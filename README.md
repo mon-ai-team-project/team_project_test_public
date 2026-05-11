@@ -92,6 +92,12 @@ GOOGLE_DRIVE_FOLDER_ID
 5. Ranking Agent computes Top 5 papers.
 6. Dashboard displays status, ranked papers, scores, and report links.
 
+## Strict Change Tracking
+
+Every meaningful repository change must update `CHANGELOG.md` in the same commit or pull request. This includes source code, infrastructure configuration, documentation, benchmark data, prompts, schema, and deployment behavior.
+
+Pull requests must use `.github/pull_request_template.md` and confirm the changelog update checklist before merge.
+
 ## GitHub Remote
 
 The personal repository is configured as `origin`:
