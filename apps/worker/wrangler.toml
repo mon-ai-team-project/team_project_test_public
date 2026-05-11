@@ -5,8 +5,7 @@ compatibility_date = "2026-05-03"
 [[d1_databases]]
 binding = "DB"
 database_name = "paper_agent_db"
-database_id = "replace-with-d1-database-id"
+database_id = "4d622431-3574-4e04-a359-dada93e97438"
 
-[[r2_buckets]]
-binding = "REPORTS"
-bucket_name = "paper-agent-outputs"
+# R2 is intentionally disabled for the MVP until billing is available.
+# Reports can be generated as direct CSV responses or stored in Google Drive.
