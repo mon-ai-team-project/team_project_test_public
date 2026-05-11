@@ -1,4 +1,4 @@
-name = "paper-agent-worker"
+name = "paper-agent-project"
 main = "src/index.ts"
 compatibility_date = "2026-05-03"
 
