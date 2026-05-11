@@ -1,0 +1,8 @@
+name = "paper-agent-project"
+main = "apps/worker/src/index.ts"
+compatibility_date = "2026-05-03"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "paper_agent_db"
+database_id = "4d622431-3574-4e04-a359-dada93e97438"
