@@ -2,6 +2,45 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-14 - Unpaywall Runtime Variable Verification
+
+### Context
+
+The deployed diagnostics endpoint initially showed `unpaywallEmail: false` after the user added `UNPAYWALL_EMAIL` in Cloudflare. The expected runtime variable name in code is exactly `UNPAYWALL_EMAIL`.
+
+### Investigation
+
+- Confirmed `apps/worker/src/index.ts` checks `Boolean(env.UNPAYWALL_EMAIL)`.
+- Confirmed `.env.example` uses `UNPAYWALL_EMAIL`.
+- Attempted remote secret listing with Wrangler, but this local environment does not have `CLOUDFLARE_API_TOKEN`, so Wrangler could not inspect deployed secrets directly.
+- Queried the deployed diagnostics endpoint:
+
+```bash
+curl -s https://paper-agent-project.shch3653.workers.dev/api/diagnostics
+```
+
+Observed:
+
+```json
+{
+  "ok": true,
+  "db": {
+    "bound": true,
+    "missingColumns": []
+  },
+  "env": {
+    "wosApiKey": false,
+    "crossrefEmail": true,
+    "unpaywallEmail": true,
+    "r2Reports": true
+  }
+}
+```
+
+### Resolution
+
+`UNPAYWALL_EMAIL` is now visible to the deployed Worker runtime. No code change was required. Remaining external blocker is Clarivate `wos-starter` approval and `WOS_API_KEY` configuration.
+
 ## 2026-05-14 - R2 Output Storage Binding
 
 ### Context

@@ -39,7 +39,7 @@ Current next implementation target:
 1. After approval, copy the issued API key into the Cloudflare Worker variables/secrets as `WOS_API_KEY`.
 2. Wait for Cloudflare to deploy the next `main` commit.
 3. Open `/api/diagnostics` and confirm `env.wosApiKey` is `true`.
-4. Open the dashboard and confirm the System Checks panel reports D1 schema readiness and WoS API key presence.
+4. Open the dashboard and confirm the System Checks panel reports D1 schema readiness, WoS API key presence, Crossref email presence, Unpaywall email presence, and R2 report binding presence.
 5. Click `Run` and confirm the Pipeline Progress panel advances through `wos_search`, journal filtering, Crossref, Unpaywall, ranking, and completion.
 6. Confirm D1 `papers.openalex_id` stores the WoS UID for new rows. The column name is retained for schema compatibility.
 7. Verify deployed CSV and Markdown report downloads include Crossref, Unpaywall, and evaluation score data.
@@ -62,6 +62,7 @@ The latest confirmed behavior is normal:
 - `POST /api/search-jobs` now calls the Web of Science Starter API, maps returned documents, scores them, and stores the result in D1.
 - `search_jobs`, `papers`, and `evaluations` receive rows in D1.
 - D1 Console no longer returns empty results after a successful run.
+- Deployed `/api/diagnostics` confirms `crossrefEmail: true`, `unpaywallEmail: true`, and `r2Reports: true`; `wosApiKey` remains `false` until Clarivate approval is complete.
 
 ## Repository And Deployment Targets
 
