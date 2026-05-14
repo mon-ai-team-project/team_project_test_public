@@ -2,6 +2,40 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-14 - Markdown Report Output While WoS Approval Is Pending
+
+### Context
+
+The `wos-starter` subscription for `MON AI Team Paper Agent Project` is pending Clarivate approval. The approval wait is now the priority 0 external blocker, so development continued on output generation that does not require a live WoS API key.
+
+### Code Changes Under Test
+
+- Added Worker route:
+
+```text
+GET /api/search-jobs/:id/report.md
+```
+
+- Added Markdown report generation from persisted D1 job, paper, Crossref, Unpaywall, and evaluation score data.
+- Added a dashboard Markdown report download button next to the CSV download button.
+
+### Verification Commands
+
+Static checks:
+
+```bash
+npm run typecheck
+npm run build
+npx wrangler deploy --dry-run
+```
+
+All passed.
+
+### Troubleshooting Notes
+
+- The report endpoint depends on an existing completed or partial search job in D1.
+- R2 remains disabled, so the report is generated directly from Worker response content rather than stored as an object.
+
 ## 2026-05-14 - Clarivate Web of Science Search Replacement
 
 ### Context

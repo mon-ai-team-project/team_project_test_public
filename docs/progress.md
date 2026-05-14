@@ -35,14 +35,15 @@ Worker health: https://paper-agent-project.shch3653.workers.dev/api/health
 
 Current next implementation target:
 
-1. Add `WOS_API_KEY` to the Cloudflare Worker variables/secrets for `paper-agent-project`.
+0. Wait for Clarivate to approve the `wos-starter` subscription for `MON AI Team Paper Agent Project`.
+1. After approval, copy the issued API key into the Cloudflare Worker variables/secrets as `WOS_API_KEY`.
 2. Wait for Cloudflare to deploy the next `main` commit.
 3. Open `/api/diagnostics` and confirm `env.wosApiKey` is `true`.
 4. Open the dashboard and confirm the System Checks panel reports D1 schema readiness and WoS API key presence.
 5. Click `Run` and confirm the Pipeline Progress panel advances through `wos_search`, journal filtering, Crossref, Unpaywall, ranking, and completion.
 6. Confirm D1 `papers.openalex_id` stores the WoS UID for new rows. The column name is retained for schema compatibility.
-7. Verify deployed CSV download includes Crossref, Unpaywall, and evaluation score columns.
-8. Start the next major implementation phase: ranking formula improvements or report generation.
+7. Verify deployed CSV and Markdown report downloads include Crossref, Unpaywall, and evaluation score data.
+8. Start the next major implementation phase: ranking formula improvements or PDF report generation.
 
 ## Current Status
 
@@ -105,6 +106,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - `POST /api/search-jobs`
 - `GET /api/search-jobs/:id`
 - `GET /api/search-jobs/:id/papers.csv`
+- `GET /api/search-jobs/:id/report.md`
 - `GET /api/diagnostics`
 - CORS headers for dashboard access.
 - D1 binding validation.
@@ -118,6 +120,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - Search job persistence into D1.
 - D1 readback for job, paper, and evaluation data.
 - Direct CSV generation from persisted D1 results while R2 is unavailable.
+- Direct Markdown report generation from persisted D1 results while R2 is unavailable.
 - Crossref DOI lookup after Web of Science search.
 - Crossref metadata enrichment for publisher, ISSN, publication type, and published date.
 - Basic DOI/title/year/journal verification status and reason fields.
@@ -197,6 +200,7 @@ The deployed D1 database already had some existing schema constraints, including
 - Score Breakdown was added to the dashboard detail view; the Worker now returns `citedByCount` in paper summaries for citation scoring.
 - Score component values are now persisted in `evaluations` and returned through API/CSV so the dashboard can prefer stored scores over frontend estimates.
 - Diagnostics were added so D1 schema drift and environment readiness can be checked from the API and dashboard before running jobs.
+- Markdown report download was added as an R2-free interim report output.
 
 ## Verification Completed
 
@@ -223,6 +227,8 @@ Dashboard Score Breakdown was locally verified through typecheck/build and Worke
 Persisted evaluation score components were locally verified with `wrangler dev`, `POST /api/search-jobs`, `GET /api/search-jobs/:id`, and `GET /api/search-jobs/:id/papers.csv`. The API response and CSV included `relevanceScore`, `journalFitScore`, `verificationScore`, `oaScore`, `citationScore`, and `recencyScore`; example verified values included `journalFitScore: 1`, `verificationScore: 1`, `oaScore: 1`, `citationScore: 1`, and `recencyScore: 0.6`.
 
 Diagnostics were locally verified with `wrangler dev` and `GET /api/diagnostics`. The response returned `ok: true`, `db.bound: true`, no missing columns, and expected warning-level false values for disabled features such as R2 reports.
+
+Markdown report generation was statically verified with typecheck/build/dry-run. Runtime verification should be done against a deployed or local completed search job using `GET /api/search-jobs/:id/report.md`.
 
 ## Manual Cloudflare Settings Required
 
@@ -263,13 +269,14 @@ After clicking `Run`, these queries returned stored data.
 
 Web of Science search, D1 persistence, CSV export, Crossref enrichment, Unpaywall metadata lookup, business school journal allowlist filtering, dashboard pipeline visualization, asynchronous job progress updates, dashboard score breakdown, persisted evaluation score components, and API/dashboard diagnostics are implemented locally. After Cloudflare deploys the next commit and `WOS_API_KEY` is configured, verify the deployed dashboard and D1 rows. The next major implementation phase is hardening and extending real paper discovery:
 
+0. Wait for Clarivate `wos-starter` subscription approval.
 1. Confirm deployed System Checks panel and `/api/diagnostics`.
 2. Confirm deployed pipeline progress visualization after clicking `Run`.
 3. Confirm deployed score breakdown in the Paper Detail panel.
-4. Confirm deployed persisted evaluation score columns in D1 and CSV.
+4. Confirm deployed persisted evaluation score columns in D1, CSV, and Markdown report output.
 5. Improve ranking formula using the persisted component scores.
-6. Add report generation.
-7. Add tests around Worker API persistence, diagnostics, Web of Science mapping, journal allowlist filtering, Crossref enrichment, Unpaywall enrichment, CSV generation, D1 row mapping, asynchronous progress updates, and score breakdown mapping.
+6. Add PDF report generation when R2 or another durable output target is available.
+7. Add tests around Worker API persistence, diagnostics, Web of Science mapping, journal allowlist filtering, Crossref enrichment, Unpaywall enrichment, CSV/report generation, D1 row mapping, asynchronous progress updates, and score breakdown mapping.
 
 ## Useful D1 Checks
 
@@ -383,4 +390,10 @@ CSV check:
 
 ```text
 https://paper-agent-project.shch3653.workers.dev/api/search-jobs/<job_id>/papers.csv
+```
+
+Markdown report check:
+
+```text
+https://paper-agent-project.shch3653.workers.dev/api/search-jobs/<job_id>/report.md
 ```

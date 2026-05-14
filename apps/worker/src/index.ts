@@ -250,6 +250,19 @@ export default {
       }
     }
 
+    const reportMatch = url.pathname.match(/^\/api\/search-jobs\/([^/]+)\/report\.md$/);
+    if (reportMatch && request.method === "GET") {
+      try {
+        if (!env.DB) return json({ error: "D1 database binding is not configured" }, 503);
+        await ensureSchema(env.DB);
+        const result = await getSearchResult(env.DB, reportMatch[1]);
+        if (!result) return json({ error: "Search job not found" }, 404);
+        return markdownReport(result);
+      } catch (error) {
+        return json({ error: getErrorMessage(error) }, 500);
+      }
+    }
+
     return json({ error: "Not found" }, 404);
   }
 };
@@ -1276,6 +1289,72 @@ function csv(result: { job: SearchJob; papers: PaperSummary[] }): Response {
       ...corsHeaders()
     }
   });
+}
+
+function markdownReport(result: { job: SearchJob; papers: PaperSummary[] }): Response {
+  const lines = [
+    `# Paper Agent Report`,
+    "",
+    `- Job ID: ${result.job.id}`,
+    `- Keyword: ${result.job.keyword}`,
+    `- Status: ${result.job.status}`,
+    `- Current step: ${result.job.currentStep}`,
+    `- Created at: ${result.job.createdAt}`,
+    `- Completed at: ${result.job.completedAt ?? "Not completed"}`,
+    `- Paper count: ${result.papers.length}`,
+    "",
+    "## Ranked Papers",
+    ""
+  ];
+
+  if (!result.papers.length) {
+    lines.push("No allowed journal results were saved for this job.", "");
+  }
+
+  for (const paper of result.papers) {
+    lines.push(
+      `### ${paper.rank}. ${paper.title}`,
+      "",
+      `- Authors: ${paper.authors}`,
+      `- Year: ${paper.year || "Unknown"}`,
+      `- Journal: ${paper.journalName}`,
+      `- DOI: ${paper.doi || "Not available"}`,
+      `- Open access: ${paper.oaStatus}`,
+      `- Final score: ${paper.finalScore.toFixed(3)}`,
+      `- Include status: ${paper.includeStatus}`,
+      `- Citation count: ${paper.citedByCount ?? 0}`,
+      `- Publisher: ${paper.publisher || "Not available"}`,
+      `- Verification: ${paper.verificationStatus ?? "unverified"} - ${paper.verificationReason ?? "No verification recorded."}`,
+      `- Unpaywall: ${paper.unpaywallStatus ?? "skipped"} - ${paper.unpaywallReason ?? "No Unpaywall lookup recorded."}`,
+      `- OA PDF: ${paper.oaPdfUrl || "Not available"}`,
+      "",
+      "Score breakdown:",
+      "",
+      `- Relevance: ${formatReportScore(paper.relevanceScore ?? paper.abstractScore)}`,
+      `- Journal fit: ${formatReportScore(paper.journalFitScore ?? 1)}`,
+      `- Crossref verification: ${formatReportScore(paper.verificationScore ?? 0)}`,
+      `- Open access: ${formatReportScore(paper.oaScore ?? 0)}`,
+      `- Citation: ${formatReportScore(paper.citationScore ?? 0)}`,
+      `- Recency: ${formatReportScore(paper.recencyScore ?? 0)}`,
+      "",
+      `Relevance reason: ${paper.relevanceReason}`,
+      ""
+    );
+  }
+
+  const body = `${lines.join("\n")}\n`;
+  const fileName = `${sanitizeFileName(result.job.keyword)}-${result.job.id}-report.md`;
+  return new Response(body, {
+    headers: {
+      "Content-Type": "text/markdown; charset=utf-8",
+      "Content-Disposition": `attachment; filename="${fileName}"`,
+      ...corsHeaders()
+    }
+  });
+}
+
+function formatReportScore(value: number): string {
+  return value.toFixed(3);
 }
 
 function formatCsvCell(value: string | number): string {

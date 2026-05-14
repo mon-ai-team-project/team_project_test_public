@@ -160,6 +160,11 @@ function App() {
     window.location.href = apiUrl(`/api/search-jobs/${job.id}/papers.csv`);
   }
 
+  function downloadReport() {
+    if (!job) return;
+    window.location.href = apiUrl(`/api/search-jobs/${job.id}/report.md`);
+  }
+
   async function refreshDiagnostics() {
     setDiagnosticsError("");
     try {
@@ -203,6 +208,9 @@ function App() {
           <div className="panelTitle">
             <h2>Ranked Papers</h2>
             <div className="panelActions">
+              <button className="iconButton" onClick={downloadReport} disabled={!job} aria-label="Download Markdown report">
+                <FileText size={18} />
+              </button>
               <button className="iconButton" onClick={downloadCsv} disabled={!job} aria-label="Download CSV">
                 <Download size={18} />
               </button>

@@ -15,6 +15,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+- `Added`: Added `GET /api/search-jobs/:id/report.md` in `apps/worker/src/index.ts` and a dashboard Markdown report download button in `apps/web/src/main.tsx`.
+- `Docs`: Recorded Clarivate `wos-starter` subscription approval as priority 0 in `docs/progress.md`.
 - `Changed`: Replaced OpenAlex search with Clarivate Web of Science Starter API search in `apps/worker/src/index.ts`, using `WOS_API_KEY` and `X-ApiKey` authentication.
 - `Changed`: Updated dashboard pipeline and System Checks labels in `apps/web/src/main.tsx` from OpenAlex to WoS.
 - `Docs`: Replaced OpenAlex setup references with Web of Science setup in `.env.example`, `README.md`, `docs/progress.md`, and `docs/debug-log.md`.
