@@ -2,6 +2,58 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-14 - Diagnostics Endpoint And Dashboard Checks
+
+### Context
+
+D1 schema drift has occurred several times after adding new columns. A lightweight diagnostic path was added so the dashboard can show missing columns and environment readiness before users run a job.
+
+### Code Changes Under Test
+
+- Added `GET /api/diagnostics` in `apps/worker/src/index.ts`.
+- Added required D1 column checks for `search_jobs`, `papers`, and `evaluations`.
+- Added Worker environment presence checks for OpenAlex, Crossref, Unpaywall, and R2.
+- Added System Checks panel in `apps/web/src/main.tsx`.
+- Added status chip styles in `apps/web/src/styles.css`.
+
+### Expected Behavior
+
+- `/api/diagnostics` returns `ok: true` when D1 is bound and all required columns exist.
+- Missing D1 columns are returned as `table.column` entries.
+- The dashboard System Checks panel displays DB/schema readiness and environment variable presence.
+- R2 can remain warning-only because report storage is not enabled during the billing-limited MVP.
+
+### Verification Commands
+
+Static checks:
+
+```bash
+npm run typecheck
+npm run build
+npx wrangler deploy --dry-run
+```
+
+All three passed.
+
+Runtime check:
+
+```bash
+npx wrangler dev --port 8787 --ip 127.0.0.1 \
+  --var UNPAYWALL_EMAIL:<contact email> \
+  --var CROSSREF_EMAIL:<contact email> \
+  --var OPENALEX_EMAIL:<contact email>
+
+curl -s http://127.0.0.1:8787/api/diagnostics
+```
+
+Observed:
+
+- HTTP 200.
+- `ok: true`.
+- `db.bound: true`.
+- `db.missingColumns: []`.
+- `r2Reports: false`, which is expected while R2 remains disabled.
+
 ## 2026-05-14 - Persisted Evaluation Score Components
 
 ### Context

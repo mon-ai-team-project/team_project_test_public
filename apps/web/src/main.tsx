@@ -20,6 +20,21 @@ type ScoreBreakdownItem = {
   detail: string;
 };
 
+type DiagnosticsResponse = {
+  ok: boolean;
+  db: {
+    bound: boolean;
+    missingColumns: Array<{ table: string; column: string; ok: boolean }>;
+  };
+  env: {
+    openAlexEmail: boolean;
+    openAlexApiKey: boolean;
+    crossrefEmail: boolean;
+    unpaywallEmail: boolean;
+    r2Reports: boolean;
+  };
+};
+
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "https://paper-agent-project.shch3653.workers.dev").replace(/\/$/, "");
 
 function apiUrl(path: string): string {
@@ -81,7 +96,13 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [diagnostics, setDiagnostics] = useState<DiagnosticsResponse | null>(null);
+  const [diagnosticsError, setDiagnosticsError] = useState("");
   const selected = useMemo(() => papers.find((paper) => paper.id === selectedId) ?? papers[0], [papers, selectedId]);
+
+  useEffect(() => {
+    void refreshDiagnostics();
+  }, []);
 
   useEffect(() => {
     if (!job || job.status === "completed" || job.status === "failed") return;
@@ -140,6 +161,17 @@ function App() {
     window.location.href = apiUrl(`/api/search-jobs/${job.id}/papers.csv`);
   }
 
+  async function refreshDiagnostics() {
+    setDiagnosticsError("");
+    try {
+      const response = await fetch(apiUrl("/api/diagnostics"));
+      if (!response.ok) throw new Error(await readApiError(response, "Failed to load diagnostics"));
+      setDiagnostics((await response.json()) as DiagnosticsResponse);
+    } catch (error) {
+      setDiagnosticsError(error instanceof Error ? error.message : "Failed to load diagnostics");
+    }
+  }
+
   return (
     <main className="shell">
       <section className="toolbar">
@@ -164,6 +196,7 @@ function App() {
         <Metric label="Top Score" value={papers[0] ? papers[0].finalScore.toFixed(2) : "-"} />
       </section>
       <PipelineProgress job={job} loading={loading} />
+      <DiagnosticsPanel diagnostics={diagnostics} errorMessage={diagnosticsError} onRefresh={refreshDiagnostics} />
       {errorMessage ? <p className="errorMessage">{errorMessage}</p> : null}
 
       <section className="contentGrid">
@@ -261,6 +294,62 @@ function App() {
         </aside>
       </section>
     </main>
+  );
+}
+
+function DiagnosticsPanel({
+  diagnostics,
+  errorMessage,
+  onRefresh
+}: {
+  diagnostics: DiagnosticsResponse | null;
+  errorMessage: string;
+  onRefresh: () => void;
+}) {
+  const missingCount = diagnostics?.db.missingColumns.length ?? 0;
+  const envItems = diagnostics
+    ? [
+        ["OpenAlex email", diagnostics.env.openAlexEmail],
+        ["OpenAlex key", diagnostics.env.openAlexApiKey],
+        ["Crossref email", diagnostics.env.crossrefEmail],
+        ["Unpaywall email", diagnostics.env.unpaywallEmail],
+        ["R2 reports", diagnostics.env.r2Reports]
+      ]
+    : [];
+
+  return (
+    <section className="diagnosticsPanel">
+      <div className="diagnosticsHeader">
+        <div>
+          <h2>System Checks</h2>
+          <p>{diagnostics ? (diagnostics.ok ? "Ready" : `${missingCount} schema issue${missingCount === 1 ? "" : "s"}`) : "Not checked"}</p>
+        </div>
+        <button className="iconButton" onClick={onRefresh} aria-label="Refresh diagnostics">
+          <RefreshCw size={18} />
+        </button>
+      </div>
+      {errorMessage ? <p className="diagnosticsError">{errorMessage}</p> : null}
+      {diagnostics ? (
+        <div className="diagnosticsGrid">
+          <div>
+            <span className={diagnostics.db.bound ? "checkOk" : "checkFail"}>{diagnostics.db.bound ? "DB bound" : "DB missing"}</span>
+            <span className={missingCount === 0 ? "checkOk" : "checkFail"}>{missingCount === 0 ? "Schema ready" : `${missingCount} missing columns`}</span>
+          </div>
+          <div>
+            {envItems.map(([label, ok]) => (
+              <span key={label as string} className={ok ? "checkOk" : "checkWarn"}>
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
+      {diagnostics?.db.missingColumns.length ? (
+        <p className="missingColumns">
+          {diagnostics.db.missingColumns.map((item) => `${item.table}.${item.column}`).join(", ")}
+        </p>
+      ) : null}
+    </section>
   );
 }
 

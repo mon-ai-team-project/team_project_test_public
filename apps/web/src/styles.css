@@ -233,6 +233,74 @@ h1 {
   color: #ffffff;
 }
 
+.diagnosticsPanel {
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  padding: 16px;
+}
+
+.diagnosticsHeader {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.diagnosticsHeader p,
+.diagnosticsError,
+.missingColumns {
+  color: #607080;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.diagnosticsError {
+  color: #9b1c1c;
+  margin-bottom: 10px;
+}
+
+.diagnosticsGrid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.diagnosticsGrid div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.checkOk,
+.checkWarn,
+.checkFail {
+  border-radius: 999px;
+  font-size: 12px;
+  padding: 5px 9px;
+}
+
+.checkOk {
+  background: #f1fbf5;
+  color: #238548;
+}
+
+.checkWarn {
+  background: #fff8e8;
+  color: #8a5a00;
+}
+
+.checkFail {
+  background: #fff1f1;
+  color: #b42318;
+}
+
+.missingColumns {
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
 .contentGrid {
   align-items: start;
   display: grid;
@@ -421,6 +489,10 @@ dd {
 
   .pipelineSteps {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .diagnosticsGrid {
+    grid-template-columns: 1fr;
   }
 
   .detailPanel {

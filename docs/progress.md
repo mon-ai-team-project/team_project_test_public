@@ -36,11 +36,11 @@ Worker health: https://paper-agent-project.shch3653.workers.dev/api/health
 Current next implementation target:
 
 1. Wait for Cloudflare to deploy the next `main` commit.
-2. Click `Run` on the dashboard and confirm the Pipeline Progress panel advances through persisted Worker steps.
-3. Select a result and confirm Score Breakdown displays persisted relevance, journal fit, Crossref, Open Access, citation, and recency scores.
-4. Confirm D1 `evaluations` rows include `relevance_score`, `journal_fit_score`, `verification_score`, `oa_score`, `citation_score`, and `recency_score`.
-5. Confirm search output contains only journals in `packages/shared/src/businessSchoolJournals.ts`.
-6. Confirm non-allowlisted journals are absent from API, dashboard, CSV, and D1 `papers` rows.
+2. Open the dashboard and confirm the System Checks panel reports D1 schema readiness.
+3. If System Checks reports missing columns, add only those columns in D1 Console using the tracked migration files.
+4. Click `Run` and confirm the Pipeline Progress panel advances through persisted Worker steps.
+5. Select a result and confirm Score Breakdown displays persisted relevance, journal fit, Crossref, Open Access, citation, and recency scores.
+6. Confirm D1 `evaluations` rows include `relevance_score`, `journal_fit_score`, `verification_score`, `oa_score`, `citation_score`, and `recency_score`.
 7. Verify deployed CSV download includes Crossref, Unpaywall, and evaluation score columns.
 8. Start the next major implementation phase: ranking formula improvements or report generation.
 
@@ -97,6 +97,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - Dashboard API base URL supports `VITE_API_BASE_URL`, with a deployed Worker default.
 - Pipeline Progress panel visualizes OpenAlex search, journal filtering, Crossref enrichment, Unpaywall check, ranking, and completion status.
 - Paper Detail panel shows Score Breakdown for relevance, journal fit, Crossref verification, open access, citations, and recency.
+- System Checks panel calls `GET /api/diagnostics` to display D1 schema readiness and Worker environment variable presence.
 
 ### Worker API
 
@@ -104,6 +105,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - `POST /api/search-jobs`
 - `GET /api/search-jobs/:id`
 - `GET /api/search-jobs/:id/papers.csv`
+- `GET /api/diagnostics`
 - CORS headers for dashboard access.
 - D1 binding validation.
 - D1 schema creation/backfill checks.
@@ -194,6 +196,7 @@ The deployed D1 database already had some existing schema constraints, including
 - Worker job execution was changed to return a job immediately and continue OpenAlex, journal filtering, Crossref, Unpaywall, and ranking in the background with D1 progress updates.
 - Score Breakdown was added to the dashboard detail view; the Worker now returns `citedByCount` in paper summaries for citation scoring.
 - Score component values are now persisted in `evaluations` and returned through API/CSV so the dashboard can prefer stored scores over frontend estimates.
+- Diagnostics were added so D1 schema drift and environment readiness can be checked from the API and dashboard before running jobs.
 
 ## Verification Completed
 
@@ -218,6 +221,8 @@ Asynchronous Worker progress was locally verified with `wrangler dev`, `POST /ap
 Dashboard Score Breakdown was locally verified through typecheck/build and Worker API polling. The Worker response now includes `citedByCount` in paper summaries; a local completed job returned `citedByCount: 378`, enabling the dashboard Citation score bar.
 
 Persisted evaluation score components were locally verified with `wrangler dev`, `POST /api/search-jobs`, `GET /api/search-jobs/:id`, and `GET /api/search-jobs/:id/papers.csv`. The API response and CSV included `relevanceScore`, `journalFitScore`, `verificationScore`, `oaScore`, `citationScore`, and `recencyScore`; example verified values included `journalFitScore: 1`, `verificationScore: 1`, `oaScore: 1`, `citationScore: 1`, and `recencyScore: 0.6`.
+
+Diagnostics were locally verified with `wrangler dev` and `GET /api/diagnostics`. The response returned `ok: true`, `db.bound: true`, no missing columns, and expected warning-level false values for disabled features such as R2 reports.
 
 ## Manual Cloudflare Settings Required
 
@@ -257,15 +262,15 @@ After clicking `Run`, these queries returned stored data.
 
 ## Remaining Work
 
-OpenAlex search, D1 persistence, CSV export, Crossref enrichment, Unpaywall metadata lookup, business school journal allowlist filtering, dashboard pipeline visualization, asynchronous job progress updates, dashboard score breakdown, and persisted evaluation score components are implemented locally. After Cloudflare deploys the next commit, verify the deployed dashboard and D1 rows. The next major implementation phase is hardening and extending real paper discovery:
+OpenAlex search, D1 persistence, CSV export, Crossref enrichment, Unpaywall metadata lookup, business school journal allowlist filtering, dashboard pipeline visualization, asynchronous job progress updates, dashboard score breakdown, persisted evaluation score components, and API/dashboard diagnostics are implemented locally. After Cloudflare deploys the next commit, verify the deployed dashboard and D1 rows. The next major implementation phase is hardening and extending real paper discovery:
 
-1. Confirm deployed pipeline progress visualization after clicking `Run`.
-2. Confirm deployed score breakdown in the Paper Detail panel.
-3. Confirm deployed persisted evaluation score columns in D1 and CSV.
-4. Confirm deployed allowlist filtering from the dashboard, CSV endpoint, and D1 Console.
+1. Confirm deployed System Checks panel and `/api/diagnostics`.
+2. Confirm deployed pipeline progress visualization after clicking `Run`.
+3. Confirm deployed score breakdown in the Paper Detail panel.
+4. Confirm deployed persisted evaluation score columns in D1 and CSV.
 5. Improve ranking formula using the persisted component scores.
 6. Add report generation.
-7. Add tests around Worker API persistence, OpenAlex mapping, journal allowlist filtering, Crossref enrichment, Unpaywall enrichment, CSV generation, D1 row mapping, asynchronous progress updates, and score breakdown mapping.
+7. Add tests around Worker API persistence, diagnostics, OpenAlex mapping, journal allowlist filtering, Crossref enrichment, Unpaywall enrichment, CSV generation, D1 row mapping, asynchronous progress updates, and score breakdown mapping.
 
 ## Useful D1 Checks
 
@@ -366,6 +371,14 @@ Then add only the missing evaluation score columns from:
 ```text
 apps/worker/migrations/0004_add_evaluation_score_columns.sql
 ```
+
+Diagnostics check:
+
+```text
+https://paper-agent-project.shch3653.workers.dev/api/diagnostics
+```
+
+The response `ok` field should be `true` after all required D1 columns are present.
 
 CSV check:
 

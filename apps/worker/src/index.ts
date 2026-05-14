@@ -19,6 +19,27 @@ type CreateSearchJobRequest = {
   maxResults?: number;
 };
 
+type DiagnosticsColumnCheck = {
+  table: string;
+  column: string;
+  ok: boolean;
+};
+
+type DiagnosticsResponse = {
+  ok: boolean;
+  db: {
+    bound: boolean;
+    missingColumns: DiagnosticsColumnCheck[];
+  };
+  env: {
+    openAlexEmail: boolean;
+    openAlexApiKey: boolean;
+    crossrefEmail: boolean;
+    unpaywallEmail: boolean;
+    r2Reports: boolean;
+  };
+};
+
 type PaperRecord = PaperSummary & {
   openalexId: string;
   abstract: string;
@@ -166,6 +187,14 @@ export default {
 
     if (url.pathname === "/api/health") {
       return json({ ok: true, service: "paper-agent-worker" });
+    }
+
+    if (url.pathname === "/api/diagnostics" && request.method === "GET") {
+      try {
+        return json(await getDiagnostics(env));
+      } catch (error) {
+        return json({ error: getErrorMessage(error) }, 500);
+      }
     }
 
     if (url.pathname === "/api/search-jobs" && request.method === "POST") {
@@ -392,6 +421,94 @@ async function ensureColumn(db: D1Database, tableName: string, columnName: strin
   const columns = await db.prepare(`PRAGMA table_info(${tableName})`).all<{ name: string }>();
   if (columns.results.some((column) => column.name === columnName)) return;
   await db.prepare(`ALTER TABLE ${tableName} ADD COLUMN ${columnName} ${definition}`).run();
+}
+
+async function getDiagnostics(env: Env): Promise<DiagnosticsResponse> {
+  const missingColumns = env.DB ? await getMissingColumns(env.DB) : [];
+  return {
+    ok: Boolean(env.DB) && missingColumns.length === 0,
+    db: {
+      bound: Boolean(env.DB),
+      missingColumns
+    },
+    env: {
+      openAlexEmail: Boolean(env.OPENALEX_EMAIL),
+      openAlexApiKey: Boolean(env.OPENALEX_API_KEY),
+      crossrefEmail: Boolean(env.CROSSREF_EMAIL || env.OPENALEX_EMAIL),
+      unpaywallEmail: Boolean(env.UNPAYWALL_EMAIL),
+      r2Reports: Boolean(env.REPORTS)
+    }
+  };
+}
+
+async function getMissingColumns(db: D1Database): Promise<DiagnosticsColumnCheck[]> {
+  const requiredColumns: Array<{ table: string; columns: string[] }> = [
+    {
+      table: "search_jobs",
+      columns: ["id", "keyword", "status", "current_step", "total_steps", "created_at", "completed_at", "error_message"]
+    },
+    {
+      table: "papers",
+      columns: [
+        "id",
+        "job_id",
+        "rank",
+        "title",
+        "authors",
+        "year",
+        "journal_name",
+        "doi",
+        "oa_status",
+        "openalex_id",
+        "abstract",
+        "cited_by_count",
+        "crossref_id",
+        "publisher",
+        "issn",
+        "publication_type",
+        "published_date",
+        "verification_status",
+        "verification_reason",
+        "oa_pdf_url",
+        "oa_landing_page_url",
+        "oa_license",
+        "oa_host_type",
+        "oa_repository",
+        "unpaywall_status",
+        "unpaywall_reason",
+        "created_at"
+      ]
+    },
+    {
+      table: "evaluations",
+      columns: [
+        "id",
+        "paper_id",
+        "abstract_score",
+        "relevance_score",
+        "journal_fit_score",
+        "verification_score",
+        "oa_score",
+        "citation_score",
+        "recency_score",
+        "final_score",
+        "include_status",
+        "relevance_reason",
+        "created_at"
+      ]
+    }
+  ];
+  const missing: DiagnosticsColumnCheck[] = [];
+
+  for (const table of requiredColumns) {
+    const existing = await db.prepare(`PRAGMA table_info(${table.table})`).all<{ name: string }>();
+    const names = new Set(existing.results.map((column) => column.name));
+    for (const column of table.columns) {
+      if (!names.has(column)) missing.push({ table: table.table, column, ok: false });
+    }
+  }
+
+  return missing;
 }
 
 async function saveSearchJob(db: D1Database, job: SearchJob): Promise<void> {
