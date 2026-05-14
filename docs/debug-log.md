@@ -25,6 +25,21 @@ npm run build
 
 Both passed. Runtime verification should be done after Cloudflare Pages deploy by opening the dashboard, loading a completed job, and confirming the Report Preview panel renders the Markdown sections.
 
+### Runtime Confirmation
+
+The user confirmed that the Report Preview appears in the dashboard after deployment.
+
+### Next Work
+
+The next recommended implementation step is XLSX output before PDF:
+
+```text
+GET /api/search-jobs/:id/papers.xlsx
+R2: reports/<job_id>/papers.xlsx
+Dashboard XLSX download button
+e2e XLSX endpoint and R2 verification
+```
+
 ## 2026-05-14 - Report Agent Markdown Enhancement
 
 ### Context

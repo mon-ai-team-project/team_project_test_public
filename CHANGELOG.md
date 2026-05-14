@@ -15,6 +15,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+- `Docs`: Updated `docs/progress.md` and `docs/debug-log.md` with the confirmed dashboard report preview status and the next XLSX/PDF output implementation plan.
 - `Added`: Added dashboard Markdown report preview in `apps/web/src/main.tsx` and `apps/web/src/styles.css` so completed job reports can be inspected before download.
 - `Docs`: Recorded dashboard report preview work in `docs/debug-log.md` and `docs/progress.md`.
 - `Changed`: Expanded Markdown report generation in `apps/worker/src/index.ts` with Report Agent sections for key findings, common themes, method/context differences, research gaps, suggested reading order, screening notes, and limitations.

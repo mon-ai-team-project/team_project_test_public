@@ -51,7 +51,11 @@ Current next implementation target:
 13. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
 14. Deployed MCP is verified at `https://paper-agent-mcp.shch3653.workers.dev/health`.
 15. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`.
-16. Start the next major implementation phase: OpenAlex integration test run, controlled write MCP design, Recent Jobs filters, PDF/XLSX generation, or report section expansion.
+16. Start the next major implementation phase with XLSX output first, then PDF output.
+    - Add `reports/<job_id>/papers.xlsx` generation and R2 persistence.
+    - Add dashboard XLSX download button.
+    - Extend `npm run e2e:reports` to verify XLSX endpoint and R2 object.
+    - After XLSX is stable, add `reports/<job_id>/report.pdf`.
 17. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
 
 ## Current Status
@@ -71,6 +75,7 @@ The latest confirmed behavior is normal:
 - `search_jobs`, `papers`, and `evaluations` receive rows in D1.
 - D1 Console no longer returns empty results after a successful run.
 - Deployed `/api/diagnostics` confirms provider readiness, Crossref, Unpaywall, and R2 status; `wosApiKey` remains `false` until Clarivate approval is complete.
+- Dashboard Report Preview is visible and displays the Markdown report for completed jobs.
 
 ## Repository And Deployment Targets
 
@@ -224,6 +229,48 @@ The deployed D1 database already had some existing schema constraints, including
 
 - `CHANGELOG.md` was added and is used as the required manual change log.
 - `.github/pull_request_template.md` was added to enforce changelog updates.
+
+## Next Implementation Plan: XLSX/PDF Outputs
+
+Begin with XLSX because it is lower risk than PDF and directly useful for reviewing paper rows and scores.
+
+Recommended XLSX scope:
+
+- Add `GET /api/search-jobs/:id/papers.xlsx`.
+- Generate workbook from the same persisted D1 result used by CSV.
+- Include columns currently present in CSV:
+  - job metadata
+  - rank/title/authors/year/journal/DOI
+  - Crossref metadata
+  - Unpaywall metadata
+  - score components
+  - final score/include status/relevance reason
+- Persist XLSX to R2 under:
+
+```text
+reports/<job_id>/papers.xlsx
+```
+
+- Add dashboard XLSX download icon beside Markdown and CSV.
+- Extend `apps/mcp/scripts/e2e-check.mjs` to verify:
+  - XLSX endpoint status 200
+  - R2 object exists
+  - non-zero object size
+
+Recommended PDF scope after XLSX:
+
+- Add `GET /api/search-jobs/:id/report.pdf`.
+- Generate from the enhanced Markdown report or equivalent HTML.
+- Persist PDF to R2 under:
+
+```text
+reports/<job_id>/report.pdf
+```
+
+Residual decisions for next session:
+
+- Choose XLSX generation library that works in Cloudflare Workers.
+- Choose PDF generation approach compatible with Workers runtime, or defer PDF to a separate rendering service if needed.
 
 ## Important Fixes Completed
 
