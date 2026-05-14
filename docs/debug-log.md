@@ -2,6 +2,64 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-14 - Cloudflare Remote MCP Worker Attachment
+
+### Context
+
+The requested next step was to attach Cloudflare MCP first. The implementation uses a separate Worker so the MCP surface remains isolated from the dashboard/backend API.
+
+### Code Changes Under Test
+
+- Added `apps/mcp` workspace.
+- Added Worker service `paper-agent-mcp`.
+- Added MCP endpoint `/mcp`.
+- Added health endpoint `/health`.
+- Added Durable Object binding `MCP_OBJECT`.
+- Reused existing D1 binding `DB` and R2 binding `REPORTS`.
+- Exposed read-only tools only:
+  - `get_system_diagnostics`
+  - `query_recent_jobs`
+  - `get_search_job`
+  - `get_paper_results`
+  - `get_report_links`
+
+### Verification Commands
+
+```bash
+npm run typecheck
+npm run build
+npx wrangler deploy --dry-run --config apps/mcp/wrangler.toml
+```
+
+All passed.
+
+Dry-run confirmed:
+
+```text
+env.MCP_OBJECT (PaperAgentMcp)            Durable Object
+env.DB (paper_agent_db)                   D1 Database
+env.REPORTS (paper-agent-outputs)         R2 Bucket
+```
+
+### Troubleshooting
+
+The first dry-run failed because the Cloudflare Agents SDK imports Node `async_hooks`.
+
+Resolution:
+
+```toml
+compatibility_flags = ["nodejs_compat"]
+```
+
+The actual deploy command then failed locally because the current non-interactive shell did not have `CLOUDFLARE_API_TOKEN`.
+
+Required local action before deployment:
+
+```bash
+export CLOUDFLARE_API_TOKEN=...
+npm run deploy:mcp
+```
+
 ## 2026-05-14 - Component-Based Ranking Formula And MCP Plan
 
 ### Context

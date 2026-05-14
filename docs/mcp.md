@@ -50,6 +50,56 @@ Purpose:
 - Let an MCP client inspect current project state.
 - Avoid write or external API cost while validating auth, transport, and observability.
 
+Current implementation:
+
+```text
+apps/mcp
+paper-agent-mcp
+/mcp
+```
+
+Implemented read-only tools:
+
+```text
+query_recent_jobs(limit)
+get_search_job(jobId)
+get_paper_results(jobId, limit)
+get_report_links(jobId)
+get_system_diagnostics()
+```
+
+Runtime bindings:
+
+```text
+MCP_OBJECT  Durable Object for MCP transport
+DB          Existing paper_agent_db D1 database
+REPORTS     Existing paper-agent-outputs R2 bucket
+```
+
+Deployment command:
+
+```bash
+npm run deploy:mcp
+```
+
+Local test endpoint:
+
+```text
+http://localhost:8788/mcp
+```
+
+Deployed endpoint after successful Cloudflare deploy:
+
+```text
+https://paper-agent-mcp.<account-subdomain>.workers.dev/mcp
+```
+
+Health endpoint:
+
+```text
+/health
+```
+
 ### Phase 2: Controlled Write MCP
 
 Expose narrow write tools after read-only behavior is stable.
@@ -120,6 +170,8 @@ Pros:
 - Separate deployment and secrets.
 - Easier permission boundary.
 - Safer for experimentation.
+
+This is now the selected project direction.
 
 Cons:
 

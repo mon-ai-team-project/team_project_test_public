@@ -47,9 +47,11 @@ Current next implementation target:
 9. Confirm the Markdown report includes executive summary metrics, top-ranked table, paper details, OA landing page, and license details.
 10. Confirm the dashboard Recent Jobs panel lists saved jobs and can reload prior job results.
 11. Confirm new jobs use persisted component-score final ranking: relevance 35%, journal fit 20%, Crossref verification 15%, OA 10%, citation 10%, recency 10%.
-12. Use `docs/mcp.md` as the current source of truth for MCP attachment planning.
-13. Start the next major implementation phase: Recent Jobs filters, PDF/XLSX generation, or read-only MCP.
-12. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
+12. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
+13. Deploy `paper-agent-mcp` after exporting `CLOUDFLARE_API_TOKEN` locally, because the last automated deploy attempt failed only due to a missing local token.
+14. After deployment, test `https://paper-agent-mcp.<account-subdomain>.workers.dev/health` and connect an MCP client to `https://paper-agent-mcp.<account-subdomain>.workers.dev/mcp`.
+15. Start the next major implementation phase: MCP Inspector verification, Recent Jobs filters, PDF/XLSX generation, or report section expansion.
+16. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
 
 ## Current Status
 
@@ -80,6 +82,8 @@ The latest confirmed behavior is normal:
 - D1 database ID: `4d622431-3574-4e04-a359-dada93e97438`
 - R2 bucket: `paper-agent-outputs`
 - R2 binding: `REPORTS`
+- MCP Worker service: `paper-agent-mcp`
+- MCP endpoint: `https://paper-agent-mcp.<account-subdomain>.workers.dev/mcp` after deployment
 - Default Worker API URL: `https://paper-agent-project.shch3653.workers.dev`
 - Dashboard URL: `https://paper-agent-project.pages.dev/`
 
@@ -96,6 +100,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - `docs` and `benchmark` directories for project references.
 - `docs/workflow.md` reflects `AI_Agent_프로젝트_전체_통합본.pdf` into the active implementation roadmap.
 - `docs/mcp.md` defines the MCP attachment plan, allowed tool phases, security boundaries, and audit requirements.
+- `apps/mcp` implements the first read-only Cloudflare Remote MCP Worker.
 
 ### Dashboard
 
@@ -145,6 +150,23 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - Unpaywall open access metadata persistence for PDF URL, landing page URL, license, host type, repository, status, and reason.
 - Business school journal allowlist filtering based on `경영대학 학술지 목록.docx`; non-allowlisted journals are removed before D1 persistence and API/CSV output.
 - JSON error responses for API failures.
+
+### Remote MCP Worker
+
+- `apps/mcp` contains a separate Cloudflare Worker named `paper-agent-mcp`.
+- MCP transport endpoint is `/mcp`.
+- Health endpoint is `/health`.
+- Durable Object binding: `MCP_OBJECT`.
+- D1 binding: `DB`.
+- R2 binding: `REPORTS`.
+- Current mode is read-only.
+- Implemented tools:
+  - `get_system_diagnostics`
+  - `query_recent_jobs`
+  - `get_search_job`
+  - `get_paper_results`
+  - `get_report_links`
+- No write/search/generation tools are exposed yet.
 
 ### D1 Schema
 
@@ -220,6 +242,7 @@ The deployed D1 database already had some existing schema constraints, including
 - Markdown report download was added and CSV/Markdown outputs are stored in R2 when the `REPORTS` binding is available.
 - Markdown report output now includes an executive summary, include/review/exclude counts, OA PDF count, average score, top-ranked table, OA landing page, and license details.
 - Integrated workflow design from `AI_Agent_프로젝트_전체_통합본.pdf` is now tracked in `docs/workflow.md`.
+- Read-only Cloudflare Remote MCP Worker was added in `apps/mcp`.
 
 ## Verification Completed
 
@@ -248,6 +271,20 @@ Persisted evaluation score components were locally verified with `wrangler dev`,
 Diagnostics were locally verified with `wrangler dev` and `GET /api/diagnostics`. The response returned `ok: true`, `db.bound: true`, no missing columns, and expected warning-level false values for disabled features such as R2 reports.
 
 R2 output storage was statically verified with typecheck/build/dry-run. Runtime verification should be done after deployment by completing a search job, downloading `GET /api/search-jobs/:id/papers.csv` and `GET /api/search-jobs/:id/report.md`, and confirming R2 objects exist under `reports/<job_id>/`.
+
+Cloudflare Remote MCP was statically verified with:
+
+```bash
+npm run typecheck
+npm run build
+npx wrangler deploy --dry-run --config apps/mcp/wrangler.toml
+```
+
+The dry-run confirmed `env.MCP_OBJECT`, `env.DB`, and `env.REPORTS`. Actual deployment still requires `CLOUDFLARE_API_TOKEN` in the local shell, then:
+
+```bash
+npm run deploy:mcp
+```
 
 ## Manual Cloudflare Settings Required
 

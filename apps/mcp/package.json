@@ -1,0 +1,21 @@
+{
+  "name": "paper-agent-mcp",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "dev": "wrangler dev --port 8788",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20250510.0",
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "agents": "^0.0.99",
+    "zod": "^3.24.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "wrangler": "^4.15.2"
+  }
+}

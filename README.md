@@ -17,6 +17,10 @@ apps/worker
   -> R2 reports
   -> Vectorize abstract search
   -> Google Drive / Web of Science / Crossref / Unpaywall tools
+
+apps/mcp
+  -> Cloudflare Remote MCP server
+  -> read-only D1/R2 inspection tools for agent clients
 ```
 
 ## Repository Structure
@@ -25,6 +29,7 @@ apps/worker
 apps/
   web/          # Frontend dashboard
   worker/       # Cloudflare Workers backend and agent workflow API
+  mcp/          # Cloudflare Remote MCP server
 packages/
   shared/       # Shared types and scoring helpers
 docs/
@@ -56,19 +61,33 @@ Run the Worker locally:
 npm run dev:worker
 ```
 
+Run the Remote MCP Worker locally:
+
+```bash
+npm run dev:mcp
+```
+
+Deploy the Remote MCP Worker:
+
+```bash
+npm run deploy:mcp
+```
+
 ## Cloudflare Setup
 
-Create two Cloudflare projects from this single GitHub repository.
+Create three Cloudflare projects from this single GitHub repository.
 
 | Target | Cloudflare Product | Root directory |
 | --- | --- | --- |
 | Dashboard | Pages | `apps/web` |
 | Backend API | Workers | `apps/worker` |
+| Remote MCP | Workers | `apps/mcp` |
 
 Recommended names:
 
 - Pages: `paper-agent-dashboard`
-- Worker: `paper-agent-worker`
+- Worker: `paper-agent-project`
+- MCP Worker: `paper-agent-mcp`
 - D1: `paper_agent_db`
 - R2: `paper-agent-outputs`
 - Vectorize: `paper-abstract-index`
