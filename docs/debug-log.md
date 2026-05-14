@@ -60,6 +60,67 @@ export CLOUDFLARE_API_TOKEN=...
 npm run deploy:mcp
 ```
 
+## 2026-05-14 - Deployed MCP Runtime Verification
+
+### Context
+
+The user confirmed the deployed `paper-agent-mcp` health response:
+
+```json
+{
+  "ok": true,
+  "service": "paper-agent-mcp",
+  "endpoint": "/mcp"
+}
+```
+
+### Verification
+
+Confirmed health endpoint:
+
+```bash
+curl -s https://paper-agent-mcp.shch3653.workers.dev/health
+```
+
+Confirmed MCP protocol connectivity with the TypeScript MCP SDK over Streamable HTTP.
+
+Observed tool list:
+
+```text
+get_system_diagnostics
+query_recent_jobs
+get_search_job
+get_paper_results
+get_report_links
+```
+
+Confirmed `get_system_diagnostics` returned D1 ready, no missing columns, R2 reports bound, and read-only MCP mode.
+
+Confirmed D1 job reads with:
+
+```text
+query_recent_jobs
+get_search_job
+get_paper_results
+get_report_links
+```
+
+Completed job used for verification:
+
+```text
+job-7c9f455b-e7aa-4443-8148-63a4a4a4b1e5
+```
+
+`get_paper_results` returned ranked D1 paper rows. `get_report_links` returned API paths and R2 keys. For this older completed job, `existsInR2` was false because it was generated before R2 output persistence was enabled.
+
+### Follow-Up
+
+Added reusable smoke test:
+
+```bash
+npm run smoke:mcp
+```
+
 ## 2026-05-14 - Component-Based Ranking Formula And MCP Plan
 
 ### Context

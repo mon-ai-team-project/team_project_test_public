@@ -48,9 +48,9 @@ Current next implementation target:
 10. Confirm the dashboard Recent Jobs panel lists saved jobs and can reload prior job results.
 11. Confirm new jobs use persisted component-score final ranking: relevance 35%, journal fit 20%, Crossref verification 15%, OA 10%, citation 10%, recency 10%.
 12. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
-13. Deploy `paper-agent-mcp` after exporting `CLOUDFLARE_API_TOKEN` locally, because the last automated deploy attempt failed only due to a missing local token.
-14. After deployment, test `https://paper-agent-mcp.<account-subdomain>.workers.dev/health` and connect an MCP client to `https://paper-agent-mcp.<account-subdomain>.workers.dev/mcp`.
-15. Start the next major implementation phase: MCP Inspector verification, Recent Jobs filters, PDF/XLSX generation, or report section expansion.
+13. Deployed MCP is verified at `https://paper-agent-mcp.shch3653.workers.dev/health`.
+14. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`.
+15. Start the next major implementation phase: controlled write MCP design, Recent Jobs filters, PDF/XLSX generation, or report section expansion.
 16. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
 
 ## Current Status
@@ -83,7 +83,7 @@ The latest confirmed behavior is normal:
 - R2 bucket: `paper-agent-outputs`
 - R2 binding: `REPORTS`
 - MCP Worker service: `paper-agent-mcp`
-- MCP endpoint: `https://paper-agent-mcp.<account-subdomain>.workers.dev/mcp` after deployment
+- MCP endpoint: `https://paper-agent-mcp.shch3653.workers.dev/mcp`
 - Default Worker API URL: `https://paper-agent-project.shch3653.workers.dev`
 - Dashboard URL: `https://paper-agent-project.pages.dev/`
 
@@ -280,11 +280,13 @@ npm run build
 npx wrangler deploy --dry-run --config apps/mcp/wrangler.toml
 ```
 
-The dry-run confirmed `env.MCP_OBJECT`, `env.DB`, and `env.REPORTS`. Actual deployment still requires `CLOUDFLARE_API_TOKEN` in the local shell, then:
+The dry-run confirmed `env.MCP_OBJECT`, `env.DB`, and `env.REPORTS`. Deployment was later confirmed by the user and remote health check.
 
 ```bash
-npm run deploy:mcp
+npm run smoke:mcp
 ```
+
+The deployed smoke test confirmed tool listing, diagnostics, recent job query, completed job details, paper rows, and report link metadata.
 
 ## Manual Cloudflare Settings Required
 

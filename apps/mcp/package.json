@@ -6,6 +6,7 @@
     "build": "tsc --noEmit",
     "dev": "wrangler dev --port 8788",
     "deploy": "wrangler deploy",
+    "smoke": "node scripts/smoke-test.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

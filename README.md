@@ -73,6 +73,18 @@ Deploy the Remote MCP Worker:
 npm run deploy:mcp
 ```
 
+Verify the deployed Remote MCP Worker:
+
+```bash
+npm run smoke:mcp
+```
+
+To test another endpoint or a specific D1 job:
+
+```bash
+MCP_URL=https://paper-agent-mcp.shch3653.workers.dev/mcp MCP_JOB_ID=job-... npm run smoke:mcp
+```
+
 ## Cloudflare Setup
 
 Create three Cloudflare projects from this single GitHub repository.

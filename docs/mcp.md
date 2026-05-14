@@ -100,6 +100,18 @@ Health endpoint:
 /health
 ```
 
+Smoke test command:
+
+```bash
+npm run smoke:mcp
+```
+
+Optional overrides:
+
+```bash
+MCP_URL=https://paper-agent-mcp.shch3653.workers.dev/mcp MCP_JOB_ID=job-... npm run smoke:mcp
+```
+
 ### Phase 2: Controlled Write MCP
 
 Expose narrow write tools after read-only behavior is stable.

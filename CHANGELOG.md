@@ -16,8 +16,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 ## Unreleased
 
 - `Added`: Added `apps/mcp` Cloudflare Remote MCP Worker with read-only D1/R2 tools for diagnostics, recent jobs, job details, paper results, and report links.
+- `Added`: Added `apps/mcp/scripts/smoke-test.mjs` and `npm run smoke:mcp` for deployed MCP protocol verification.
 - `Infra`: Added `paper-agent-mcp` Wrangler configuration with Durable Object `MCP_OBJECT`, D1 `DB`, R2 `REPORTS`, and `nodejs_compat` for the Cloudflare Agents SDK.
-- `Docs`: Updated `README.md`, `docs/mcp.md`, `docs/progress.md`, and `docs/debug-log.md` with MCP deployment, verification, and troubleshooting details.
+- `Docs`: Updated `README.md`, `docs/mcp.md`, `docs/progress.md`, and `docs/debug-log.md` with MCP deployment, verification, smoke test, and troubleshooting details.
 - `Changed`: Updated `packages/shared/src/index.ts` and `apps/worker/src/index.ts` so final ranking uses persisted relevance, journal fit, Crossref verification, OA, citation, and recency score components.
 - `Docs`: Added `docs/mcp.md` with a phased MCP attachment plan, safe tool boundaries, deployment options, required bindings/secrets, and audit requirements.
 - `Docs`: Added `docs/workflow.md` and updated `docs/benchmark.md` to reflect `AI_Agent_프로젝트_전체_통합본.pdf` into the target multi-agent workflow, data architecture, output standard, evaluation plan, blocker status, and WoS-excluded implementation priorities.

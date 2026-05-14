@@ -14,6 +14,7 @@
     "deploy:web": "npm run deploy --workspace apps/web",
     "deploy:worker": "npm run deploy --workspace apps/worker",
     "deploy:mcp": "npm run deploy --workspace apps/mcp",
+    "smoke:mcp": "npm run smoke --workspace apps/mcp",
     "typecheck": "npm run typecheck --workspaces"
   },
   "devDependencies": {
