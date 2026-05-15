@@ -2,6 +2,35 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-15 - Dashboard Search Options
+
+### Context
+
+After fixing the dashboard `Run` failure, the next bottleneck was search tuning. The dashboard had fixed request values:
+
+```json
+{"yearStart":2020,"maxResults":20}
+```
+
+This made it hard to test broader WoS queries or adjust candidate volume from the UI.
+
+### Code Changes Under Test
+
+- Added `Max`, `From`, and `To` controls to the dashboard command area.
+- `Max` is clamped to the Worker-supported range of 1-50.
+- `From` and `To` are optional year fields.
+- Empty year fields are omitted from the request payload.
+- `Run` now sends `keyword`, `maxResults`, and optional `yearStart`/`yearEnd` from UI state instead of hard-coded values.
+
+### Verification Commands
+
+```bash
+npm run typecheck
+npm run build
+```
+
+Both passed.
+
 ## 2026-05-15 - Dashboard Run Failed At WoS Search
 
 ### Context

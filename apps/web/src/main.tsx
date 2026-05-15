@@ -100,6 +100,9 @@ const demoPapers: PaperSummary[] = [
 
 function App() {
   const [keyword, setKeyword] = useState("AI interview employer branding");
+  const [maxResults, setMaxResults] = useState(20);
+  const [yearStart, setYearStart] = useState("2020");
+  const [yearEnd, setYearEnd] = useState("");
   const [job, setJob] = useState<SearchJob | null>(null);
   const [papers, setPapers] = useState<PaperSummary[]>(demoPapers);
   const [selectedId, setSelectedId] = useState<string>(demoPapers[0].id);
@@ -169,7 +172,7 @@ function App() {
       const response = await fetch(apiUrl("/api/search-jobs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword, yearStart: 2020, maxResults: 20 })
+        body: JSON.stringify(buildSearchPayload(keyword, maxResults, yearStart, yearEnd))
       });
       if (!response.ok) throw new Error(await readApiError(response, "Failed to create search job"));
       const data = (await response.json()) as JobResponse;
@@ -266,6 +269,46 @@ function App() {
               {loading ? <RefreshCw size={18} className="spin" /> : <Play size={18} />}
               Run
             </button>
+          </div>
+          <div className="searchOptions" aria-label="Search options">
+            <label>
+              <span>Max</span>
+              <input
+                type="number"
+                min={1}
+                max={50}
+                step={1}
+                value={maxResults}
+                onChange={(event) => setMaxResults(clampNumber(event.target.valueAsNumber, 1, 50, 20))}
+                aria-label="Maximum results"
+              />
+            </label>
+            <label>
+              <span>From</span>
+              <input
+                type="number"
+                min={1900}
+                max={new Date().getUTCFullYear()}
+                step={1}
+                value={yearStart}
+                onChange={(event) => setYearStart(event.target.value)}
+                placeholder="Any"
+                aria-label="Start year"
+              />
+            </label>
+            <label>
+              <span>To</span>
+              <input
+                type="number"
+                min={1900}
+                max={new Date().getUTCFullYear()}
+                step={1}
+                value={yearEnd}
+                onChange={(event) => setYearEnd(event.target.value)}
+                placeholder="Now"
+                aria-label="End year"
+              />
+            </label>
           </div>
           <div className="runMeta">
             <StatusBadge value={diagnostics?.searchProvider ?? "wos"} tone="neutral" />
@@ -715,6 +758,31 @@ function formatDateTime(value: string): string {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return value;
   return date.toLocaleString();
+}
+
+function buildSearchPayload(keyword: string, maxResults: number, yearStart: string, yearEnd: string) {
+  const payload: { keyword: string; maxResults: number; yearStart?: number; yearEnd?: number } = {
+    keyword: keyword.trim(),
+    maxResults: clampNumber(maxResults, 1, 50, 20)
+  };
+  const start = parseOptionalYear(yearStart);
+  const end = parseOptionalYear(yearEnd);
+  if (start) payload.yearStart = start;
+  if (end) payload.yearEnd = end;
+  return payload;
+}
+
+function parseOptionalYear(value: string): number | undefined {
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  const parsed = Number.parseInt(trimmed, 10);
+  if (!Number.isFinite(parsed)) return undefined;
+  return clampNumber(parsed, 1900, new Date().getUTCFullYear(), parsed);
+}
+
+function clampNumber(value: number, min: number, max: number, fallback: number): number {
+  if (!Number.isFinite(value)) return fallback;
+  return Math.max(min, Math.min(max, Math.trunc(value)));
 }
 
 function Metric({ label, value, detail, tone = "neutral" }: { label: string; value: string; detail?: string; tone?: BadgeTone }) {

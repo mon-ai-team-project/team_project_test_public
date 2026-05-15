@@ -132,6 +132,37 @@ h1 {
   justify-content: flex-end;
 }
 
+.searchOptions {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.searchOptions label {
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #d9e0e7;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 9px;
+}
+
+.searchOptions span {
+  color: #607080;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.searchOptions input {
+  border: 0;
+  min-width: 0;
+  outline: 0;
+  width: 100%;
+}
+
 .statusBand {
   display: grid;
   gap: 12px;
@@ -770,6 +801,10 @@ dd {
     justify-content: flex-start;
   }
 
+  .searchOptions {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .statusBand {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -806,6 +841,10 @@ dd {
   .searchBox button {
     grid-column: 1 / -1;
     justify-content: center;
+  }
+
+  .searchOptions {
+    grid-template-columns: 1fr;
   }
 
   .statusBand,

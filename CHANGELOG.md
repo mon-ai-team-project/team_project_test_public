@@ -15,6 +15,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+- `Added`: Added dashboard search option controls for max results, start year, and end year in `apps/web/src/main.tsx` and `apps/web/src/styles.css`, wiring them into `POST /api/search-jobs`.
+- `Docs`: Recorded search option UI work and verification in `docs/debug-log.md` and `docs/progress.md`.
 - `Docs`: Added deployed runtime confirmation for the dashboard Run failure fix in `docs/debug-log.md` and `docs/progress.md`.
 - `Fixed`: Capped Web of Science Starter API candidate request size at 50 in `apps/worker/src/index.ts` so dashboard runs with `maxResults=20` no longer send invalid `limit=100` requests.
 - `Docs`: Recorded dashboard Run failure debugging and WoS 400 resolution in `docs/debug-log.md` and `docs/progress.md`.
