@@ -38,6 +38,25 @@ All passed.
 
 After Cloudflare deploys this commit, run a low-result query with a small `Max` value first to preserve WoS quota. Confirm `sourceResultCount` increases compared with the previous exact-only behavior.
 
+### Runtime Confirmation
+
+After Cloudflare deployment, this payload:
+
+```json
+{"keyword":"AI interview employer branding","yearStart":2020,"maxResults":3}
+```
+
+completed as:
+
+```text
+job-9da78c65-3f85-479d-9ee0-7354c3f1f4dd
+status=completed
+sourceResultCount=15
+allowedResultCount=1
+```
+
+This confirms keyword expansion plus source-title-priority retrieval improved the previous low-result behavior for the same keyword family.
+
 ## 2026-05-15 - Dashboard Search Options
 
 ### Context

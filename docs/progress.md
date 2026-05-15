@@ -102,6 +102,7 @@ The latest confirmed behavior is normal:
 - Dashboard `Max` accepts typed numeric input and enforces the 1-50 limit before the search request is sent.
 - `CHANGELOG.md` has been reorganized into dated sections for `2026-05-15`, `2026-05-14`, `2026-05-13`, and `2026-05-11`, with `Unreleased` reserved for in-progress changes.
 - WoS retrieval now uses keyword decomposition, curated allowlist source-title priority queries, sequential request spacing, and DOI/UID/title deduplication before journal filtering.
+- Runtime confirmation job `job-9da78c65-3f85-479d-9ee0-7354c3f1f4dd` completed with `sourceResultCount=15` and `allowedResultCount=1` for `AI interview employer branding`, confirming expanded WoS retrieval improves low-result queries.
 
 ## Repository And Deployment Targets
 

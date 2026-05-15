@@ -19,6 +19,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-15
 
+- `Docs`: Recorded deployed runtime confirmation that expanded WoS retrieval improved `AI interview employer branding` from zero allowed results to one allowlisted result in `docs/debug-log.md` and `docs/progress.md`.
 - `Changed`: Expanded WoS retrieval in `apps/worker/src/index.ts` with keyword-variant searches, allowlist source-title priority queries, sequential rate-limit spacing, and DOI/UID/title deduplication before journal filtering.
 - `Docs`: Recorded WoS keyword expansion and allowlist-priority search work in `docs/debug-log.md` and `docs/progress.md`.
 - `Changed`: Reorganized `CHANGELOG.md` into dated sections so prior and future changes are tracked by modification date.
