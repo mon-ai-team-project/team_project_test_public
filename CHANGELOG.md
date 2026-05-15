@@ -6,7 +6,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Rules
 
-- Add a new entry under `Unreleased` before committing a meaningful change.
+- Add a new entry under `Unreleased` before committing a meaningful change, then move it under the current `YYYY-MM-DD` section before the final commit when the date is known.
 - Use one of these labels: `Added`, `Changed`, `Fixed`, `Removed`, `Security`, `Infra`, `Docs`, `Benchmark`.
 - Include the affected path when practical.
 - Do not bundle unrelated changes into one vague entry.
@@ -15,6 +15,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+- No unreleased changes.
+
+## 2026-05-15
+
+- `Changed`: Reorganized `CHANGELOG.md` into dated sections so prior and future changes are tracked by modification date.
 - `Changed`: Updated the dashboard `Max` search option in `apps/web/src/main.tsx` and `apps/web/src/styles.css` to allow numeric typing while enforcing the 1-50 limit on blur and request payload creation.
 - `Added`: Added dashboard search option controls for max results, start year, and end year in `apps/web/src/main.tsx` and `apps/web/src/styles.css`, wiring them into `POST /api/search-jobs`.
 - `Docs`: Recorded search option UI work and verification in `docs/debug-log.md` and `docs/progress.md`.
@@ -32,6 +37,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - `Docs`: Recorded WoS runtime verification, zero-result troubleshooting, and search result count diagnostics in `docs/debug-log.md` and `docs/progress.md`.
 - `Changed`: Added WoS API key alias detection and diagnostics source reporting in `apps/worker/src/index.ts` and `apps/web/src/main.tsx` to debug Cloudflare secret naming issues without exposing secret values.
 - `Docs`: Recorded WoS secret diagnostics debugging in `docs/debug-log.md` and `docs/progress.md`.
+
+## 2026-05-14
+
 - `Docs`: Updated `docs/progress.md` and `docs/debug-log.md` with the confirmed dashboard report preview status and the next XLSX/PDF output implementation plan.
 - `Added`: Added dashboard Markdown report preview in `apps/web/src/main.tsx` and `apps/web/src/styles.css` so completed job reports can be inspected before download.
 - `Docs`: Recorded dashboard report preview work in `docs/debug-log.md` and `docs/progress.md`.
@@ -83,12 +91,18 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - `Docs`: Added `CROSSREF_EMAIL` to `.env.example` and `README.md` required secrets.
 - `Docs`: Added `docs/debug-log.md` with CSV endpoint verification and troubleshooting details.
 - `Added`: Added `GET /api/search-jobs/:id/papers.csv` in `apps/worker/src/index.ts` and a dashboard CSV download button in `apps/web/src/main.tsx`.
+
+## 2026-05-13
+
 - `Fixed`: Added OpenAlex `api_key` support, selected response fields, and retry/backoff handling for 429 responses in `apps/worker/src/index.ts`.
 - `Docs`: Added `OPENALEX_API_KEY` to `.env.example` and `README.md` required secrets.
 - `Changed`: Replaced demo-only search persistence in `apps/worker/src/index.ts` with OpenAlex Works API search, D1 persistence, and basic relevance scoring.
 - `Changed`: Extended `apps/worker/schema.sql` and D1 schema backfill checks with `openalex_id`, `abstract`, and `cited_by_count` paper metadata.
 - `Docs`: Added and expanded `docs/progress.md` as the mandatory session handoff document with current implementation, deployment, D1 verification status, remaining work, and next-session startup instructions.
 - `Docs`: Added `README.md` session handoff policy requiring `docs/progress.md` updates before ending work sessions.
+
+## 2026-05-11
+
 - `Added`: Added `apps/worker/schema.sql` with D1 tables and indexes for search jobs, papers, and evaluations.
 - `Fixed`: Added Worker route error responses and D1 column backfill checks so older Cloudflare D1 tables can accept search job inserts.
 - `Fixed`: Included `created_at` values when inserting papers and evaluations to satisfy existing Cloudflare D1 constraints.
@@ -101,8 +115,6 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - `Fixed`: Added missing `build` scripts to `apps/worker/package.json` and `packages/shared/package.json` so Cloudflare root-level `npm run build` succeeds across workspaces.
 - `Infra`: Configured `apps/worker/wrangler.toml` with D1 database ID `4d622431-3574-4e04-a359-dada93e97438` and disabled R2 binding until billing is available.
 - `Added`: Created `CHANGELOG.md` and `.github/pull_request_template.md` to enforce strict update history tracking.
-
-## 2026-05-11
 
 - `Added`: Set up monorepo structure with `apps/web`, `apps/worker`, `packages/shared`, `docs`, and `benchmark`.
 - `Added`: Created React/Vite dashboard scaffold in `apps/web`.

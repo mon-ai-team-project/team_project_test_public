@@ -68,6 +68,7 @@ Current next implementation target:
 20. Dashboard `Run` no longer fails with `Web of Science request failed with 400`.
 21. Search option controls for `Max`, `From`, and `To` are implemented locally; after Cloudflare Pages deploy, verify they appear and that different settings change `sourceResultCount`.
 22. Next improve low-result queries by adding keyword decomposition, source-title-aware retrieval, or multi-page WoS collection.
+23. `CHANGELOG.md` is now organized by modification date. Continue moving completed entries from `Unreleased` into the current `YYYY-MM-DD` section before each commit.
 
 ## Current Status
 
@@ -99,6 +100,7 @@ The latest confirmed behavior is normal:
 - Runtime confirmation job `job-6639c061-9c43-43bf-bbc7-063de355f974` completed with `sourceResultCount=2` and `allowedResultCount=0`, confirming the WoS 400 failure is resolved.
 - Dashboard search options now expose `Max`, `From`, and `To` fields and send them to the existing Worker search API.
 - Dashboard `Max` accepts typed numeric input and enforces the 1-50 limit before the search request is sent.
+- `CHANGELOG.md` has been reorganized into dated sections for `2026-05-15`, `2026-05-14`, `2026-05-13`, and `2026-05-11`, with `Unreleased` reserved for in-progress changes.
 
 ## Repository And Deployment Targets
 
