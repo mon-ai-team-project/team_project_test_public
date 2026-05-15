@@ -944,10 +944,18 @@ function buildWosQuery(keyword: string, yearStart: number | undefined, yearEnd: 
   const terms = [`TS=(${escapeWosQuery(keyword)})`];
   const start = yearStart ? Math.trunc(yearStart) : null;
   const end = yearEnd ? Math.trunc(yearEnd) : null;
-  if (start && end) terms.push(`PY=(${start}-${end})`);
-  else if (start) terms.push(`PY=(${start}-${new Date().getUTCFullYear()})`);
+  if (start && end) terms.push(buildWosYearQuery(start, end));
+  else if (start) terms.push(buildWosYearQuery(start, new Date().getUTCFullYear()));
   else if (end) terms.push(`PY=(1900-${end})`);
   return terms.join(" AND ");
+}
+
+function buildWosYearQuery(start: number, end: number): string {
+  const normalizedStart = Math.min(start, end);
+  const normalizedEnd = Math.max(start, end);
+  const years = Array.from({ length: normalizedEnd - normalizedStart + 1 }, (_, index) => normalizedStart + index);
+  if (years.length <= 25) return `PY=(${years.join(" OR ")})`;
+  return `PY=(${normalizedStart}-${normalizedEnd})`;
 }
 
 function escapeWosQuery(value: string): string {

@@ -42,26 +42,27 @@ Current next implementation target:
    - `readiness.activeProviderReady: true`
 1. Deploy the search job result count diagnostics added in this session.
 2. Confirm the WoS Starter API `hits` parser fix is deployed.
-3. Run a new WoS dashboard search and confirm the `Source / Allowed` metric.
+3. Confirm the WoS year filter OR-clause fix is deployed.
+4. Run a new WoS dashboard search and confirm the `Source / Allowed` metric.
    - If `Source > 0` and `Allowed = 0`, the WoS query returned candidates but the approved journal allowlist removed them.
    - If `Source = 0`, tune the WoS keyword/date query.
-4. Confirm D1 `search_jobs.source_result_count` and `search_jobs.allowed_result_count` are populated for new jobs.
-5. If allowed results remain zero for broad business keywords, improve WoS retrieval by adding source-title-aware query expansion or multi-page candidate collection before the allowlist filter.
-6. Confirm D1 `papers.openalex_id` stores the external source identifier. The column name is retained for schema compatibility.
-7. Verify deployed CSV and Markdown report downloads include Crossref, Unpaywall, and evaluation score data.
-8. In R2 bucket `paper-agent-outputs`, confirm `reports/<job_id>/papers.csv` and `reports/<job_id>/report.md` are created for completed jobs with allowed papers.
-9. Confirm the Markdown report includes executive summary metrics, Report Agent synthesis sections, top-ranked table, paper details, OA landing page, and license details.
-10. Confirm the dashboard Recent Jobs panel lists saved jobs and can reload prior job results.
-11. Confirm new jobs use persisted component-score final ranking: relevance 35%, journal fit 20%, Crossref verification 15%, OA 10%, citation 10%, recency 10%.
-12. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
-13. Deployed MCP is verified at `https://paper-agent-mcp.shch3653.workers.dev/health`.
-14. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`.
-15. Start the next major implementation phase with XLSX output first, then PDF output.
+5. Confirm D1 `search_jobs.source_result_count` and `search_jobs.allowed_result_count` are populated for new jobs.
+6. If allowed results remain zero for broad business keywords, improve WoS retrieval by adding source-title-aware query expansion or multi-page candidate collection before the allowlist filter.
+7. Confirm D1 `papers.openalex_id` stores the external source identifier. The column name is retained for schema compatibility.
+8. Verify deployed CSV and Markdown report downloads include Crossref, Unpaywall, and evaluation score data.
+9. In R2 bucket `paper-agent-outputs`, confirm `reports/<job_id>/papers.csv` and `reports/<job_id>/report.md` are created for completed jobs with allowed papers.
+10. Confirm the Markdown report includes executive summary metrics, Report Agent synthesis sections, top-ranked table, paper details, OA landing page, and license details.
+11. Confirm the dashboard Recent Jobs panel lists saved jobs and can reload prior job results.
+12. Confirm new jobs use persisted component-score final ranking: relevance 35%, journal fit 20%, Crossref verification 15%, OA 10%, citation 10%, recency 10%.
+13. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
+14. Deployed MCP is verified at `https://paper-agent-mcp.shch3653.workers.dev/health`.
+15. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`.
+16. Start the next major implementation phase with XLSX output first, then PDF output.
     - Add `reports/<job_id>/papers.xlsx` generation and R2 persistence.
     - Add dashboard XLSX download button.
     - Extend `npm run e2e:reports` to verify XLSX endpoint and R2 object.
     - After XLSX is stable, add `reports/<job_id>/report.pdf`.
-16. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
+17. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
 
 ## Current Status
 
@@ -84,6 +85,7 @@ The latest confirmed behavior is normal:
 - WoS runtime searches now complete, but the first tested keywords returned zero saved papers after the approved journal allowlist.
 - Search job count diagnostics have been added so new jobs expose provider candidate count and allowlist pass count.
 - WoS Starter API parsing has been corrected to read the official `hits` response array.
+- WoS short year ranges now use explicit OR clauses because `PY=(start-end)` returned zero candidates in runtime testing.
 
 ## Repository And Deployment Targets
 
@@ -153,6 +155,7 @@ Local manual Cloudflare deployment is not used. Deployment should happen in Clou
 - Web of Science retry/backoff handling for 429 and 5xx responses.
 - Web of Science result mapping for title, authors, year, journal/source, DOI, abstract/keywords, WoS UID, and citation count.
 - Web of Science Starter API response parsing reads `hits`, with `documents` retained as a compatibility fallback.
+- Web of Science year filters use explicit OR clauses for short ranges.
 - Temporary OpenAlex Works API fallback using `OPENALEX_EMAIL` and optional `OPENALEX_API_KEY`.
 - OpenAlex result mapping for title, authors, publication year/date, source, DOI, OA status, abstract, type, and citation count.
 - Basic relevance scoring based on title keyword overlap, abstract keyword overlap, citation count, and recency.

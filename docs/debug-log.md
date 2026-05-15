@@ -73,6 +73,27 @@ Source should be greater than 0 for broad business keywords such as marketing.
 Allowed may still be 0 if the first page of WoS candidates does not include approved journals.
 ```
 
+### Additional Finding
+
+After direct deployment, running `marketing` without a year filter returned:
+
+```text
+sourceResultCount=50
+allowedResultCount=10
+```
+
+The same keyword with `yearStart=2020` still returned zero candidates, so the remaining issue was the WoS year range clause. The Worker now emits short year ranges as explicit OR clauses:
+
+```text
+PY=(2020 OR 2021 OR 2022 OR 2023 OR 2024 OR 2025 OR 2026)
+```
+
+instead of:
+
+```text
+PY=(2020-2026)
+```
+
 ## 2026-05-15 - WoS API Key Runtime Diagnostics
 
 ### Context
