@@ -73,13 +73,16 @@ Current next implementation target:
 24. Journal category selection from `경영대학 학술지 목록.docx` is deployed and user-confirmed as working. Use this as the baseline for the next UI/reporting step.
 25. Result `Field / Rank` visibility is implemented locally. After Cloudflare deploy, verify dashboard rows/details plus CSV and Markdown report downloads show values such as `2. 조직인사 / 국제 S급`.
 26. Next recommended implementation for product UX: add a search settings summary bar that records keyword, selected field, priority order, year range, and max count for each active job.
-27. Next recommended implementation for submission quality: expand the benchmark first, before adding more UI polish.
-    - Add at least 20 tasks to `benchmark/tasks.jsonl`.
-    - Add gold relevant papers and DOI labels.
-    - Compare rule-based, single-LLM, and proposed-agent outputs.
-    - Generate `benchmark/benchmark_summary.md`.
-28. After benchmark scaffolding, implement Critic Agent and `agent_traces`, then XLSX output, then PDF output.
-29. Next dashboard integration target: replace static mock data in `apps/web/src/dashboard/mockData.ts` with real API responses while preserving the current route/component contracts.
+27. Benchmark fixture expansion is initialized.
+    - `benchmark/tasks.jsonl` contains 20 tasks.
+    - `benchmark/keywords.csv` contains 20 runnable benchmark queries.
+    - `benchmark/gold_relevant_papers.csv` contains 60 seed gold relevance rows.
+    - `benchmark/evaluation_rubric.md` defines human scoring and agent-level checks.
+    - `benchmark/benchmark_summary.md` records the current benchmark status.
+28. Next benchmark step: verify seed gold rows through Crossref and create `benchmark/gold_relevant_papers.verified.csv` before computing DOI Accuracy.
+29. After DOI verification, compare rule-based, single-LLM, and proposed-agent outputs.
+30. After benchmark scaffolding, implement Critic Agent and `agent_traces`, then XLSX output, then PDF output.
+31. Next dashboard integration target: replace static mock data in `apps/web/src/dashboard/mockData.ts` with real API responses while preserving the current route/component contracts.
 
 ## Current Status
 
@@ -127,6 +130,13 @@ The latest confirmed behavior is normal:
   - `/dashboard/evaluation`: adds evaluation scenario switching, baseline metrics, score breakdown, error analysis, and Rule-based vs Single LLM vs Proposed Multi-Agent comparison.
 - Static mock data for the new route UI is separated in `apps/web/src/dashboard/mockData.ts` so future API wiring can replace data sources without redesigning the components.
 - Cloudflare Pages direct route fallback is configured through `apps/web/public/_redirects`.
+- Benchmark priority 1 from `paper_agent_enhanced_report.md` is now initialized:
+  - 20 structured benchmark tasks in `benchmark/tasks.jsonl`.
+  - 20 runnable keywords in `benchmark/keywords.csv`.
+  - 60 seed gold relevance rows in `benchmark/gold_relevant_papers.csv`.
+  - Human and agent-level scoring rules in `benchmark/evaluation_rubric.md`.
+  - Current status and next steps in `benchmark/benchmark_summary.md`.
+- The benchmark gold file intentionally tracks DOI values as `needs_crossref_verification` rather than storing unverified DOI strings. Crossref verification is the next required benchmark task.
 
 ## Agent Work Attribution
 

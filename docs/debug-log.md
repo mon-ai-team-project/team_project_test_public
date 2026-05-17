@@ -2,6 +2,38 @@
 
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
+## 2026-05-17 - Benchmark Fixture Expansion
+
+### Context
+
+`paper_agent_enhanced_report.md` identifies benchmark expansion as the highest priority because the final project needs evidence that the proposed multi-agent workflow outperforms rule-based search and single-LLM recommendation.
+
+### Changes Under Test
+
+- Expanded `benchmark/keywords.csv` from 3 keywords to 20 benchmark queries.
+- Added `benchmark/tasks.jsonl` with 20 structured tasks including task id, keyword, research question, field, journal category id, year range, max results, expected journal priority, and evaluation focus.
+- Added `benchmark/gold_relevant_papers.csv` with 60 seed gold relevance rows, 3 per task.
+- Added `benchmark/evaluation_rubric.md` defining human relevance scores, core metrics, and agent-level checks.
+- Added `benchmark/benchmark_summary.md` documenting current benchmark status and the next DOI verification step.
+
+### Verification Commands
+
+```bash
+node -e "const fs=require('fs'); const lines=fs.readFileSync('benchmark/tasks.jsonl','utf8').trim().split(/\n/); for (const line of lines) JSON.parse(line); console.log('tasks', lines.length);"
+wc -l benchmark/keywords.csv benchmark/gold_relevant_papers.csv benchmark/tasks.jsonl benchmark/evaluation_rubric.md benchmark/benchmark_summary.md
+```
+
+Results:
+
+- `benchmark/tasks.jsonl` parsed successfully.
+- Task count: 20.
+- `benchmark/keywords.csv`: 21 lines including header.
+- `benchmark/gold_relevant_papers.csv`: 61 lines including header.
+
+### Important Constraint
+
+The gold CSV intentionally does not invent DOI values. Rows are title-level seed labels with `doi_label_status=needs_crossref_verification`. The next benchmark step should use Crossref verification to fill verified DOI, author, journal, and year values before computing DOI Accuracy.
+
 ## 2026-05-17 - Final Dashboard Route UI/UX Implementation
 
 ### Context

@@ -1,0 +1,61 @@
+task_id,gold_id,title,authors,year,journal,doi,human_relevance,top_journal_expected,doi_label_status,notes
+T001,G001,Applicant reactions to artificial intelligence in hiring,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Seed gold label for AI interview and employer branding relevance.
+T001,G002,Artificial intelligence in selection and assessment,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Verify DOI and top journal status before scoring.
+T001,G003,Employer branding and applicant attraction in technology-mediated recruitment,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Use as title-level target until Crossref gold DOI fill.
+T002,G004,Algorithmic hiring and applicant fairness perceptions,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core applicant reaction gold candidate.
+T002,G005,Technology-mediated recruitment and organizational attractiveness,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant to recruitment and attractiveness.
+T002,G006,Artificial intelligence and fairness in personnel selection,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Verifier baseline should reject unverified DOI claims.
+T003,G007,Generative artificial intelligence in advertising and consumer response,To be verified,2023,To be verified,,5,yes,needs_crossref_verification,Primary generative AI advertising target.
+T003,G008,AI-generated content and persuasion knowledge in marketing,To be verified,2023,To be verified,,4,yes,needs_crossref_verification,Relevant to consumer persuasion.
+T003,G009,Consumer trust in AI-created brand communication,To be verified,2023,To be verified,,4,yes,needs_crossref_verification,Use for marketing top journal search validation.
+T004,G010,Algorithmic management and worker autonomy,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core algorithmic management target.
+T004,G011,Employee trust under algorithmic control systems,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,HR/organization relevance.
+T004,G012,Digital monitoring and employee outcomes,To be verified,2020,To be verified,,3,yes,needs_crossref_verification,Adjacent relevance.
+T005,G013,Algorithm transparency and consumer trust,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core AI transparency marketing target.
+T005,G014,Consumer responses to AI recommendations,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Recommendation trust target.
+T005,G015,Explainable AI in consumer decision support,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,May be IS or marketing; classify carefully.
+T006,G016,Chatbot service failure and recovery,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core service failure target.
+T006,G017,Customer satisfaction with conversational agents,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant service technology target.
+T006,G018,AI service agents and customer experience,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Top journal marketing/IS candidate.
+T007,G019,Algorithmic control in platform work,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core platform work target.
+T007,G020,Digital labor platforms and worker well-being,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant worker outcome target.
+T007,G021,Control mechanisms in gig economy platforms,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Adjacent management target.
+T008,G022,Remote work and knowledge sharing effectiveness,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core remote work target.
+T008,G023,Virtual collaboration and team knowledge exchange,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant collaboration target.
+T008,G024,Telework and organizational communication,To be verified,2020,To be verified,,3,yes,needs_crossref_verification,Broader remote work target.
+T009,G025,Digital transformation and dynamic capabilities,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core strategy target.
+T009,G026,Dynamic capabilities in digital innovation,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant strategy/IS boundary target.
+T009,G027,Digital transformation and firm performance,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Performance outcome target.
+T010,G028,ESG disclosure quality and firm value,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core accounting/finance target.
+T010,G029,Investor response to ESG information,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant investor response target.
+T010,G030,Sustainability reporting and capital markets,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Accounting/finance target.
+T011,G031,Greenwashing and consumer skepticism,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core greenwashing target.
+T011,G032,Sustainability claims and consumer trust,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant consumer trust target.
+T011,G033,Corporate environmental communication and purchase behavior,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Marketing relevance target.
+T012,G034,Influencer authenticity and consumer trust,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core influencer target.
+T012,G035,Social media influencers and purchase intention,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant purchase target.
+T012,G036,Authenticity in influencer marketing,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Marketing top journal candidate.
+T013,G037,Privacy personalization tradeoff in digital marketing,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core privacy-personalization target.
+T013,G038,Consumer privacy concerns and personalization acceptance,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant digital marketing target.
+T013,G039,Data-driven personalization and consumer trust,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant trust target.
+T014,G040,FinTech adoption trust and perceived risk,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core FinTech adoption target.
+T014,G041,Mobile payment adoption and trust,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant IS target.
+T014,G042,Risk perception in financial technology services,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Finance/IS boundary target.
+T015,G043,Blockchain and supply chain transparency,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core supply chain transparency target.
+T015,G044,Blockchain-enabled traceability in operations,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant operations target.
+T015,G045,Supply chain trust and distributed ledger technology,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant supply chain target.
+T016,G046,AI decision support and managerial judgment,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core AI decision support target.
+T016,G047,Algorithmic advice and decision quality,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant judgment target.
+T016,G048,Human-AI collaboration in managerial decisions,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,IS/management target.
+T017,G049,Diversity climate and employee voice,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core diversity climate target.
+T017,G050,Inclusion climate and speaking up behavior,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant voice target.
+T017,G051,Diversity management and team outcomes,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Organization target.
+T018,G052,Organizational resilience and crisis management,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core resilience target.
+T018,G053,Resilience capabilities under uncertainty,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Strategy relevance target.
+T018,G054,Crisis response and firm performance,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Performance target.
+T019,G055,Customer journey and omnichannel retailing,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core customer journey target.
+T019,G056,Omnichannel touchpoints and customer experience,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant retailing target.
+T019,G057,Digital retail channels and customer loyalty,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Marketing retail target.
+T020,G058,Business analytics capabilities and competitive advantage,To be verified,2020,To be verified,,5,yes,needs_crossref_verification,Core analytics capability target.
+T020,G059,Data analytics and firm performance,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant IS/strategy target.
+T020,G060,Analytics-driven decision making and organizational performance,To be verified,2020,To be verified,,4,yes,needs_crossref_verification,Relevant performance target.

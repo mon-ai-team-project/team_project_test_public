@@ -22,6 +22,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-17 (codex)
 
+- Benchmark: Expanded the benchmark fixture from 3 keywords to 20 tasks in `benchmark/keywords.csv` and `benchmark/tasks.jsonl`. (codex)
+- Benchmark: Added `benchmark/gold_relevant_papers.csv` with 60 seed gold relevance rows and explicit DOI verification status tracking. (codex)
+- Benchmark: Added `benchmark/evaluation_rubric.md` and `benchmark/benchmark_summary.md` to define human scoring, agent-level checks, metrics, and next DOI verification steps. (codex)
 - Added: Implemented the final dashboard UI/UX routes `/dashboard/research`, `/dashboard/ops`, and `/dashboard/evaluation` from the three interactive HTML design references. (codex)
 - Added: Added separated dashboard mock data in `apps/web/src/dashboard/mockData.ts` for workflow stages, journal pools, agent status, tool logs, critic reviews, literature preview, and evaluation scenarios. (codex)
 - Infra: Added Cloudflare Pages SPA fallback `apps/web/public/_redirects` so direct dashboard route URLs resolve to the React app. (codex)
