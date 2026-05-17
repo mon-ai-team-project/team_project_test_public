@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-16
+Updated: 2026-05-17
 
 ## Mandatory Session Handoff Rules
 
@@ -10,6 +10,8 @@ Strict rules:
 
 - Always update `Updated:` to the current date.
 - Record all meaningful work completed during the session.
+- Record all dated work entries in the strict attribution format `Label: description. (agent-id)`.
+- Use lowercase agent identifiers such as `(codex)` or `(gemini)`, and preserve other agents' attribution labels unless the user explicitly requests correction.
 - Record verification commands and whether they passed, failed, or were not run.
 - Record deployment URLs, database IDs, branch names, and service names when they change.
 - Record any uncommitted work, local-only state, blockers, and manual Cloudflare/GitHub actions still required.
@@ -124,7 +126,15 @@ The following recent repository work was implemented and/or recorded by Codex in
 - Docs: Recorded deployed runtime confirmation for expanded WoS retrieval. Commit `0b98a25`. (codex)
 - Changed: Expanded WoS retrieval with keyword variants, curated source-title priority queries, sequential spacing, and deduplication. Commit `2a49e1e`. (codex)
 
-Current local note: `GEMINI.md` exists as an untracked handoff/rules file. It has not been committed by Codex. Do not delete or commit it unless the user explicitly requests that policy file to become part of the repository.
+Current policy note: `GEMINI.md` is now a repository handoff/rules file and must preserve strict agent attribution. Do not remove or rewrite existing `(codex)` or `(gemini)` attribution labels unless the user explicitly requests correction.
+
+## Previous Work Check - 2026-05-17
+
+- Docs: Confirmed latest pushed Codex commit before this check is `a738203 docs: apply codex attribution format`. (codex)
+- Docs: Found pending `CHANGELOG.md` entries for Gemini prototype work dated `2026-05-16 (gemini)`. (codex)
+- Docs: Verified current worktree does not contain the referenced Gemini prototype files or dependency changes: `apps/web/prototype.html`, `PrototypeApp.tsx`, `framer-motion`, `recharts`, and `radix-ui` were not found. (codex)
+- Docs: Confirmed `apps/web/src/test-prototype` exists only as an empty directory, which Git does not track by itself. (codex)
+- Docs: Added strict attribution rules so future records must preserve `Label: description. (agent-id)` and must not rewrite another agent's attribution without explicit user instruction. (codex)
 
 ## Repository And Deployment Targets
 

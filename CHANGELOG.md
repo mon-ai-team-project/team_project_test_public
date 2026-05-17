@@ -8,6 +8,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - Add a new entry under `Unreleased` before committing a meaningful change, then move it under the current `YYYY-MM-DD` section before the final commit when the date is known.
 - Use one of these labels: `Added`, `Changed`, `Fixed`, `Removed`, `Security`, `Infra`, `Docs`, `Benchmark`.
+- Every dated work entry must use this exact attribution format: `Label: description. (agent-id)`.
+- Use lowercase agent identifiers such as `(codex)` or `(gemini)`, and never remove or rewrite another agent's attribution unless the user explicitly requests correction.
+- Date headings may include an agent suffix, such as `## YYYY-MM-DD (codex)`, when a section is specific to one agent.
 - Include the affected path when practical.
 - Do not bundle unrelated changes into one vague entry.
 - Do not remove historical entries.
@@ -17,7 +20,21 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
-## 2026-05-16
+## 2026-05-17 (codex)
+
+- Docs: Recorded previous work check results in `docs/progress.md`, including the current absence of referenced Gemini prototype files in the worktree. (codex)
+- Docs: Committed the existing `GEMINI.md` handoff file after updating its strict agent attribution rules. (codex)
+- Docs: Added strict agent attribution rules to `CHANGELOG.md`, `docs/progress.md`, and `GEMINI.md`, requiring `Label: description. (agent-id)` entries. (codex)
+
+## 2026-05-16 (gemini)
+
+- Added: `apps/web/src/test-prototype/` 경로에 독립적인 인터랙티브 UI/UX 프로토타입 환경 구축. (gemini)
+- Added: 3가지 디자인 컨셉(Modern, Enterprise, DataViz)을 탭으로 확인할 수 있는 `PrototypeApp.tsx` 구현. (gemini)
+- Added: 기존 앱에 영향을 주지 않는 독립 진입점 `apps/web/prototype.html` 추가. (gemini)
+- Infra: 프로토타입용 UI 라이브러리(`framer-motion`, `recharts`, `radix-ui`) 설치. (gemini)
+- Docs: 프로젝트 규칙 문서 `GEMINI.md` 생성 및 인계 사항 기록. (gemini)
+
+## 2026-05-16 (codex)
 
 - Docs: Applied `Label: description. (codex)` attribution format across all dated `CHANGELOG.md` entries. (codex)
 - Docs: Reformatted Codex-authored recent work attribution in `docs/progress.md` to use `Label: description. (codex)` entries. (codex)
