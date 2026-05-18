@@ -122,6 +122,11 @@ Current next implementation target:
     - `/dashboard/research` distinguishes live API features from mock workflow/top-journal/preview panels.
     - `/dashboard/ops` distinguishes live MCP/D1/R2 from mock Agent Status Board, Tool Console, Critic Review, and planned Vectorize/Drive work.
     - `/dashboard/evaluation` distinguishes live benchmark fixtures/runner from mock scenario metrics and planned baseline bindings.
+40. Team GitHub collaboration repository is configured locally as `team-origin`.
+    - Repository: `https://github.com/mon-ai-team-project/team_project_test_public`
+    - GitHub MCP confirmed admin, maintain, push, triage, and pull permissions.
+    - `docs/team-collaboration.md` defines branch policy, benchmark file ownership, data rules, changelog attribution, and review checklist.
+    - Use `team-origin` for team collaboration while keeping the existing personal `origin` remote intact.
 
 ## Current Status
 
