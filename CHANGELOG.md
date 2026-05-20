@@ -22,6 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-20 (juilie)
 
+- Docs: Added `juilie_bot_hub/work-log-2026-05-20.md` to record continued personal-folder work and automatic branch push workflow. (juilie)
 - Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access for the personal workspace branch. (juilie)
 - Docs: Updated `docs/progress.md` with the juilie direct-push test handoff. (juilie)
 

@@ -4,6 +4,7 @@ Updated: 2026-05-20 (juilie direct-push test)
 
 ## juilie — Direct Push Test (2026-05-20)
 
+- Docs: Added `juilie_bot_hub/work-log-2026-05-20.md` after checking the `main/juilie_bot_hub` folder URL and continuing work on the personal branch. (juilie)
 - Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access on `benchmark/juilie-proposed-review`. (juilie)
 - Docs: Updated `CHANGELOG.md` for the push-test documentation change. (juilie)
 - Verification: Local branch is configured to track `team-origin/benchmark/juilie-proposed-review`; push target is protected by the local pre-push hook. (juilie)
