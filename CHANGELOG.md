@@ -20,6 +20,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-20 (juilie)
+
+- Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access for the personal workspace branch. (juilie)
+- Docs: Updated `docs/progress.md` with the juilie direct-push test handoff. (juilie)
+
 ## 2026-05-18 (shonshinemin)
 
 - Benchmark: Filled `benchmark/manual_review_proposed.csv` with manual relevance scores and decisions for all 15 proposed agent papers across T001-T003 (reviewer: shonshinemin). (shonshinemin)

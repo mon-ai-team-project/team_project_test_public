@@ -1,6 +1,13 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-18 (shonshinemin benchmark QA re-evaluation)
+Updated: 2026-05-20 (juilie direct-push test)
+
+## juilie — Direct Push Test (2026-05-20)
+
+- Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access on `benchmark/juilie-proposed-review`. (juilie)
+- Docs: Updated `CHANGELOG.md` for the push-test documentation change. (juilie)
+- Verification: Local branch is configured to track `team-origin/benchmark/juilie-proposed-review`; push target is protected by the local pre-push hook. (juilie)
+- Local-only state: `paper_agent_enhanced_report.pdf` remains untracked and was not included. (juilie)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
