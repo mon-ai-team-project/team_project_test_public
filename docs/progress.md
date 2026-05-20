@@ -145,13 +145,17 @@ Current next implementation target:
     - `jin23624_cpu/`, `juilie_bot_hub/`, `seunghyeon_choi/`, `shonshinemin_cmd/`, and `integrated/` each contain a role-specific README.
     - Benchmark collaboration templates are initialized: `benchmark/manual_review_proposed.csv`, `benchmark/baseline_rule_based_results.csv`, and `benchmark/baseline_single_llm_results.csv`.
     - `.github/pull_request_template.md` now asks contributors to confirm `AGENTS.md`, assignment scope, and benchmark verification.
-42. Repository secret exposure audit completed before continuing organization-repository work.
+42. Proposed Agent manual review for the `juilie_bot_hub` assignment is complete on branch `benchmark/juilie-proposed-review`.
+    - Benchmark: Filled all 15 T001-T003 rows in `benchmark/manual_review_proposed.csv` with `manual_relevance`, `manual_decision`, `failure_type`, `review_note`, and `reviewer`. (juilie)
+    - Docs: Reflected `paper_agent_enhanced_report.pdf` section 8 as the Paper-Agent-Bench evaluation basis in `juilie_bot_hub/README.md`. (juilie)
+    - Verification: Local PDF text extraction with `pdfjs-dist` confirmed section 8 covers REPRO-Bench-style Agent-level evaluation, human relevance labels, Precision@5/NDCG@5, DOI accuracy, top-journal precision, hallucination checks, and report completeness. (juilie)
+43. Repository secret exposure audit completed before continuing organization-repository work.
     - Current tracked files, full Git history, and local workspace were checked for GitHub PAT, Cloudflare `cfut_`, the previously shared OpenAlex key, private key, AWS, npm, and Slack token patterns.
     - No actual token values were found in repository files or history.
     - Only `.env.example` is tracked as an env-style file.
     - Secret-related documentation matches are placeholders or variable names.
     - Any token pasted into external chat should remain revoked/rotated because the repository audit cannot remove external exposure.
-43. Cloudflare organization repository migration settings are documented.
+44. Cloudflare organization repository migration settings are documented.
     - Use `docs/cloudflare-org-repo-migration.md` to reconnect Worker Builds and Pages builds from `Vulter3653/paper-agent-project` to `mon-ai-team-project/team_project_test_public`.
     - No D1, R2, Worker name, Pages project name, or runtime secret change is required.
     - Actual Cloudflare dashboard Git connection changes still require Cloudflare account access.

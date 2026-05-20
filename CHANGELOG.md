@@ -33,6 +33,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-18 (codex)
 
+- Benchmark: Completed `benchmark/manual_review_proposed.csv` for all 15 T001-T003 Proposed Agent rows using REPRO-Bench-style human relevance review from `paper_agent_enhanced_report.pdf` section 8. (juilie)
+- Docs: Updated `juilie_bot_hub/README.md` with the manual review summary and Paper-Agent-Bench evaluation basis. (juilie)
 - Docs: Added `docs/cloudflare-org-repo-migration.md` with Worker, Pages, and MCP settings for switching Cloudflare Git builds to the organization repository. (codex)
 - Security: Audited tracked files, Git history, and local workspace for GitHub PAT, Cloudflare token, OpenAlex key, private key, AWS, npm, and Slack token patterns; no actual token values were found. (codex)
 - Docs: Corrected team-agent ownership so `seunghyeon_choi` is the current maintainer/integration lead and baseline collection is unassigned pending a separate team member. (codex)
