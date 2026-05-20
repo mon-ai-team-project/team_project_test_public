@@ -48,3 +48,11 @@ Do not rewrite original Proposed Agent result fields.
 - Used `manual_relevance` scores from 1 to 5 and `manual_decision` values limited to `include`, `review`, and `reject`.
 - Marked the one direct T003 advertising-effectiveness match as `include`, four adjacent papers as `review`, and ten off-topic or weak-subtopic papers as `reject`.
 - Kept original Proposed Agent result metadata unchanged and added only manual judgment fields.
+
+## 2026-05-20 Branch Push Notes
+
+- Confirmed this workspace tracks `team-origin/benchmark/juilie-proposed-review`.
+- Added `push-test.md` to verify direct pushes to the personal branch.
+- Added `work-log-2026-05-20.md` to record the `main/juilie_bot_hub` folder check and continued personal-folder workflow.
+- Kept `main` untouched and did not open a pull request.
+- Left local-only `paper_agent_enhanced_report.pdf` untracked and out of commits.

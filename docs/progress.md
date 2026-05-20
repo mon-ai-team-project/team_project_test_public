@@ -4,6 +4,7 @@ Updated: 2026-05-20 (juilie direct-push test)
 
 ## juilie — Direct Push Test (2026-05-20)
 
+- Docs: Updated `juilie_bot_hub/README.md` with the direct branch push notes and current local-only state. (juilie)
 - Docs: Added `juilie_bot_hub/work-log-2026-05-20.md` after checking the `main/juilie_bot_hub` folder URL and continuing work on the personal branch. (juilie)
 - Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access on `benchmark/juilie-proposed-review`. (juilie)
 - Docs: Updated `CHANGELOG.md` for the push-test documentation change. (juilie)
