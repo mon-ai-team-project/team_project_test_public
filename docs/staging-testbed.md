@@ -130,13 +130,19 @@ The current production Worker config is:
 apps/worker/wrangler.toml
 ```
 
-For staging, create a copied config only after the staging D1 database ID exists:
+For staging, copy the example config only after the staging D1 database ID exists:
+
+```bash
+cp apps/worker/wrangler.staging.example.toml apps/worker/wrangler.staging.toml
+```
+
+Then replace `<staging-d1-database-id>` in:
 
 ```text
 apps/worker/wrangler.staging.toml
 ```
 
-Expected edits:
+Tracked example file:
 
 ```toml
 name = "paper-agent-project-staging"
@@ -167,13 +173,19 @@ The current production MCP config is:
 apps/mcp/wrangler.toml
 ```
 
-For staging, create:
+For staging, copy the example config only after the staging D1 database ID exists:
+
+```bash
+cp apps/mcp/wrangler.staging.example.toml apps/mcp/wrangler.staging.toml
+```
+
+Then replace `<staging-d1-database-id>` in:
 
 ```text
 apps/mcp/wrangler.staging.toml
 ```
 
-Expected edits:
+Tracked example file:
 
 ```toml
 name = "paper-agent-mcp-staging"

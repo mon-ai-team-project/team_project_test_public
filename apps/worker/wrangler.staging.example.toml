@@ -1,0 +1,12 @@
+name = "paper-agent-project-staging"
+main = "src/index.ts"
+compatibility_date = "2026-05-03"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "paper_agent_db_staging"
+database_id = "<staging-d1-database-id>"
+
+[[r2_buckets]]
+binding = "REPORTS"
+bucket_name = "paper-agent-outputs-staging"

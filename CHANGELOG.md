@@ -22,6 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-20 (codex)
 
+- Infra: Added Worker and MCP staging Wrangler example configs and ignored local staging config copies that will contain environment-specific D1 IDs. (codex)
 - Added: Added `apps/worker/scripts/smoke-test.mjs` and `npm run smoke:worker` for no-quota Worker health, diagnostics, and recent-job checks with optional low-quota search mode. (codex)
 - Docs: Updated `docs/staging-testbed.md`, `docs/progress.md`, and `docs/debug-log.md` with Worker smoke-test usage and verification. (codex)
 - Docs: Added `docs/staging-testbed.md` with the personal-repo-based staging Worker, Pages, MCP, D1, R2, smoke-test, promotion, and team-integration procedure. (codex)
@@ -204,7 +205,6 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Fixed: Added missing `build` scripts to `apps/worker/package.json` and `packages/shared/package.json` so Cloudflare root-level `npm run build` succeeds across workspaces. (codex)
 - Infra: Configured `apps/worker/wrangler.toml` with D1 database ID `4d622431-3574-4e04-a359-dada93e97438` and disabled R2 binding until billing is available. (codex)
 - Added: Created `CHANGELOG.md` and `.github/pull_request_template.md` to enforce strict update history tracking. (codex)
-
 - Added: Set up monorepo structure with `apps/web`, `apps/worker`, `packages/shared`, `docs`, and `benchmark`. (codex)
 - Added: Created React/Vite dashboard scaffold in `apps/web`. (codex)
 - Added: Created Cloudflare Worker API scaffold in `apps/worker`. (codex)

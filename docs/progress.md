@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-20 (codex Worker smoke test)
+Updated: 2026-05-20 (codex staging Wrangler examples)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -36,6 +36,13 @@ Updated: 2026-05-20 (codex Worker smoke test)
 - Added: Root script `npm run smoke:worker`, which defaults to no-quota checks for `/api/health`, `/api/diagnostics`, and `/api/search-jobs?limit=3`. (codex)
 - Verification: Ran `npm run smoke:worker` against `https://paper-agent-project.shch3653.workers.dev`; health and diagnostics returned `ok: true`, active provider readiness was true, D1 had no missing columns, R2 was bound, and 3 recent jobs were listed. (codex)
 - Verification: Ran `npm run typecheck`; all workspaces passed. (codex)
+
+## codex - Staging Wrangler Examples (2026-05-20)
+
+- Infra: Added `apps/worker/wrangler.staging.example.toml` and `apps/mcp/wrangler.staging.example.toml` as copyable staging templates. (codex)
+- Infra: Added local ignore rules for `apps/worker/wrangler.staging.toml` and `apps/mcp/wrangler.staging.toml` because copied staging configs will contain environment-specific D1 IDs. (codex)
+- Docs: Updated `docs/staging-testbed.md` to use the tracked example configs and copy them only after staging D1 exists. (codex)
+- Verification: Ran `npm run typecheck`; all workspaces passed after adding staging Wrangler example configs. (codex)
 
 ## Mandatory Session Handoff Rules
 
