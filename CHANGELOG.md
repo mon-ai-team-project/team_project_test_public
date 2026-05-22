@@ -23,6 +23,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 ## 2026-05-22 (codex)
 
 - Added: Added agent rule validation script and GitHub Actions workflow to enforce team branch scope, changelog attribution, and assigned personal-folder updates. (codex)
+- Test: Triggered Agent rules status check after workflow merge. (codex)
 - Fixed: Tightened agent rule validation so benchmark PR attribution must appear in newly added CHANGELOG lines. (codex)
 - Infra: Added CODEOWNERS and updated PR template so maintainer review, shared rules, and personal work-log updates are required for team PRs. (codex)
 
