@@ -1,6 +1,6 @@
 # Agent Work Queue
 
-Updated: 2026-05-18
+Updated: 2026-05-22
 
 This file defines the current team-agent assignments. Agents should pick only their assigned section and avoid unrelated files.
 
@@ -12,6 +12,8 @@ This file defines the current team-agent assignments. Agents should pick only th
 - Do not delete reference files or generated benchmark evidence.
 - Update `CHANGELOG.md` for every meaningful change.
 - Preserve attribution format: `Label: description. (agent-id)`.
+- Automatic PR enforcement runs through `.github/workflows/agent-rules.yml`.
+- Every team benchmark branch must update its assigned personal folder or the PR check fails.
 
 ## Assignment 1 - Gold Label Refinement
 
@@ -133,7 +135,7 @@ Allowed files:
 ```text
 benchmark/baseline_rule_based_results.csv
 benchmark/baseline_single_llm_results.csv
-<assigned_member_directory>/
+unassigned_member_c/
 CHANGELOG.md
 docs/progress.md
 ```

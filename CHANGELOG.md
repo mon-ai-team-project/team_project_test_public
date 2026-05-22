@@ -20,8 +20,20 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-22 (codex)
+
+- Added: Added agent rule validation script and GitHub Actions workflow to enforce team branch scope, changelog attribution, and assigned personal-folder updates. (codex)
+- Infra: Added CODEOWNERS and updated PR template so maintainer review, shared rules, and personal work-log updates are required for team PRs. (codex)
+
+- Docs: Added shared writing rules for Codex, Gemini, Claude, and future agents, and added/updated agent-specific operating guides. (codex)
+
 ## 2026-05-20 (codex)
 
+- Infra: Added Worker and MCP staging Wrangler example configs and ignored local staging config copies that will contain environment-specific D1 IDs. (codex)
+- Added: Added `apps/worker/scripts/smoke-test.mjs` and `npm run smoke:worker` for no-quota Worker health, diagnostics, and recent-job checks with optional low-quota search mode. (codex)
+- Docs: Updated `docs/staging-testbed.md`, `docs/progress.md`, and `docs/debug-log.md` with Worker smoke-test usage and verification. (codex)
+- Docs: Added `docs/staging-testbed.md` with the personal-repo-based staging Worker, Pages, MCP, D1, R2, smoke-test, promotion, and team-integration procedure. (codex)
+- Docs: Clarified `seunghyeon_choi/README.md` as the current active worker workspace, maintainer role, integration boundary, and main-protection responsibility. (codex)
 - Docs: Added MCP installation guide and shared client config example for Paper Agent, GitHub, Cloudflare, Playwright, and restricted filesystem MCP servers selected from `awesome-mcp-servers`. (codex)
 - Docs: Recorded MCP smoke-test verification and local Codex MCP registration status in `docs/debug-log.md` and `docs/progress.md`. (codex)
 
@@ -200,7 +212,6 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Fixed: Added missing `build` scripts to `apps/worker/package.json` and `packages/shared/package.json` so Cloudflare root-level `npm run build` succeeds across workspaces. (codex)
 - Infra: Configured `apps/worker/wrangler.toml` with D1 database ID `4d622431-3574-4e04-a359-dada93e97438` and disabled R2 binding until billing is available. (codex)
 - Added: Created `CHANGELOG.md` and `.github/pull_request_template.md` to enforce strict update history tracking. (codex)
-
 - Added: Set up monorepo structure with `apps/web`, `apps/worker`, `packages/shared`, `docs`, and `benchmark`. (codex)
 - Added: Created React/Vite dashboard scaffold in `apps/web`. (codex)
 - Added: Created Cloudflare Worker API scaffold in `apps/worker`. (codex)

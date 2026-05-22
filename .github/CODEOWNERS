@@ -1,0 +1,13 @@
+# Maintainer-reviewed integration ownership.
+# GitHub branch protection should require CODEOWNER review for main.
+
+* @Vulter3653
+
+# Team-member workspaces remain maintainer-reviewed because final integration
+# is performed by seunghyeon_choi through the personal source repository.
+jin23624_cpu/ @Vulter3653
+juilie_bot_hub/ @Vulter3653
+shonshinemin_cmd/ @Vulter3653
+unassigned_member_c/ @Vulter3653
+integrated/ @Vulter3653
+seunghyeon_choi/ @Vulter3653

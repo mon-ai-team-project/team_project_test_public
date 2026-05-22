@@ -1,6 +1,6 @@
 # Agent Operating Guide
 
-Updated: 2026-05-18
+Updated: 2026-05-22
 
 This repository is the shared MON AI Team Paper Agent workspace.
 
@@ -18,6 +18,7 @@ git log --oneline -8
 Read these files in order:
 
 ```text
+docs/agent-writing-rules.md
 docs/progress.md
 docs/team-collaboration.md
 docs/agent-work-queue.md
@@ -88,6 +89,35 @@ Use the matching directory README for detailed instructions:
 | `integrated/` | Maintainer integration notes only | `integrated/`, docs, scripts, source code only when assigned |
 
 If an agent is not explicitly assigned to source-code work, it must not edit `apps/`, `packages/`, `wrangler.toml`, or deployment settings.
+
+## Shared Agent Writing Rules
+
+Codex, Gemini, Claude, and any other AI agent must follow:
+
+```text
+docs/agent-writing-rules.md
+GEMINI.md
+CLAUDE.md
+```
+
+Agent-specific work must use the correct lowercase attribution:
+
+```text
+(codex)
+(gemini)
+(claude)
+```
+
+Do not remove or rewrite another agent attribution entry.
+
+Automatic enforcement:
+
+```text
+.github/workflows/agent-rules.yml
+scripts/validate-agent-rules.mjs
+```
+
+Team benchmark branches that skip the assigned personal folder, change files outside scope, or omit matching changelog attribution should fail PR validation.
 
 ## Current Benchmark Priority
 

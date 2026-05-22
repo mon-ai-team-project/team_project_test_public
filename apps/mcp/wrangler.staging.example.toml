@@ -1,0 +1,21 @@
+name = "paper-agent-mcp-staging"
+main = "src/index.ts"
+compatibility_date = "2026-05-03"
+compatibility_flags = ["nodejs_compat"]
+
+[[durable_objects.bindings]]
+name = "MCP_OBJECT"
+class_name = "PaperAgentMcp"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["PaperAgentMcp"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "paper_agent_db_staging"
+database_id = "<staging-d1-database-id>"
+
+[[r2_buckets]]
+binding = "REPORTS"
+bucket_name = "paper-agent-outputs-staging"
