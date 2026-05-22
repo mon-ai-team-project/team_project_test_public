@@ -20,6 +20,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-22 (codex)
+
+- Docs: Added shared writing rules for Codex, Gemini, Claude, and future agents, and added/updated agent-specific operating guides. (codex)
+
 ## 2026-05-20 (codex)
 
 - Infra: Added Worker and MCP staging Wrangler example configs and ignored local staging config copies that will contain environment-specific D1 IDs. (codex)

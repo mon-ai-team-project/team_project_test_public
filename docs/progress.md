@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-20 (codex staging Wrangler examples)
+Updated: 2026-05-22 (codex shared agent writing rules)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -43,6 +43,14 @@ Updated: 2026-05-20 (codex staging Wrangler examples)
 - Infra: Added local ignore rules for `apps/worker/wrangler.staging.toml` and `apps/mcp/wrangler.staging.toml` because copied staging configs will contain environment-specific D1 IDs. (codex)
 - Docs: Updated `docs/staging-testbed.md` to use the tracked example configs and copy them only after staging D1 exists. (codex)
 - Verification: Ran `npm run typecheck`; all workspaces passed after adding staging Wrangler example configs. (codex)
+
+## codex - Shared Agent Writing Rules (2026-05-22)
+
+- Docs: Added `docs/agent-writing-rules.md` as the shared writing, attribution, handoff, verification, and scope rule source for Codex, Gemini, Claude, and future agents. (codex)
+- Docs: Replaced `GEMINI.md` with an updated Gemini operating guide that mirrors Codex rules and requires `(gemini)` attribution. (codex)
+- Docs: Added `CLAUDE.md` with the same operating rules and required `(claude)` attribution. (codex)
+- Docs: Updated `AGENTS.md` to require all agents to read `docs/agent-writing-rules.md`, `GEMINI.md`, and `CLAUDE.md` before editing. (codex)
+- Verification: Documentation-only change; no build or test command was run. (codex)
 
 ## Mandatory Session Handoff Rules
 
