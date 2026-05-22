@@ -22,6 +22,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-22 (codex)
 
+- Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)
+
 - Added: Added agent rule validation script and GitHub Actions workflow to enforce team branch scope, changelog attribution, and assigned personal-folder updates. (codex)
 - Fixed: Tightened agent rule validation so benchmark PR attribution must appear in newly added CHANGELOG lines. (codex)
 - Infra: Added CODEOWNERS and updated PR template so maintainer review, shared rules, and personal work-log updates are required for team PRs. (codex)

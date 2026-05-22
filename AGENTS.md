@@ -22,6 +22,7 @@ docs/agent-writing-rules.md
 docs/progress.md
 docs/team-collaboration.md
 docs/agent-work-queue.md
+docs/team-task-briefing.md
 CHANGELOG.md
 docs/debug-log.md
 ```

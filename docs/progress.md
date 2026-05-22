@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex automatic team rule enforcement)
+Updated: 2026-05-22 (codex team task briefing)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -60,6 +60,13 @@ Updated: 2026-05-22 (codex automatic team rule enforcement)
 - Infra: Added `.github/CODEOWNERS` to support maintainer-reviewed integration when GitHub branch protection requires CODEOWNER review. (codex)
 - Docs: Updated `AGENTS.md`, `docs/agent-writing-rules.md`, `docs/agent-work-queue.md`, and `.github/pull_request_template.md` with automatic enforcement and personal-folder/work-log requirements. (codex)
 - Added: `unassigned_member_c/README.md` as the baseline-collection workspace so Assignment 3 also has an enforceable personal folder. (codex)
+
+## codex - Organization Main Team Task Briefing (2026-05-22)
+
+- Docs: Added `docs/team-task-briefing.md` as the current team-facing assignment brief from organization `main`. (codex)
+- Docs: Updated `AGENTS.md` and `docs/agent-work-queue.md` so future agents read the team briefing and see the current status snapshot. (codex)
+- Docs: Updated `jin23624_cpu/README.md`, `juilie_bot_hub/README.md`, `shonshinemin_cmd/README.md`, `unassigned_member_c/README.md`, and `seunghyeon_choi/README.md` with current status and next actions. (codex)
+- Status: `juilie_bot_hub` manual review is complete; `shonshinemin_cmd` metric QA output exists; `jin23624_cpu` gold refinement and `unassigned_member_c` baselines remain the next team priorities. (codex)
 
 ## Mandatory Session Handoff Rules
 

@@ -27,4 +27,6 @@ Every baseline branch must update this folder with a README or work-log note. Th
 
 ## Work Summary
 
-- Pending assignment.
+- Current `main` status: pending assignment.
+- `benchmark/baseline_rule_based_results.csv` and `benchmark/baseline_single_llm_results.csv` currently contain headers only.
+- Next action for the assigned member: collect T001-T003 Rule-based and Single-LLM baseline rows, verify DOI/journal metadata when available, update this workspace, and add a `CHANGELOG.md` entry ending with `(member-c)`.

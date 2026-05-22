@@ -14,6 +14,17 @@ This file defines the current team-agent assignments. Agents should pick only th
 - Preserve attribution format: `Label: description. (agent-id)`.
 - Automatic PR enforcement runs through `.github/workflows/agent-rules.yml`.
 - Every team benchmark branch must update its assigned personal folder or the PR check fails.
+- Read `docs/team-task-briefing.md` for the current team status snapshot and detailed task instructions.
+
+## Current Status Snapshot
+
+| Assignment | Owner | Current status | Next action |
+| --- | --- | --- | --- |
+| Gold label refinement | `jin23624_cpu` | Not complete on `main`; branch has readiness notes only. | Start DOI-backed T001-T003 gold label refinement. |
+| Proposed Agent manual review | `juilie_bot_hub` | Complete for 15 T001-T003 rows. | Wait for maintainer request before adding new review rows. |
+| Baseline result collection | `unassigned_member_c` | Not started; baseline CSV files contain headers only. | Assign member and collect Rule-based / Single-LLM baseline rows. |
+| Metric QA | `shonshinemin_cmd` | Current T001-T003 metric output exists. | Rerun after gold labels, baselines, or Proposed Agent results change. |
+| Integration | `seunghyeon_choi` | Maintainer and integration lead. | Review PRs and keep `main` protected by Agent rules. |
 
 ## Assignment 1 - Gold Label Refinement
 

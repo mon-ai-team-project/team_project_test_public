@@ -57,3 +57,5 @@ Primary responsibilities:
 ## Work Summary
 
 - Active workspace for maintainer-reviewed integration and current project development.
+- Organization `main` now includes `Agent rules / validate-agent-rules` for PR enforcement.
+- Next maintainer actions: keep stale test branches closed/deleted, review `jin23624_cpu` gold-label PR first, assign the baseline owner, and reject PRs that skip changelog attribution or personal-folder updates.
