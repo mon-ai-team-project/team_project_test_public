@@ -157,6 +157,31 @@ npm run smoke:mcp
 
 Record verification results in `docs/progress.md`; record defect investigations or workflow-confidence checks in `docs/debug-log.md`.
 
+## Automatic Enforcement
+
+The repository includes a PR validation workflow:
+
+```text
+.github/workflows/agent-rules.yml
+scripts/validate-agent-rules.mjs
+```
+
+Team benchmark branches must satisfy these checks:
+
+- `CHANGELOG.md` changed.
+- The branch name matches a known assignment prefix.
+- Changed files stay inside the assignment allowlist.
+- The assigned personal workspace folder changed.
+- `CHANGELOG.md` contains the matching attribution, such as `(jin23624)`, `(juilie)`, `(shonshinemin)`, or `(member-c)`.
+
+Local pre-PR check:
+
+```bash
+npm run validate:agent-rules
+```
+
+Maintainers should enable GitHub branch protection so `Agent rules` and CODEOWNER review are required before merging into `main`.
+
 ## Final Response Requirements
 
 When finishing a work session, report:

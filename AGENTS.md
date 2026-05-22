@@ -110,6 +110,15 @@ Agent-specific work must use the correct lowercase attribution:
 
 Do not remove or rewrite another agent attribution entry.
 
+Automatic enforcement:
+
+```text
+.github/workflows/agent-rules.yml
+scripts/validate-agent-rules.mjs
+```
+
+Team benchmark branches that skip the assigned personal folder, change files outside scope, or omit matching changelog attribution should fail PR validation.
+
 ## Current Benchmark Priority
 
 Current focus: improve T001-T003 benchmark evidence.

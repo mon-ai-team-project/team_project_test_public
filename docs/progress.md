@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex shared agent writing rules)
+Updated: 2026-05-22 (codex automatic team rule enforcement)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -51,6 +51,14 @@ Updated: 2026-05-22 (codex shared agent writing rules)
 - Docs: Added `CLAUDE.md` with the same operating rules and required `(claude)` attribution. (codex)
 - Docs: Updated `AGENTS.md` to require all agents to read `docs/agent-writing-rules.md`, `GEMINI.md`, and `CLAUDE.md` before editing. (codex)
 - Verification: Documentation-only change; no build or test command was run. (codex)
+
+## codex - Automatic Team Rule Enforcement (2026-05-22)
+
+- Added: `scripts/validate-agent-rules.mjs` to enforce team benchmark branch scope, required `CHANGELOG.md` updates, matching attribution, and assigned personal-folder updates. (codex)
+- Added: `.github/workflows/agent-rules.yml` so pull requests into `main` run the validator automatically. (codex)
+- Infra: Added `.github/CODEOWNERS` to support maintainer-reviewed integration when GitHub branch protection requires CODEOWNER review. (codex)
+- Docs: Updated `AGENTS.md`, `docs/agent-writing-rules.md`, `docs/agent-work-queue.md`, and `.github/pull_request_template.md` with automatic enforcement and personal-folder/work-log requirements. (codex)
+- Added: `unassigned_member_c/README.md` as the baseline-collection workspace so Assignment 3 also has an enforceable personal folder. (codex)
 
 ## Mandatory Session Handoff Rules
 
