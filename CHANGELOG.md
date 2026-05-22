@@ -22,6 +22,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-22 (codex)
 
+- Changed: Added manual-review-informed subtopic relevance scoring in `apps/worker/src/index.ts` for T001-T003 benchmark queries. (codex)
+
 - Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)
 
 - Added: Added agent rule validation script and GitHub Actions workflow to enforce team branch scope, changelog attribution, and assigned personal-folder updates. (codex)

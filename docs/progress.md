@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex team task briefing)
+Updated: 2026-05-22 (codex subtopic relevance scoring)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -67,6 +67,13 @@ Updated: 2026-05-22 (codex team task briefing)
 - Docs: Updated `AGENTS.md` and `docs/agent-work-queue.md` so future agents read the team briefing and see the current status snapshot. (codex)
 - Docs: Updated `jin23624_cpu/README.md`, `juilie_bot_hub/README.md`, `shonshinemin_cmd/README.md`, `unassigned_member_c/README.md`, and `seunghyeon_choi/README.md` with current status and next actions. (codex)
 - Status: `juilie_bot_hub` manual review is complete; `shonshinemin_cmd` metric QA output exists; `jin23624_cpu` gold refinement and `unassigned_member_c` baselines remain the next team priorities. (codex)
+
+## codex - Manual Review Informed Relevance Scoring (2026-05-22)
+
+- Changed: Updated `apps/worker/src/index.ts` so Worker relevance scoring includes subtopic-fit rules derived from `benchmark/manual_review_proposed.csv` failure patterns. (codex)
+- Changed: Added benchmark-focused rules for `AI interview employer branding`, `AI recruitment applicant reaction`, and `generative AI advertising effectiveness` so broad AI/top-journal matches are penalized when the specific subtopic is missing. (codex)
+- Changed: Ranking now uses persisted `paper.relevanceScore` when available instead of falling back only to `abstractScore`. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
 
 ## Mandatory Session Handoff Rules
 

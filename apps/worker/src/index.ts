@@ -1148,6 +1148,7 @@ function mapWosDocument(document: WosDocument, keyword: string, rank: number): P
     doi,
     oaStatus: "unknown",
     abstractScore: scores.abstractScore,
+    relevanceScore: scores.relevanceScore,
     finalScore: scores.finalScore,
     includeStatus: scores.finalScore >= 0.35 ? "include" : "review",
     relevanceReason: scores.reason,
@@ -1191,6 +1192,7 @@ function mapOpenAlexWork(work: OpenAlexWork, keyword: string, rank: number): Pap
     doi,
     oaStatus: isOpenAccess ? "oa" : "unknown",
     abstractScore: scores.abstractScore,
+    relevanceScore: scores.relevanceScore,
     finalScore: scores.finalScore,
     includeStatus: scores.finalScore >= 0.35 ? "include" : "review",
     relevanceReason: scores.reason,
@@ -1499,7 +1501,9 @@ function getWosAbstract(document: WosDocument): string {
 function scorePaper(input: { keyword: string; title: string; abstract: string; citedByCount: number; year: number }) {
   const titleScore = keywordOverlap(input.keyword, input.title);
   const abstractScore = keywordOverlap(input.keyword, input.abstract);
-  const relevanceScore = scoreRelevance(titleScore, abstractScore);
+  const baseRelevanceScore = scoreRelevance(titleScore, abstractScore);
+  const subtopicFit = scoreSubtopicFit(input.keyword, input.title, input.abstract);
+  const relevanceScore = baseRelevanceScore * (0.45 + 0.55 * subtopicFit.score);
   const citationScore = Math.min(input.citedByCount / 100, 1);
   const recencyScore = scoreRecency(input.year);
   const finalScore = calculateFinalScore({
@@ -1513,12 +1517,14 @@ function scorePaper(input: { keyword: string; title: string; abstract: string; c
   const reason = [
     `title keyword overlap ${titleScore.toFixed(2)}`,
     `abstract keyword overlap ${abstractScore.toFixed(2)}`,
+    `subtopic fit ${subtopicFit.score.toFixed(2)}${subtopicFit.rule ? ` (${subtopicFit.rule})` : ""}`,
     `combined relevance ${relevanceScore.toFixed(2)}`,
     `citations ${input.citedByCount}`,
     `year ${input.year || "unknown"}`
   ].join("; ");
   return {
     abstractScore: roundScore(abstractScore),
+    relevanceScore: roundScore(relevanceScore),
     finalScore: roundScore(finalScore),
     reason
   };
@@ -1528,12 +1534,94 @@ function scoreRelevance(titleScore: number, abstractScore: number): number {
   return Math.max(titleScore, 0.7 * abstractScore + 0.3 * titleScore);
 }
 
+type SubtopicRule = {
+  label: string;
+  keywordTerms: string[];
+  requiredGroups: string[][];
+};
+
+const SUBTOPIC_RULES: SubtopicRule[] = [
+  {
+    label: "AI interview employer branding",
+    keywordTerms: ["interview", "employer", "branding"],
+    requiredGroups: [
+      ["ai", "artificial intelligence", "algorithmic", "automated", "machine learning"],
+      ["interview", "hiring", "selection", "recruitment"],
+      ["employer branding", "employer brand", "organizational attractiveness", "applicant attraction", "attractiveness"],
+      ["applicant", "candidate", "job seeker", "justice", "fairness", "reaction", "perception"]
+    ]
+  },
+  {
+    label: "AI recruitment applicant reaction",
+    keywordTerms: ["recruitment", "applicant", "reaction"],
+    requiredGroups: [
+      ["ai", "artificial intelligence", "algorithmic", "automated", "machine learning"],
+      ["recruitment", "hiring", "selection"],
+      ["applicant", "candidate", "job seeker"],
+      ["reaction", "fairness", "justice", "perception", "organizational attractiveness", "attractiveness"]
+    ]
+  },
+  {
+    label: "generative AI advertising effectiveness",
+    keywordTerms: ["generative", "advertising"],
+    requiredGroups: [
+      ["generative", "generated", "generation", "llm", "large language model", "artificial intelligence", "ai"],
+      ["advertising", "advertisement", "advertisements", "ad", "ads", "video advertisement"],
+      ["effectiveness", "persuasion", "response", "trust", "brand", "consumer", "click", "conversion"]
+    ]
+  }
+];
+
+function scoreSubtopicFit(keyword: string, title: string, abstract: string): { score: number; rule: string | null } {
+  const keywordText = normalizeSearchText(keyword);
+  const rule = SUBTOPIC_RULES.find((candidate) => candidate.keywordTerms.every((term) => keywordText.includes(term)));
+  if (!rule) return { score: 1, rule: null };
+
+  const titleText = normalizeSearchText(title);
+  const fullText = normalizeSearchText([title, abstract].join(" "));
+  const matchedGroups = rule.requiredGroups.filter((group) => group.some((term) => containsSearchTerm(fullText, term))).length;
+  const titleMatchedGroups = rule.requiredGroups.filter((group) => group.some((term) => containsSearchTerm(titleText, term))).length;
+  const coverageScore = matchedGroups / rule.requiredGroups.length;
+  const titleCoverageScore = titleMatchedGroups / rule.requiredGroups.length;
+  return {
+    score: Math.max(0.15, 0.75 * coverageScore + 0.25 * titleCoverageScore),
+    rule: rule.label
+  };
+}
+
+function normalizeSearchText(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9가-힣]+/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function containsSearchTerm(text: string, term: string): boolean {
+  const normalizedTerm = normalizeSearchText(term);
+  if (!normalizedTerm) return false;
+  if (normalizedTerm.length <= 3 && !normalizedTerm.includes(" ")) {
+    return new RegExp("(^| )" + escapeRegExp(normalizedTerm) + "( |$)").test(text);
+  }
+  return text.includes(normalizedTerm);
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 function keywordOverlap(keyword: string, text: string): number {
-  const keywordTerms = tokenize(keyword);
+  const keywordTerms = tokenize(keyword).filter((term) => !isWeakSearchToken(term));
   if (!keywordTerms.length) return 0;
-  const textTerms = new Set(tokenize(text));
-  const matches = keywordTerms.filter((term) => textTerms.has(term)).length;
-  return matches / keywordTerms.length;
+  const textTerms = new Set(expandTokenSet(tokenize(text)));
+  const matches = expandTokenSet(keywordTerms).filter((term) => textTerms.has(term)).length;
+  return matches / expandTokenSet(keywordTerms).length;
+}
+
+function expandTokenSet(terms: string[]): string[] {
+  const expanded = new Set(terms);
+  if (terms.includes("ai")) {
+    expanded.add("artificial");
+    expanded.add("intelligence");
+  }
+  if (terms.includes("artificial") && terms.includes("intelligence")) expanded.add("ai");
+  return Array.from(expanded);
 }
 
 function tokenize(value: string): string[] {
@@ -1548,7 +1636,7 @@ function scoreRecency(year: number): number {
 
 function calculateEvaluationScores(paper: PaperSummary): EvaluationScores {
   return {
-    relevanceScore: roundScore(paper.abstractScore),
+    relevanceScore: roundScore(paper.relevanceScore ?? paper.abstractScore),
     journalFitScore: 1,
     verificationScore: roundScore(paper.verificationStatus === "verified" ? 1 : paper.verificationStatus === "partial" ? 0.5 : 0),
     oaScore: roundScore(paper.oaPdfUrl ? 1 : paper.oaLandingPageUrl || paper.oaStatus === "oa" ? 0.75 : paper.unpaywallStatus === "not_found" ? 0 : 0.25),

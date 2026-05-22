@@ -1,5 +1,13 @@
 # Debug Log
 
+## 2026-05-22 - Manual Review Informed Scoring
+
+- Context: `benchmark/manual_review_proposed.csv` shows repeated `wrong_subtopic` failures, especially broad AI papers that match approved journals but miss employer branding, applicant reaction, recruitment, or advertising-effectiveness specifics. (codex)
+- Change: Added subtopic-fit scoring groups in `apps/worker/src/index.ts` and included the resulting score in `relevanceReason`. (codex)
+- Expected effect: T001/T002/T003 candidates that only match general AI terms should receive lower relevance and rank below papers matching the required subtopic groups. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
 ## 2026-05-20 - Worker Smoke Test Verification (codex)
