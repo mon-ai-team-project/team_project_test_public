@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-24 - Enrichment Limit
+
+- Context: The deployed job confirmed Google Drive wiring, but Crossref plus Unpaywall calls over 50 results hit Cloudflare Worker subrequest limits. (codex)
+- Change: Added `enrichmentLimit` to cap Crossref and Unpaywall processing, defaulting to 10 and recording skipped rows instead of attempting every allowed paper. (codex)
+- Expected effect: Search jobs should complete without Unpaywall-wide `Too many subrequests` failures; Drive upload can be tested when one of the enriched top rows has an OA PDF URL. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `git diff --check` passed in this session. (codex)
+
 ## 2026-05-24 - Google Drive OA PDF Archive
 
 - Context: Google Drive was listed as planned while Unpaywall already captured OA PDF URLs. The user prioritized Drive connection before remaining benchmark work. (codex)

@@ -75,6 +75,13 @@ Updated: 2026-05-24 (codex dashboard mock clarity)
 - Changed: Ranking now uses persisted `paper.relevanceScore` when available instead of falling back only to `abstractScore`. (codex)
 - Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
 
+## codex - Enrichment Limit (2026-05-24)
+
+- Added: Worker request payload accepts `enrichmentLimit`, defaulting to 10 and capped at 20, to limit Crossref and Unpaywall subrequests separately from `maxResults`. (codex)
+- Changed: Crossref and Unpaywall enrichment now process only the first `enrichmentLimit` rows and mark the remaining rows as skipped with explicit subrequest-limit reasons. (codex)
+- Changed: Main dashboard and Ops launch payloads send `enrichmentLimit` so production runs avoid the previous Worker subrequest overflow. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `git diff --check` passed in this session. (codex)
+
 ## codex - Google Drive OA PDF Archive (2026-05-24)
 
 - Added: Worker Google Drive service-account JWT authentication using `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, and `GOOGLE_DRIVE_FOLDER_ID`. (codex)

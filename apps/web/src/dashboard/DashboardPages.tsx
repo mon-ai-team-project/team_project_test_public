@@ -234,7 +234,7 @@ export function AgentOpsPage() {
       const response = await fetch(apiUrl("/api/search-jobs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ keyword, maxResults: 20 })
+        body: JSON.stringify({ keyword, maxResults: 20, enrichmentLimit: 10 })
       });
       if (!response.ok) throw new Error(await readDashboardError(response, "Failed to launch agent job"));
       const data = (await response.json()) as { job: SearchJob };

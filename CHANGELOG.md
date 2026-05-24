@@ -22,6 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-24 (codex)
 
+- Added: Introduced `enrichmentLimit` to cap Crossref and Unpaywall lookups per job, reducing Cloudflare Worker subrequest-limit failures while recording skipped rows explicitly. (codex)
 - Added: Connected Google Drive OA PDF archival for Unpaywall-confirmed PDF URLs using Worker service-account credentials and persisted Drive metadata in D1, CSV, Markdown, dashboard, and MCP outputs. (codex)
 - Changed: Connected the Ops dashboard route to live Worker search jobs and D1 `agent_traces` for status board, pipeline, and console output. (codex)
 - Fixed: Ensured Worker diagnostics runs schema bootstrap before checking columns, set new search jobs to 12 total steps, and completed trace rows now receive completion timestamps. (codex)

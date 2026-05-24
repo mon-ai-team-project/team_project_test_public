@@ -34,6 +34,7 @@ type CreateSearchJobRequest = {
   yearStart?: number;
   yearEnd?: number;
   maxResults?: number;
+  enrichmentLimit?: number;
   journalCategoryId?: string;
 };
 
@@ -339,6 +340,7 @@ export default {
         await ensureSchema(env.DB);
         const keyword = normalizeKeyword(body.keyword);
         const maxResults = normalizeMaxResults(body.maxResults);
+        const enrichmentLimit = normalizeEnrichmentLimit(body.enrichmentLimit, maxResults);
         const searchProvider = normalizeSearchProvider(env.SEARCH_PROVIDER);
         const job = createSearchJob(keyword, "searching", searchProvider);
         await saveSearchJob(env.DB, job);
@@ -355,6 +357,7 @@ export default {
             googlePrivateKey: env.GOOGLE_PRIVATE_KEY,
             googleDriveFolderId: env.GOOGLE_DRIVE_FOLDER_ID,
             maxResults,
+            enrichmentLimit,
             yearStart: body.yearStart,
             yearEnd: body.yearEnd,
             journalCategoryId: normalizeJournalCategoryId(body.journalCategoryId)
@@ -442,6 +445,11 @@ function normalizeKeyword(keyword: string | undefined): string {
 function normalizeMaxResults(maxResults: number | undefined): number {
   if (typeof maxResults !== "number" || !Number.isFinite(maxResults)) return 20;
   return Math.max(1, Math.min(50, Math.trunc(maxResults)));
+}
+
+function normalizeEnrichmentLimit(enrichmentLimit: number | undefined, maxResults: number): number {
+  if (typeof enrichmentLimit !== "number" || !Number.isFinite(enrichmentLimit)) return Math.min(10, maxResults);
+  return Math.max(1, Math.min(maxResults, 20, Math.trunc(enrichmentLimit)));
 }
 
 function normalizeJournalCategoryId(categoryId: string | undefined): string | undefined {
@@ -1000,6 +1008,7 @@ async function processSearchJob(
     googlePrivateKey?: string;
     googleDriveFolderId?: string;
     maxResults: number;
+    enrichmentLimit: number;
     yearStart?: number;
     yearEnd?: number;
     journalCategoryId?: string;
@@ -1012,7 +1021,7 @@ async function processSearchJob(
       stepId: "planner",
       agentName: "Planner Agent",
       summary: "Normalized research question and runtime constraints.",
-      detail: JSON.stringify({ keyword, maxResults: options.maxResults, yearStart: options.yearStart ?? null, yearEnd: options.yearEnd ?? null, journalCategoryId: options.journalCategoryId ?? null }),
+      detail: JSON.stringify({ keyword, maxResults: options.maxResults, enrichmentLimit: options.enrichmentLimit, yearStart: options.yearStart ?? null, yearEnd: options.yearEnd ?? null, journalCategoryId: options.journalCategoryId ?? null }),
       outputCount: 1
     });
 
@@ -1028,12 +1037,12 @@ async function processSearchJob(
     await recordAgentTrace(db, job, { stepOrder: 2, stepId: "journal_selector", agentName: "Journal Selector Agent", summary: "Filtered candidates to " + allowedPapers.length + " approved business-school journal papers.", detail: JSON.stringify({ sourceCount: candidates.length, categoryId: options.journalCategoryId ?? "all" }), inputCount: candidates.length, outputCount: allowedPapers.length });
 
     job = await updateSearchJobProgress(db, job, "enriching_metadata", "crossref_enrichment");
-    const crossrefEnriched = await enrichPapersWithCrossref(allowedPapers, options.crossrefEmail);
-    await recordAgentTrace(db, job, { stepOrder: 4, stepId: "crossref_enrichment", agentName: "Verifier Agent", summary: "Crossref verification completed for " + crossrefEnriched.length + " allowed papers.", detail: JSON.stringify({ verified: crossrefEnriched.filter((paper) => paper.verificationStatus === "verified").length, partial: crossrefEnriched.filter((paper) => paper.verificationStatus === "partial").length }), inputCount: allowedPapers.length, outputCount: crossrefEnriched.length });
+    const crossrefEnriched = await enrichPapersWithCrossref(allowedPapers, options.crossrefEmail, options.enrichmentLimit);
+    await recordAgentTrace(db, job, { stepOrder: 4, stepId: "crossref_enrichment", agentName: "Verifier Agent", summary: "Crossref verification completed for " + crossrefEnriched.length + " allowed papers.", detail: JSON.stringify({ enrichmentLimit: options.enrichmentLimit, verified: crossrefEnriched.filter((paper) => paper.verificationStatus === "verified").length, partial: crossrefEnriched.filter((paper) => paper.verificationStatus === "partial").length, skipped: crossrefEnriched.filter((paper) => paper.verificationReason.includes("Enrichment limit")).length }), inputCount: allowedPapers.length, outputCount: Math.min(allowedPapers.length, options.enrichmentLimit) });
 
     job = await updateSearchJobProgress(db, job, "checking_oa", "unpaywall_check");
-    const unpaywallEnriched = await enrichPapersWithUnpaywall(crossrefEnriched, options.unpaywallEmail);
-    await recordAgentTrace(db, job, { stepOrder: 5, stepId: "unpaywall_check", agentName: "Open Access Agent", summary: "Unpaywall lookup completed; " + unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length + " OA PDF URLs found.", detail: JSON.stringify({ pdfUrls: unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length, landingPages: unpaywallEnriched.filter((paper) => paper.oaLandingPageUrl).length }), inputCount: crossrefEnriched.length, outputCount: unpaywallEnriched.length });
+    const unpaywallEnriched = await enrichPapersWithUnpaywall(crossrefEnriched, options.unpaywallEmail, options.enrichmentLimit);
+    await recordAgentTrace(db, job, { stepOrder: 5, stepId: "unpaywall_check", agentName: "Open Access Agent", summary: "Unpaywall lookup completed; " + unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length + " OA PDF URLs found.", detail: JSON.stringify({ enrichmentLimit: options.enrichmentLimit, pdfUrls: unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length, landingPages: unpaywallEnriched.filter((paper) => paper.oaLandingPageUrl).length, skipped: unpaywallEnriched.filter((paper) => paper.unpaywallReason.includes("Enrichment limit")).length }), inputCount: crossrefEnriched.length, outputCount: Math.min(crossrefEnriched.length, options.enrichmentLimit) });
 
     const driveEnriched = await uploadOpenAccessPdfsToDrive(unpaywallEnriched, {
       clientEmail: options.googleClientEmail,
@@ -1444,9 +1453,17 @@ function getOpenAlexAbstract(work: OpenAlexWork): string {
     .join(" ");
 }
 
-async function enrichPapersWithCrossref(papers: PaperRecord[], email: string | undefined): Promise<PaperRecord[]> {
+async function enrichPapersWithCrossref(papers: PaperRecord[], email: string | undefined, limit: number): Promise<PaperRecord[]> {
   const enriched: PaperRecord[] = [];
-  for (const paper of papers) {
+  for (const [index, paper] of papers.entries()) {
+    if (index >= limit) {
+      enriched.push({
+        ...paper,
+        verificationStatus: "partial",
+        verificationReason: `Enrichment limit ${limit} reached; Crossref lookup skipped to stay within Worker subrequest limits.`
+      });
+      continue;
+    }
     if (!paper.doi) {
       enriched.push(paper);
       continue;
@@ -1547,9 +1564,17 @@ function isCloseJournalNameMatch(sourceName: string): boolean {
   return normalized.endsWith("s") && isBusinessSchoolJournal(normalized.slice(0, -1));
 }
 
-async function enrichPapersWithUnpaywall(papers: PaperRecord[], email: string | undefined): Promise<PaperRecord[]> {
+async function enrichPapersWithUnpaywall(papers: PaperRecord[], email: string | undefined, limit: number): Promise<PaperRecord[]> {
   const enriched: PaperRecord[] = [];
-  for (const paper of papers) {
+  for (const [index, paper] of papers.entries()) {
+    if (index >= limit) {
+      enriched.push({
+        ...paper,
+        unpaywallStatus: "skipped",
+        unpaywallReason: `Enrichment limit ${limit} reached; Unpaywall lookup skipped to stay within Worker subrequest limits.`
+      });
+      continue;
+    }
     if (!paper.doi) {
       enriched.push(paper);
       continue;

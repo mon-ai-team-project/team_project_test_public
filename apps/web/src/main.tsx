@@ -123,6 +123,7 @@ function App() {
 function ResearchDashboard() {
   const [keyword, setKeyword] = useState("AI interview employer branding");
   const [maxResults, setMaxResults] = useState("20");
+  const [enrichmentLimit, setEnrichmentLimit] = useState("10");
   const [yearStart, setYearStart] = useState("2020");
   const [yearEnd, setYearEnd] = useState("");
   const [journalCategoryId, setJournalCategoryId] = useState("");
@@ -204,7 +205,7 @@ function ResearchDashboard() {
       const response = await fetch(apiUrl("/api/search-jobs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildSearchPayload(keyword, maxResults, yearStart, yearEnd, journalCategoryId))
+        body: JSON.stringify(buildSearchPayload(keyword, maxResults, enrichmentLimit, yearStart, yearEnd, journalCategoryId))
       });
       if (!response.ok) throw new Error(await readApiError(response, "Failed to create search job"));
       const data = (await response.json()) as JobResponse;
@@ -332,6 +333,21 @@ function ResearchDashboard() {
                 onBlur={() => setMaxResults(String(parseLimitedMaxResults(maxResults)))}
                 placeholder="20"
                 aria-label="Maximum results"
+              />
+            </label>
+            <label>
+              <span>Enrich 1-20</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                step={1}
+                inputMode="numeric"
+                value={enrichmentLimit}
+                onChange={(event) => setEnrichmentLimit(event.target.value)}
+                onBlur={() => setEnrichmentLimit(String(parseLimitedEnrichmentLimit(enrichmentLimit, parseLimitedMaxResults(maxResults))))}
+                placeholder="10"
+                aria-label="Metadata enrichment limit"
               />
             </label>
             <label className="categoryOption">
@@ -882,10 +898,12 @@ function formatDateTime(value: string): string {
   return date.toLocaleString();
 }
 
-function buildSearchPayload(keyword: string, maxResults: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
-  const payload: { keyword: string; maxResults: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
+function buildSearchPayload(keyword: string, maxResults: string, enrichmentLimit: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
+  const parsedMaxResults = parseLimitedMaxResults(maxResults);
+  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
     keyword: keyword.trim(),
-    maxResults: parseLimitedMaxResults(maxResults)
+    maxResults: parsedMaxResults,
+    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults)
   };
   const start = parseOptionalYear(yearStart);
   const end = parseOptionalYear(yearEnd);
@@ -898,6 +916,11 @@ function buildSearchPayload(keyword: string, maxResults: string, yearStart: stri
 function parseLimitedMaxResults(value: string): number {
   const parsed = Number.parseInt(value.trim(), 10);
   return clampNumber(parsed, 1, 50, 20);
+}
+
+function parseLimitedEnrichmentLimit(value: string, maxResults: number): number {
+  const parsed = Number.parseInt(value.trim(), 10);
+  return clampNumber(parsed, 1, Math.min(20, maxResults), Math.min(10, maxResults));
 }
 
 function parseOptionalYear(value: string): number | undefined {
