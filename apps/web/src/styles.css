@@ -881,3 +881,11 @@ dd {
     grid-template-columns: 1fr;
   }
 }
+
+.agentTracePanel { min-width: 0; }
+.traceList { display: grid; gap: 8px; margin-top: 12px; }
+.traceItem { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 10px 0; border-top: 1px solid var(--line); }
+.traceItem div { display: grid; gap: 3px; min-width: 0; }
+.traceItem strong { font-size: 0.86rem; color: var(--text); }
+.traceItem span { color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+.errorMessage.compact { margin: 10px 0 0; }

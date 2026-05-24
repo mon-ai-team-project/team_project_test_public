@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-24 - Agent Trace Persistence
+
+- Context: Benchmark work is deferred until team outputs are merged, so the next product priority is replacing dashboard mock workflow state with persisted execution traces. (codex)
+- Change: Added D1 `agent_traces` schema, Worker trace recording, Worker trace API, MCP trace read tool, and dashboard trace panel. (codex)
+- Expected effect: A completed or failed search job now has inspectable step-level records, making the 12-step workflow auditable without relying only on static mock UI data. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
 ## 2026-05-24 - Dashboard Mock Clarity
 
 - Context: The final dashboard routes displayed static mock numbers and statuses that could be mistaken for completed benchmark or agent execution results. (codex)

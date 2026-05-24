@@ -19,6 +19,22 @@ type SearchJobRow = {
   error_message: string | null;
 };
 
+type AgentTraceRow = {
+  id: string;
+  job_id: string;
+  step_order: number;
+  step_id: string;
+  agent_name: string;
+  status: string;
+  summary: string;
+  detail: string | null;
+  input_count: number | null;
+  output_count: number | null;
+  started_at: string;
+  completed_at: string | null;
+  error_message: string | null;
+};
+
 type PaperRow = {
   id: string;
   rank: number;
@@ -106,6 +122,10 @@ const REQUIRED_COLUMNS = [
       "relevance_reason",
       "created_at"
     ]
+  },
+  {
+    table: "agent_traces",
+    columns: ["id", "job_id", "step_order", "step_id", "agent_name", "status", "summary", "detail", "input_count", "output_count", "started_at", "completed_at", "error_message", "created_at"]
   }
 ] as const;
 
@@ -267,6 +287,34 @@ async function getMissingColumns(db: D1Database): Promise<DiagnosticsColumnCheck
     }
   }
   return missing;
+}
+
+async function listAgentTraces(db: D1Database, jobId: string) {
+  const rows = await db
+    .prepare(
+      `SELECT id, job_id, step_order, step_id, agent_name, status, summary, detail,
+              input_count, output_count, started_at, completed_at, error_message
+       FROM agent_traces
+       WHERE job_id = ?
+       ORDER BY step_order ASC, started_at ASC`
+    )
+    .bind(jobId)
+    .all<AgentTraceRow>();
+  return rows.results.map((row) => ({
+    id: row.id,
+    jobId: row.job_id,
+    stepOrder: row.step_order,
+    stepId: row.step_id,
+    agentName: row.agent_name,
+    status: row.status,
+    summary: row.summary,
+    detail: row.detail ?? undefined,
+    inputCount: row.input_count ?? 0,
+    outputCount: row.output_count ?? 0,
+    startedAt: row.started_at,
+    completedAt: row.completed_at ?? undefined,
+    errorMessage: row.error_message ?? undefined
+  }));
 }
 
 async function listSearchJobs(db: D1Database, limit: number) {

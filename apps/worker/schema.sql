@@ -59,5 +59,25 @@ CREATE TABLE IF NOT EXISTS evaluations (
   FOREIGN KEY (paper_id) REFERENCES papers(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS agent_traces (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL,
+  step_order INTEGER NOT NULL,
+  step_id TEXT NOT NULL,
+  agent_name TEXT NOT NULL,
+  status TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  detail TEXT,
+  input_count INTEGER DEFAULT 0,
+  output_count INTEGER DEFAULT 0,
+  started_at TEXT NOT NULL,
+  completed_at TEXT,
+  error_message TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE
+);
+
 CREATE INDEX IF NOT EXISTS idx_papers_job_id ON papers(job_id);
 CREATE INDEX IF NOT EXISTS idx_evaluations_paper_id ON evaluations(paper_id);
+CREATE INDEX IF NOT EXISTS idx_agent_traces_job_id ON agent_traces(job_id);
+CREATE INDEX IF NOT EXISTS idx_agent_traces_job_order ON agent_traces(job_id, step_order);

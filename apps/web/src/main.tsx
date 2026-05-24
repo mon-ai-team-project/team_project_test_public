@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Download, Eye, FileText, History, Play, RefreshCw, Search } from "lucide-react";
-import { BUSINESS_SCHOOL_JOURNAL_CATEGORY_OPTIONS, type PaperSummary, type SearchJob } from "@paper-agent/shared";
+import { BUSINESS_SCHOOL_JOURNAL_CATEGORY_OPTIONS, type AgentTrace, type PaperSummary, type SearchJob } from "@paper-agent/shared";
 import { AgentOpsPage, DashboardNav, EvaluationDashboardPage, ResearchExperiencePanels, resolveDashboardRoute } from "./dashboard/DashboardPages";
 import "./styles.css";
 
@@ -12,6 +12,11 @@ type JobResponse = {
 
 type JobsResponse = {
   jobs: SearchJob[];
+};
+
+type TracesResponse = {
+  job: SearchJob;
+  traces: AgentTrace[];
 };
 
 type PipelineStep = {
@@ -134,6 +139,9 @@ function ResearchDashboard() {
   const [reportPreview, setReportPreview] = useState("");
   const [reportPreviewError, setReportPreviewError] = useState("");
   const [reportPreviewLoading, setReportPreviewLoading] = useState(false);
+  const [agentTraces, setAgentTraces] = useState<AgentTrace[]>([]);
+  const [agentTracesError, setAgentTracesError] = useState("");
+  const [agentTracesLoading, setAgentTracesLoading] = useState(false);
   const selected = useMemo(() => papers.find((paper) => paper.id === selectedId) ?? papers[0], [papers, selectedId]);
   const includedCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "include").length, [papers]);
   const reviewCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "review").length, [papers]);
@@ -162,6 +170,12 @@ function ResearchDashboard() {
     setReportPreviewError("");
     if (job?.status === "completed") void refreshReportPreview(job.id);
   }, [job?.id, job?.status]);
+
+  useEffect(() => {
+    setAgentTraces([]);
+    setAgentTracesError("");
+    if (job?.id) void refreshAgentTraces(job.id);
+  }, [job?.id, job?.status, job?.currentStep]);
 
   async function refreshJob() {
     if (!job) return;
@@ -212,6 +226,22 @@ function ResearchDashboard() {
   function downloadReport() {
     if (!job) return;
     window.location.href = apiUrl(`/api/search-jobs/${job.id}/report.md`);
+  }
+
+  async function refreshAgentTraces(jobId = job?.id) {
+    if (!jobId) return;
+    setAgentTracesLoading(true);
+    setAgentTracesError("");
+    try {
+      const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
+      if (!response.ok) throw new Error(await readApiError(response, "Failed to load agent traces"));
+      const data = (await response.json()) as TracesResponse;
+      setAgentTraces(data.traces);
+    } catch (error) {
+      setAgentTracesError(error instanceof Error ? error.message : "Failed to load agent traces");
+    } finally {
+      setAgentTracesLoading(false);
+    }
   }
 
   async function refreshReportPreview(jobId = job?.id) {
@@ -361,6 +391,7 @@ function ResearchDashboard() {
       <section className="operationsGrid">
         <PipelineProgress job={job} loading={loading} />
         <DiagnosticsPanel diagnostics={diagnostics} errorMessage={diagnosticsError} onRefresh={refreshDiagnostics} />
+        <AgentTracePanel traces={agentTraces} loading={agentTracesLoading} errorMessage={agentTracesError} onRefresh={() => refreshAgentTraces()} />
       </section>
 
       {errorMessage ? <p className="errorMessage">{errorMessage}</p> : null}
@@ -520,6 +551,35 @@ function JournalRankBadge({ paper }: { paper: PaperSummary }) {
   );
 }
 
+function AgentTracePanel({
+  traces, loading, errorMessage, onRefresh
+}: { traces: AgentTrace[]; loading: boolean; errorMessage: string; onRefresh: () => void }) {
+  return (
+    <section className="diagnosticsPanel agentTracePanel">
+      <div className="diagnosticsHeader">
+        <div>
+          <h2>Agent Traces</h2>
+          <p>{traces.length ? String(traces.length) + " recorded workflow steps" : "No live traces for the selected job"}</p>
+        </div>
+        <button className="iconButton" onClick={onRefresh} disabled={loading} aria-label="Refresh agent traces" title="Refresh agent traces">
+          <RefreshCw size={18} className={loading ? "spin" : undefined} />
+        </button>
+      </div>
+      {errorMessage ? <p className="errorMessage compact">{errorMessage}</p> : null}
+      <div className="traceList">
+        {traces.length ? traces.map((trace) => (
+          <article className="traceItem" key={trace.id}>
+            <div>
+              <strong>{trace.stepOrder}. {trace.agentName}</strong>
+              <span>{trace.summary}</span>
+            </div>
+            <StatusBadge value={trace.status} tone={getTraceTone(trace.status)} />
+          </article>
+        )) : <p className="emptyState">Run or load a job to inspect persisted D1 traces.</p>}
+      </div>
+    </section>
+  );
+}
 function DiagnosticsPanel({
   diagnostics,
   errorMessage,
@@ -864,6 +924,12 @@ function getStatusTone(status?: SearchJob["status"]): BadgeTone {
   return "neutral";
 }
 
+function getTraceTone(status: AgentTrace["status"]): BadgeTone {
+  if (status === "completed") return "ok";
+  if (status === "failed") return "danger";
+  if (status === "skipped") return "warn";
+  return "neutral";
+}
 function getIncludeTone(status: PaperSummary["includeStatus"]): BadgeTone {
   if (status === "include") return "ok";
   if (status === "exclude") return "danger";

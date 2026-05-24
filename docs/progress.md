@@ -75,6 +75,14 @@ Updated: 2026-05-24 (codex dashboard mock clarity)
 - Changed: Ranking now uses persisted `paper.relevanceScore` when available instead of falling back only to `abstractScore`. (codex)
 - Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
 
+## codex - Agent Trace Persistence (2026-05-24)
+
+- Added: `agent_traces` D1 schema support in Worker schema bootstrap and static schema file. (codex)
+- Added: Worker trace writes for Planner, Journal Selector, Search/Retriever, Verifier, Open Access, Storage, Evaluation, Relevance, Ranking, Critic, Report, and Delivery stages. (codex)
+- Added: `GET /api/search-jobs/:id/traces` and MCP `get_agent_traces` read support so dashboard and external agents can inspect real execution traces. (codex)
+- Added: Dashboard Agent Traces panel for the selected job, replacing one mock-only status gap with persisted D1 data. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
 ## codex - Dashboard Mock Clarity (2026-05-24)
 
 - Changed: Updated `apps/web/src/dashboard/mockData.ts` so mock-only evaluation metrics, tool logs, workflow details, Google Drive, Vectorize, and scenario data display as `미완성 Mock` or `미완성` instead of realistic placeholder performance values. (codex)

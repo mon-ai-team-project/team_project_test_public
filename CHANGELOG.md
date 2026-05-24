@@ -22,6 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-24 (codex)
 
+- Added: Persisted Worker multi-agent execution traces in D1 and exposed trace read APIs for dashboard and MCP inspection. (codex)
 - Changed: Replaced misleading dashboard mock metric/status values with explicit incomplete mock placeholders in final dashboard routes. (codex)
 
 ## 2026-05-22 (codex)

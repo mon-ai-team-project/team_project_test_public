@@ -5,6 +5,8 @@ import {
   getBusinessSchoolJournalMatch,
   isBusinessSchoolJournal,
   normalizeJournalName,
+  type AgentTrace,
+  type AgentTraceStatus,
   type PaperSummary,
   type SearchJob
 } from "@paper-agent/shared";
@@ -225,6 +227,36 @@ type SearchJobRow = {
   allowed_result_count: number | null;
 };
 
+type AgentTraceRow = {
+  id: string;
+  job_id: string;
+  step_order: number;
+  step_id: string;
+  agent_name: string;
+  status: AgentTraceStatus;
+  summary: string;
+  detail: string | null;
+  input_count: number | null;
+  output_count: number | null;
+  started_at: string;
+  completed_at: string | null;
+  error_message: string | null;
+};
+
+type AgentTraceInput = {
+  stepOrder: number;
+  stepId: string;
+  agentName: string;
+  status?: AgentTraceStatus;
+  summary: string;
+  detail?: string;
+  inputCount?: number;
+  outputCount?: number;
+  startedAt?: string;
+  completedAt?: string;
+  errorMessage?: string;
+};
+
 type PaperSummaryRow = {
   id: string;
   rank: number;
@@ -330,6 +362,19 @@ export default {
         const result = await getSearchResult(env.DB, jobMatch[1]);
         if (!result) return json({ error: "Search job not found" }, 404);
         return json(result);
+      } catch (error) {
+        return json({ error: getErrorMessage(error) }, 500);
+      }
+    }
+
+    const tracesMatch = url.pathname.match(/^\/api\/search-jobs\/([^/]+)\/traces$/);
+    if (tracesMatch && request.method === "GET") {
+      try {
+        if (!env.DB) return json({ error: "D1 database binding is not configured" }, 503);
+        await ensureSchema(env.DB);
+        const result = await getSearchResult(env.DB, tracesMatch[1]);
+        if (!result) return json({ error: "Search job not found" }, 404);
+        return json({ job: result.job, traces: await listAgentTraces(env.DB, tracesMatch[1]) });
       } catch (error) {
         return json({ error: getErrorMessage(error) }, 500);
       }
@@ -511,6 +556,27 @@ async function ensureSchema(db: D1Database): Promise<void> {
       )`
     )
     .run();
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS agent_traces (
+        id TEXT PRIMARY KEY,
+        job_id TEXT NOT NULL,
+        step_order INTEGER NOT NULL,
+        step_id TEXT NOT NULL,
+        agent_name TEXT NOT NULL,
+        status TEXT NOT NULL,
+        summary TEXT NOT NULL,
+        detail TEXT,
+        input_count INTEGER DEFAULT 0,
+        output_count INTEGER DEFAULT 0,
+        started_at TEXT NOT NULL,
+        completed_at TEXT,
+        error_message TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE
+      )`
+    )
+    .run();
 
   await ensureColumn(db, "search_jobs", "id", "TEXT");
   await ensureColumn(db, "search_jobs", "keyword", "TEXT DEFAULT ''");
@@ -565,9 +631,26 @@ async function ensureSchema(db: D1Database): Promise<void> {
   await ensureColumn(db, "evaluations", "relevance_reason", "TEXT DEFAULT ''");
   await ensureColumn(db, "evaluations", "created_at", "TEXT");
 
+  await ensureColumn(db, "agent_traces", "id", "TEXT");
+  await ensureColumn(db, "agent_traces", "job_id", "TEXT");
+  await ensureColumn(db, "agent_traces", "step_order", "INTEGER DEFAULT 0");
+  await ensureColumn(db, "agent_traces", "step_id", "TEXT DEFAULT ''");
+  await ensureColumn(db, "agent_traces", "agent_name", "TEXT DEFAULT ''");
+  await ensureColumn(db, "agent_traces", "status", "TEXT DEFAULT 'pending'");
+  await ensureColumn(db, "agent_traces", "summary", "TEXT DEFAULT ''");
+  await ensureColumn(db, "agent_traces", "detail", "TEXT");
+  await ensureColumn(db, "agent_traces", "input_count", "INTEGER DEFAULT 0");
+  await ensureColumn(db, "agent_traces", "output_count", "INTEGER DEFAULT 0");
+  await ensureColumn(db, "agent_traces", "started_at", "TEXT");
+  await ensureColumn(db, "agent_traces", "completed_at", "TEXT");
+  await ensureColumn(db, "agent_traces", "error_message", "TEXT");
+  await ensureColumn(db, "agent_traces", "created_at", "TEXT");
+
   await db.batch([
     db.prepare("CREATE INDEX IF NOT EXISTS idx_papers_job_id ON papers(job_id)"),
-    db.prepare("CREATE INDEX IF NOT EXISTS idx_evaluations_paper_id ON evaluations(paper_id)")
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_evaluations_paper_id ON evaluations(paper_id)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_agent_traces_job_id ON agent_traces(job_id)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_agent_traces_job_order ON agent_traces(job_id, step_order)")
   ]);
 }
 
@@ -670,6 +753,25 @@ async function getMissingColumns(db: D1Database): Promise<DiagnosticsColumnCheck
         "relevance_reason",
         "created_at"
       ]
+    },
+    {
+      table: "agent_traces",
+      columns: [
+        "id",
+        "job_id",
+        "step_order",
+        "step_id",
+        "agent_name",
+        "status",
+        "summary",
+        "detail",
+        "input_count",
+        "output_count",
+        "started_at",
+        "completed_at",
+        "error_message",
+        "created_at"
+      ]
     }
   ];
   const missing: DiagnosticsColumnCheck[] = [];
@@ -720,6 +822,38 @@ async function saveSearchFailure(db: D1Database, job: SearchJob, error: unknown)
        WHERE id = ?`
     )
     .bind("failed", job.currentStep, new Date().toISOString(), getErrorMessage(error), job.id)
+    .run();
+}
+
+async function recordAgentTrace(db: D1Database, job: SearchJob, trace: AgentTraceInput): Promise<void> {
+  const now = new Date().toISOString();
+  const startedAt = trace.startedAt ?? now;
+  const completedAt = trace.completedAt ?? (trace.status === "completed" || trace.status === "failed" || trace.status === "skipped" ? now : undefined);
+  const id = job.id + "-trace-" + String(trace.stepOrder).padStart(2, "0") + "-" + trace.stepId;
+  await db
+    .prepare(
+      `INSERT OR REPLACE INTO agent_traces (
+        id, job_id, step_order, step_id, agent_name, status, summary, detail,
+        input_count, output_count, started_at, completed_at, error_message, created_at
+       )
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+    )
+    .bind(
+      id,
+      job.id,
+      trace.stepOrder,
+      trace.stepId,
+      trace.agentName,
+      trace.status ?? "completed",
+      trace.summary,
+      trace.detail ?? null,
+      trace.inputCount ?? 0,
+      trace.outputCount ?? 0,
+      startedAt,
+      completedAt ?? null,
+      trace.errorMessage ?? null,
+      now
+    )
     .run();
 }
 
@@ -843,31 +977,51 @@ async function processSearchJob(
 ): Promise<void> {
   let job = initialJob;
   try {
+    await recordAgentTrace(db, job, {
+      stepOrder: 1,
+      stepId: "planner",
+      agentName: "Planner Agent",
+      summary: "Normalized research question and runtime constraints.",
+      detail: JSON.stringify({ keyword, maxResults: options.maxResults, yearStart: options.yearStart ?? null, yearEnd: options.yearEnd ?? null, journalCategoryId: options.journalCategoryId ?? null }),
+      outputCount: 1
+    });
+
     job = await updateSearchJobProgress(db, job, "searching", getSearchStepId(options.searchProvider));
     const candidates =
       options.searchProvider === "openalex"
         ? await searchOpenAlex(keyword, options)
         : await searchWebOfScience(keyword, options);
+    await recordAgentTrace(db, job, { stepOrder: 3, stepId: getSearchStepId(options.searchProvider), agentName: "Search/Retriever Agent", summary: "Retrieved " + candidates.length + " candidate papers from " + options.searchProvider + ".", inputCount: 1, outputCount: candidates.length });
 
     job = await updateSearchJobProgress(db, job, "scoring", "journal_filter");
     const allowedPapers = filterAllowedBusinessSchoolJournals(candidates, options.journalCategoryId).slice(0, options.maxResults);
+    await recordAgentTrace(db, job, { stepOrder: 2, stepId: "journal_selector", agentName: "Journal Selector Agent", summary: "Filtered candidates to " + allowedPapers.length + " approved business-school journal papers.", detail: JSON.stringify({ sourceCount: candidates.length, categoryId: options.journalCategoryId ?? "all" }), inputCount: candidates.length, outputCount: allowedPapers.length });
 
     job = await updateSearchJobProgress(db, job, "enriching_metadata", "crossref_enrichment");
     const crossrefEnriched = await enrichPapersWithCrossref(allowedPapers, options.crossrefEmail);
+    await recordAgentTrace(db, job, { stepOrder: 4, stepId: "crossref_enrichment", agentName: "Verifier Agent", summary: "Crossref verification completed for " + crossrefEnriched.length + " allowed papers.", detail: JSON.stringify({ verified: crossrefEnriched.filter((paper) => paper.verificationStatus === "verified").length, partial: crossrefEnriched.filter((paper) => paper.verificationStatus === "partial").length }), inputCount: allowedPapers.length, outputCount: crossrefEnriched.length });
 
     job = await updateSearchJobProgress(db, job, "checking_oa", "unpaywall_check");
     const unpaywallEnriched = await enrichPapersWithUnpaywall(crossrefEnriched, options.unpaywallEmail);
+    await recordAgentTrace(db, job, { stepOrder: 5, stepId: "unpaywall_check", agentName: "Open Access Agent", summary: "Unpaywall lookup completed; " + unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length + " OA PDF URLs found.", detail: JSON.stringify({ pdfUrls: unpaywallEnriched.filter((paper) => paper.oaPdfUrl).length, landingPages: unpaywallEnriched.filter((paper) => paper.oaLandingPageUrl).length }), inputCount: crossrefEnriched.length, outputCount: unpaywallEnriched.length });
+
+    await recordAgentTrace(db, job, { stepOrder: 6, stepId: "drive_r2_storage", agentName: "Storage Worker", status: options.reports ? "completed" : "skipped", summary: options.reports ? "R2 output bucket is available for report persistence." : "R2 output bucket is not bound for this run.", detail: "Google Drive upload remains planned and is not executed by this Worker yet." });
 
     job = await updateSearchJobProgress(db, job, "ranking", "ranking");
     const rankedPapers = rankPapers(unpaywallEnriched);
+    await recordAgentTrace(db, job, { stepOrder: 7, stepId: "journal_evaluation", agentName: "Evaluation Agent", summary: "Calculated journal fit, verification, OA, citation, recency, and relevance scores.", inputCount: unpaywallEnriched.length, outputCount: rankedPapers.length });
+    await recordAgentTrace(db, job, { stepOrder: 8, stepId: "vectorize_relevance", agentName: "Relevance Agent", status: "skipped", summary: "Vectorize embedding relevance is not connected yet; keyword and metadata scoring were used.", inputCount: rankedPapers.length, outputCount: rankedPapers.length });
+    await recordAgentTrace(db, job, { stepOrder: 9, stepId: "ranking", agentName: "Ranking Agent", summary: "Ranked " + rankedPapers.length + " papers by final score.", inputCount: unpaywallEnriched.length, outputCount: rankedPapers.length });
+    await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", status: "skipped", summary: "Critic Agent persistence is not implemented yet; review flags are planned." });
+
     const completedJob = completeSearchJob(job);
-    await saveSearchResult(db, completedJob, rankedPapers, {
-      sourceResultCount: candidates.length,
-      allowedResultCount: allowedPapers.length
-    });
+    await saveSearchResult(db, completedJob, rankedPapers, { sourceResultCount: candidates.length, allowedResultCount: allowedPapers.length });
     await persistSearchOutputs(options.reports, { job: completedJob, papers: rankedPapers });
+    await recordAgentTrace(db, completedJob, { stepOrder: 11, stepId: "report_generation", agentName: "Report Agent", summary: "Generated CSV and Markdown report outputs; XLSX/PDF remain planned.", inputCount: rankedPapers.length, outputCount: 2 });
+    await recordAgentTrace(db, completedJob, { stepOrder: 12, stepId: "delivery", agentName: "Dashboard", summary: "Search job completed and is available through dashboard, CSV, Markdown, and trace APIs.", outputCount: rankedPapers.length });
   } catch (error) {
     await saveSearchFailure(db, job, error);
+    await recordAgentTrace(db, job, { stepOrder: 12, stepId: "failure", agentName: "Worker Error Handler", status: "failed", summary: "Search job failed before completion.", errorMessage: getErrorMessage(error) });
   }
 }
 
@@ -1732,6 +1886,20 @@ async function getSearchResult(db: D1Database, jobId: string): Promise<{ job: Se
   };
 }
 
+async function listAgentTraces(db: D1Database, jobId: string): Promise<AgentTrace[]> {
+  const rows = await db
+    .prepare(
+      `SELECT id, job_id, step_order, step_id, agent_name, status, summary, detail,
+              input_count, output_count, started_at, completed_at, error_message
+       FROM agent_traces
+       WHERE job_id = ?
+       ORDER BY step_order ASC, started_at ASC`
+    )
+    .bind(jobId)
+    .all<AgentTraceRow>();
+  return rows.results.map(mapAgentTrace);
+}
+
 async function listSearchJobs(db: D1Database, limit: number): Promise<SearchJob[]> {
   const rows = await db
     .prepare(
@@ -1743,6 +1911,24 @@ async function listSearchJobs(db: D1Database, limit: number): Promise<SearchJob[
     .bind(limit)
     .all<SearchJobRow>();
   return rows.results.map(mapSearchJob);
+}
+
+function mapAgentTrace(row: AgentTraceRow): AgentTrace {
+  return {
+    id: row.id,
+    jobId: row.job_id,
+    stepOrder: row.step_order,
+    stepId: row.step_id,
+    agentName: row.agent_name,
+    status: row.status,
+    summary: row.summary,
+    detail: row.detail ?? undefined,
+    inputCount: row.input_count ?? undefined,
+    outputCount: row.output_count ?? undefined,
+    startedAt: row.started_at,
+    completedAt: row.completed_at ?? undefined,
+    errorMessage: row.error_message ?? undefined
+  };
 }
 
 function mapSearchJob(row: SearchJobRow): SearchJob {

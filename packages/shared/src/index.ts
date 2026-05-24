@@ -36,6 +36,24 @@ export type SearchJob = {
   allowedResultCount?: number;
 };
 
+export type AgentTraceStatus = "pending" | "running" | "completed" | "failed" | "skipped";
+
+export type AgentTrace = {
+  id: string;
+  jobId: string;
+  stepOrder: number;
+  stepId: string;
+  agentName: string;
+  status: AgentTraceStatus;
+  summary: string;
+  detail?: string;
+  inputCount?: number;
+  outputCount?: number;
+  startedAt: string;
+  completedAt?: string;
+  errorMessage?: string;
+};
+
 export type PaperSummary = {
   id: string;
   rank: number;
