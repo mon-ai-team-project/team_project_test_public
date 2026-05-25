@@ -32,6 +32,10 @@ function apiUrl(path: string): string {
 
 type TraceResponse = { job: SearchJob; traces: AgentTrace[] };
 type JobsResponse = { jobs: SearchJob[] };
+type CriticFlag = { id: string; paperRank: number; severity: "low" | "medium" | "high" | string; flagType: string; message: string; evidence: string };
+type JobOutput = { id: string; outputType: string; status: string; storage: string; urlPath: string; detail: string };
+type CriticFlagsResponse = { job: SearchJob; criticFlags: CriticFlag[] };
+type JobOutputsResponse = { job: SearchJob; outputs: JobOutput[] };
 type TraceDetail = Record<string, string | number | boolean | null>;
 type EnrichmentOverview = { limit: string; crossrefProcessed: string; crossrefSkipped: string; unpaywallProcessed: string; unpaywallSkipped: string };
 
@@ -181,12 +185,16 @@ export function AgentOpsPage() {
   const [activeJob, setActiveJob] = useState<SearchJob | null>(null);
   const [traces, setTraces] = useState<AgentTrace[]>([]);
   const [traceError, setTraceError] = useState("");
+  const [artifactError, setArtifactError] = useState("");
+  const [criticFlags, setCriticFlags] = useState<CriticFlag[]>([]);
+  const [outputs, setOutputs] = useState<JobOutput[]>([]);
   const [logs, setLogs] = useState(toolCallLogs);
   const completedTraceCount = traces.filter((trace) => trace.status === "completed" || trace.status === "skipped").length;
   const progress = traces.length ? Math.round((completedTraceCount / 12) * 100) : 0;
   const liveStages = traces.length ? mapTracesToWorkflowStages(traces) : literatureWorkflowStages;
   const liveAgentCards = traces.length ? mapTracesToAgentCards(traces) : agentStatuses;
   const enrichmentOverview = useMemo(() => summarizeEnrichmentTraces(traces), [traces]);
+  const criticSummary = useMemo(() => summarizeCriticFlags(criticFlags), [criticFlags]);
 
   useEffect(() => {
     void loadLatestJob();
@@ -222,10 +230,31 @@ export function AgentOpsPage() {
       setActiveJob(data.job);
       setTraces(data.traces);
       setLogs(data.traces.map((trace) => ({ level: getTraceLogLevel(trace.status), message: formatTraceConsoleMessage(trace) })));
+      await loadJobArtifacts(data.job.id);
       if (data.job.status === "completed" || data.job.status === "failed") setRunning(false);
     } catch (error) {
       setTraceError(error instanceof Error ? error.message : "Failed to load agent traces");
       setRunning(false);
+    }
+  }
+
+  async function loadJobArtifacts(jobId: string) {
+    setArtifactError("");
+    try {
+      const [flagsResponse, outputsResponse] = await Promise.all([
+        fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
+        fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
+      ]);
+      if (!flagsResponse.ok) throw new Error(await readDashboardError(flagsResponse, "Failed to load critic flags"));
+      if (!outputsResponse.ok) throw new Error(await readDashboardError(outputsResponse, "Failed to load output artifacts"));
+      const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
+      const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
+      setCriticFlags(flagsData.criticFlags);
+      setOutputs(outputsData.outputs);
+    } catch (error) {
+      setArtifactError(error instanceof Error ? error.message : "Failed to load job artifacts");
+      setCriticFlags([]);
+      setOutputs([]);
     }
   }
 
@@ -300,7 +329,9 @@ export function AgentOpsPage() {
         <MetricTile label="Warnings" value={String(traces.filter((trace) => trace.status === "skipped" || trace.status === "failed").length)} detail="skipped or failed" tone="amber" />
         <MetricTile label="Enrichment" value={enrichmentOverview.limit} detail={`Crossref ${enrichmentOverview.crossrefProcessed}/skip ${enrichmentOverview.crossrefSkipped} · Unpaywall ${enrichmentOverview.unpaywallProcessed}/skip ${enrichmentOverview.unpaywallSkipped}`} tone="blue" />
         <MetricTile label="Storage" value={traces.some((trace) => trace.stepId === "drive_r2_storage" && trace.status === "completed") ? "R2 Ready" : "Pending"} detail="Drive uploads OA PDFs when configured" tone="green" />
-        <MetricTile label="Vectorize" value={traces.some((trace) => trace.stepId === "vectorize_relevance" && trace.status === "skipped") ? "Skipped" : "Pending"} detail="embedding index pending" tone="blue" />
+        <MetricTile label="Critic Flags" value={String(criticFlags.length)} detail={`high ${criticSummary.high} · medium ${criticSummary.medium} · low ${criticSummary.low}`} tone={criticSummary.high ? "amber" : "green"} />
+        <MetricTile label="Outputs" value={String(outputs.length)} detail={outputs.length ? outputs.map((output) => output.outputType + ":" + output.status).join(" · ") : "no metadata"} tone="purple" />
+        <MetricTile label="Vectorize" value={traces.some((trace) => trace.stepId === "vectorize_relevance" && trace.status === "completed") ? "Fallback" : "Pending"} detail="metadata fallback; embeddings planned" tone="blue" />
       </section>
 
       <ImplementationStatusPanel
@@ -371,6 +402,10 @@ export function AgentOpsPage() {
             </div>
           </section>
 
+          <OutputArtifactsPanel outputs={outputs} errorMessage={artifactError} />
+
+          <LiveCriticFlagsPanel flags={criticFlags} errorMessage={artifactError} />
+
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
@@ -395,6 +430,68 @@ export function AgentOpsPage() {
       </section>
     </main>
   );
+}
+
+function OutputArtifactsPanel({ outputs, errorMessage }: { outputs: JobOutput[]; errorMessage: string }) {
+  return (
+    <section className="uxPanel">
+      <div className="uxPanelHead">
+        <div>
+          <h2>Output Artifacts</h2>
+          <p>CSV, Markdown, XLSX, PDF 산출물의 실제 저장 상태입니다.</p>
+        </div>
+        <FileText size={18} />
+      </div>
+      {errorMessage ? <p className="uxTinyError">{errorMessage}</p> : null}
+      <div className="uxArtifactList">
+        {outputs.length ? outputs.map((output) => (
+          <article key={output.id} className="uxArtifactItem">
+            <div>
+              <strong>{output.outputType.toUpperCase()}</strong>
+              <span>{output.storage} · {output.detail}</span>
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+            </div>
+            <span className={`uxPill ${output.status === "stored" || output.status === "generated" ? "green" : output.status === "failed" ? "amber" : "gray"}`}>{output.status}</span>
+          </article>
+        )) : <p className="uxEmptyNote">No output metadata loaded.</p>}
+      </div>
+    </section>
+  );
+}
+
+function LiveCriticFlagsPanel({ flags, errorMessage }: { flags: CriticFlag[]; errorMessage: string }) {
+  return (
+    <section className="uxPanel">
+      <div className="uxPanelHead">
+        <div>
+          <h2>Critic Review</h2>
+          <p>실제 D1 critic_flags에서 읽은 paper-level risk flag입니다.</p>
+        </div>
+        <ShieldCheck size={18} />
+      </div>
+      {errorMessage ? <p className="uxTinyError">{errorMessage}</p> : null}
+      <div className="uxArtifactList">
+        {flags.length ? flags.slice(0, 8).map((flag) => (
+          <article key={flag.id} className="uxArtifactItem">
+            <div>
+              <strong>#{flag.paperRank} · {flag.flagType}</strong>
+              <span>{flag.message}</span>
+              {flag.evidence ? <small>{flag.evidence}</small> : null}
+            </div>
+            <span className={`uxPill ${flag.severity === "high" ? "amber" : flag.severity === "medium" ? "blue" : "gray"}`}>{flag.severity}</span>
+          </article>
+        )) : <p className="uxEmptyNote">No critic flags loaded for this job.</p>}
+      </div>
+    </section>
+  );
+}
+
+function summarizeCriticFlags(flags: CriticFlag[]) {
+  return {
+    high: flags.filter((flag) => flag.severity === "high").length,
+    medium: flags.filter((flag) => flag.severity === "medium").length,
+    low: flags.filter((flag) => flag.severity === "low").length
+  };
 }
 
 function mapTracesToWorkflowStages(traces: AgentTrace[]) {

@@ -891,3 +891,12 @@ dd {
 .traceMeta { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
 .traceMeta span { background: #eef3f8; border: 1px solid var(--line); border-radius: 999px; color: #405469; font-size: 0.7rem; font-weight: 700; line-height: 1.2; padding: 3px 7px; }
 .errorMessage.compact { margin: 10px 0 0; }
+
+.artifactList { display: grid; gap: 8px; margin-top: 12px; }
+.artifactItem { align-items: flex-start; border-top: 1px solid var(--line); display: flex; gap: 12px; justify-content: space-between; padding: 10px 0; }
+.artifactItem div { display: grid; gap: 4px; min-width: 0; }
+.artifactItem strong { color: var(--text); font-size: 0.86rem; }
+.artifactItem span, .artifactItem small, .mutedText { color: var(--muted); font-size: 0.78rem; line-height: 1.35; }
+.artifactItem a { color: #1d5fd1; font-size: 0.78rem; font-weight: 700; text-decoration: none; }
+.inlineError { color: #b42318; font-size: 0.78rem; }
+.outputArtifactsPanel { min-width: 0; }

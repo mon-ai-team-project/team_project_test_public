@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-25 - Dashboard Artifact Visibility
+
+- Context: After `critic_flags` and `job_outputs` were verified through direct API calls, the dashboard still lacked visible panels for those artifacts. (codex)
+- Change: Connected the Research dashboard to paper-level critic flags and job output artifacts, and connected Ops to output metadata, critic severity summaries, and live critic flag rows. (codex)
+- Expected effect: Users can verify Critic and Report/Delivery stages from the UI without manually opening API URLs. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
 ## 2026-05-25 - Enrichment Trace Visibility
 
 ## 2026-05-25 - Full Workflow Skeleton Persistence

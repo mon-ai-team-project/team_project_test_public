@@ -22,9 +22,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-25 (codex)
 
+- Changed: Connected `critic_flags` and `job_outputs` APIs to dashboard UI panels for Paper Detail, Output Artifacts, Ops metrics, live Critic Review, and artifact download links. (codex)
 - Added: Implemented full workflow skeleton persistence with `critic_flags` and `job_outputs` D1 tables, Critic Agent rule-based flags, output metadata APIs, and completed fallback relevance trace status in `apps/worker/src/index.ts` and `apps/worker/schema.sql`. (codex)
-
-
 - Changed: Added dashboard trace metadata display for `enrichmentLimit`, processed counts, skipped counts, Crossref verification, Unpaywall OA, and Google Drive storage summaries in `apps/web/src/main.tsx` and `apps/web/src/dashboard/DashboardPages.tsx`. (codex)
 
 ## 2026-05-24 (codex)

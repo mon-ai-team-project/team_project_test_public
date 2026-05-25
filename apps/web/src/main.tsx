@@ -19,6 +19,34 @@ type TracesResponse = {
   traces: AgentTrace[];
 };
 
+type CriticFlag = {
+  id: string;
+  jobId: string;
+  paperId: string;
+  paperRank: number;
+  severity: "low" | "medium" | "high";
+  flagType: string;
+  message: string;
+  evidence: string;
+  createdAt: string;
+};
+
+type JobOutput = {
+  id: string;
+  jobId: string;
+  outputType: "csv" | "markdown" | "xlsx" | "pdf" | string;
+  status: "generated" | "stored" | "planned" | "failed" | string;
+  storage: "dynamic" | "r2" | "planned" | string;
+  objectKey: string;
+  urlPath: string;
+  contentType: string;
+  detail: string;
+  createdAt: string;
+};
+
+type CriticFlagsResponse = { job: SearchJob; criticFlags: CriticFlag[] };
+type JobOutputsResponse = { job: SearchJob; outputs: JobOutput[] };
+
 type PipelineStep = {
   id: string;
   label: string;
@@ -146,7 +174,12 @@ function ResearchDashboard() {
   const [agentTraces, setAgentTraces] = useState<AgentTrace[]>([]);
   const [agentTracesError, setAgentTracesError] = useState("");
   const [agentTracesLoading, setAgentTracesLoading] = useState(false);
+  const [criticFlags, setCriticFlags] = useState<CriticFlag[]>([]);
+  const [criticFlagsError, setCriticFlagsError] = useState("");
+  const [jobOutputs, setJobOutputs] = useState<JobOutput[]>([]);
+  const [jobOutputsError, setJobOutputsError] = useState("");
   const selected = useMemo(() => papers.find((paper) => paper.id === selectedId) ?? papers[0], [papers, selectedId]);
+  const selectedCriticFlags = useMemo(() => criticFlags.filter((flag) => flag.paperRank === selected?.rank), [criticFlags, selected?.rank]);
   const includedCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "include").length, [papers]);
   const reviewCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "review").length, [papers]);
 
@@ -178,7 +211,14 @@ function ResearchDashboard() {
   useEffect(() => {
     setAgentTraces([]);
     setAgentTracesError("");
-    if (job?.id) void refreshAgentTraces(job.id);
+    setCriticFlags([]);
+    setCriticFlagsError("");
+    setJobOutputs([]);
+    setJobOutputsError("");
+    if (job?.id) {
+      void refreshAgentTraces(job.id);
+      if (job.status === "completed") void refreshJobArtifacts(job.id);
+    }
   }, [job?.id, job?.status, job?.currentStep]);
 
   async function refreshJob() {
@@ -245,6 +285,28 @@ function ResearchDashboard() {
       setAgentTracesError(error instanceof Error ? error.message : "Failed to load agent traces");
     } finally {
       setAgentTracesLoading(false);
+    }
+  }
+
+  async function refreshJobArtifacts(jobId = job?.id) {
+    if (!jobId) return;
+    setCriticFlagsError("");
+    setJobOutputsError("");
+    try {
+      const [flagsResponse, outputsResponse] = await Promise.all([
+        fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
+        fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
+      ]);
+      if (!flagsResponse.ok) throw new Error(await readApiError(flagsResponse, "Failed to load critic flags"));
+      if (!outputsResponse.ok) throw new Error(await readApiError(outputsResponse, "Failed to load output artifacts"));
+      const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
+      const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
+      setCriticFlags(flagsData.criticFlags);
+      setJobOutputs(outputsData.outputs);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to load job artifacts";
+      setCriticFlagsError(message);
+      setJobOutputsError(message);
     }
   }
 
@@ -411,6 +473,7 @@ function ResearchDashboard() {
         <PipelineProgress job={job} loading={loading} />
         <DiagnosticsPanel diagnostics={diagnostics} errorMessage={diagnosticsError} onRefresh={refreshDiagnostics} />
         <AgentTracePanel traces={agentTraces} loading={agentTracesLoading} errorMessage={agentTracesError} onRefresh={() => refreshAgentTraces()} />
+        <OutputArtifactsPanel job={job} outputs={jobOutputs} errorMessage={jobOutputsError} onRefresh={() => refreshJobArtifacts()} />
       </section>
 
       {errorMessage ? <p className="errorMessage">{errorMessage}</p> : null}
@@ -497,7 +560,7 @@ function ResearchDashboard() {
         </section>
 
         <aside className="sideColumn">
-          <PaperDetailPanel selected={selected} />
+          <PaperDetailPanel selected={selected} criticFlags={selectedCriticFlags} errorMessage={criticFlagsError} />
           <RecentJobsPanel jobs={recentJobs} activeJobId={job?.id} loadingJobId={loadingJobId} errorMessage={recentJobsError} onLoad={loadSearchJob} onRefresh={refreshRecentJobs} />
         </aside>
       </section>
@@ -505,7 +568,7 @@ function ResearchDashboard() {
   );
 }
 
-function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
+function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: PaperSummary; criticFlags: CriticFlag[]; errorMessage: string }) {
   return (
     <section className="detailPanel">
       <div className="panelTitle">
@@ -562,11 +625,66 @@ function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
             </dd>
             <dt>License</dt>
             <dd>{[selected.oaLicense, selected.oaHostType, selected.oaRepository].filter(Boolean).join(" · ") || "Unknown"}</dd>
+            <dt>Critic Flags</dt>
+            <dd>
+              <CriticFlagsList flags={criticFlags} errorMessage={errorMessage} />
+            </dd>
           </dl>
         </>
       ) : (
         <p className="emptyState">No allowed journal result selected.</p>
       )}
+    </section>
+  );
+}
+
+function CriticFlagsList({ flags, errorMessage }: { flags: CriticFlag[]; errorMessage: string }) {
+  if (errorMessage) return <span className="inlineError">{errorMessage}</span>;
+  if (!flags.length) return <span className="mutedText">No critic flags for this paper.</span>;
+
+  return (
+    <div className="artifactList criticFlagList">
+      {flags.map((flag) => (
+        <article key={flag.id} className="artifactItem">
+          <div>
+            <strong>{flag.flagType}</strong>
+            <span>{flag.message}</span>
+            {flag.evidence ? <small>{flag.evidence}</small> : null}
+          </div>
+          <StatusBadge value={flag.severity} tone={getSeverityTone(flag.severity)} />
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function OutputArtifactsPanel({
+  job, outputs, errorMessage, onRefresh
+}: { job: SearchJob | null; outputs: JobOutput[]; errorMessage: string; onRefresh: () => void }) {
+  return (
+    <section className="diagnosticsPanel outputArtifactsPanel">
+      <div className="diagnosticsHeader">
+        <div>
+          <h2>Output Artifacts</h2>
+          <p>{outputs.length ? String(outputs.length) + " job outputs recorded" : job ? "No output metadata loaded" : "Run or load a job"}</p>
+        </div>
+        <button className="iconButton" onClick={onRefresh} disabled={!job} aria-label="Refresh output artifacts" title="Refresh output artifacts">
+          <RefreshCw size={18} />
+        </button>
+      </div>
+      {errorMessage ? <p className="errorMessage compact">{errorMessage}</p> : null}
+      <div className="artifactList">
+        {outputs.length ? outputs.map((output) => (
+          <article className="artifactItem" key={output.id}>
+            <div>
+              <strong>{output.outputType.toUpperCase()}</strong>
+              <span>{output.storage} · {output.detail}</span>
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+            </div>
+            <StatusBadge value={output.status} tone={getOutputTone(output.status)} />
+          </article>
+        )) : <p className="emptyState">Completed jobs record CSV, Markdown, planned XLSX, and planned PDF outputs.</p>}
+      </div>
     </section>
   );
 }
@@ -1030,6 +1148,18 @@ function getTraceTone(status: AgentTrace["status"]): BadgeTone {
   if (status === "failed") return "danger";
   if (status === "skipped") return "warn";
   return "neutral";
+}
+
+function getSeverityTone(severity: CriticFlag["severity"]): BadgeTone {
+  if (severity === "high") return "danger";
+  if (severity === "medium") return "warn";
+  return "neutral";
+}
+
+function getOutputTone(status: JobOutput["status"]): BadgeTone {
+  if (status === "stored" || status === "generated") return "ok";
+  if (status === "failed") return "danger";
+  return "warn";
 }
 function getIncludeTone(status: PaperSummary["includeStatus"]): BadgeTone {
   if (status === "include") return "ok";
