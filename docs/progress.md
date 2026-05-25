@@ -70,6 +70,16 @@ Updated: 2026-05-24 (codex dashboard mock clarity)
 
 ## codex - Enrichment Trace Visibility (2026-05-25)
 
+## codex - Full Workflow Skeleton Persistence (2026-05-25)
+
+- Added: D1 `critic_flags` table plus rule-based Critic Agent flag generation for missing DOI, incomplete Crossref verification, low relevance, non-include screening status, and missing access paths. (codex)
+- Added: D1 `job_outputs` table plus `GET /api/search-jobs/:id/outputs` so CSV, Markdown, planned XLSX, and planned PDF output states are queryable per job. (codex)
+- Added: `GET /api/search-jobs/:id/critic-flags` so dashboard/API consumers can inspect persisted paper-level critic risk flags. (codex)
+- Changed: Relevance Agent trace now records metadata-fallback completion instead of `skipped`; Vectorize embeddings remain explicitly planned. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `npm run build` passed in this session. (codex)
+
+
+
 - Changed: Main Agent Traces panel now displays compact metadata chips for `limit`, `input`, `processed`, `skipped`, Crossref verification counts, Unpaywall OA counts, and Google Drive upload/skip counts. (codex)
 - Changed: `/dashboard/ops` now includes an Enrichment metric tile and expands pipeline, agent board, and console summaries with the same processed/skipped trace metadata. (codex)
 - Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)

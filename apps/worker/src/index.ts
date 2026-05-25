@@ -121,6 +121,24 @@ type EvaluationScores = {
   recencyScore: number;
 };
 
+type CriticFlag = {
+  paperRank: number;
+  severity: "low" | "medium" | "high";
+  flagType: string;
+  message: string;
+  evidence: string;
+};
+
+type JobOutputRecord = {
+  outputType: "csv" | "markdown" | "xlsx" | "pdf";
+  status: "generated" | "stored" | "planned" | "failed";
+  storage: "dynamic" | "r2" | "planned";
+  key: string;
+  urlPath: string;
+  contentType: string;
+  detail: string;
+};
+
 type WosStarterResponse = {
   documents?: WosDocument[];
   hits?: WosDocument[];
@@ -395,6 +413,32 @@ export default {
       }
     }
 
+    const criticFlagsMatch = url.pathname.match(/^\/api\/search-jobs\/([^/]+)\/critic-flags$/);
+    if (criticFlagsMatch && request.method === "GET") {
+      try {
+        if (!env.DB) return json({ error: "D1 database binding is not configured" }, 503);
+        await ensureSchema(env.DB);
+        const result = await getSearchResult(env.DB, criticFlagsMatch[1]);
+        if (!result) return json({ error: "Search job not found" }, 404);
+        return json({ job: result.job, criticFlags: await listCriticFlags(env.DB, criticFlagsMatch[1]) });
+      } catch (error) {
+        return json({ error: getErrorMessage(error) }, 500);
+      }
+    }
+
+    const outputsMatch = url.pathname.match(/^\/api\/search-jobs\/([^/]+)\/outputs$/);
+    if (outputsMatch && request.method === "GET") {
+      try {
+        if (!env.DB) return json({ error: "D1 database binding is not configured" }, 503);
+        await ensureSchema(env.DB);
+        const result = await getSearchResult(env.DB, outputsMatch[1]);
+        if (!result) return json({ error: "Search job not found" }, 404);
+        return json({ job: result.job, outputs: await listJobOutputs(env.DB, outputsMatch[1]) });
+      } catch (error) {
+        return json({ error: getErrorMessage(error) }, 500);
+      }
+    }
+
     const csvMatch = url.pathname.match(/^\/api\/search-jobs\/([^/]+)\/papers\.csv$/);
     if (csvMatch && request.method === "GET") {
       try {
@@ -578,6 +622,40 @@ async function ensureSchema(db: D1Database): Promise<void> {
     .run();
   await db
     .prepare(
+      `CREATE TABLE IF NOT EXISTS critic_flags (
+        id TEXT PRIMARY KEY,
+        job_id TEXT NOT NULL,
+        paper_id TEXT NOT NULL,
+        paper_rank INTEGER NOT NULL,
+        severity TEXT NOT NULL,
+        flag_type TEXT NOT NULL,
+        message TEXT NOT NULL,
+        evidence TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE,
+        FOREIGN KEY (paper_id) REFERENCES papers(id) ON DELETE CASCADE
+      )`
+    )
+    .run();
+  await db
+    .prepare(
+      `CREATE TABLE IF NOT EXISTS job_outputs (
+        id TEXT PRIMARY KEY,
+        job_id TEXT NOT NULL,
+        output_type TEXT NOT NULL,
+        status TEXT NOT NULL,
+        storage TEXT NOT NULL,
+        object_key TEXT,
+        url_path TEXT,
+        content_type TEXT,
+        detail TEXT,
+        created_at TEXT NOT NULL,
+        FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE
+      )`
+    )
+    .run();
+  await db
+    .prepare(
       `CREATE TABLE IF NOT EXISTS agent_traces (
         id TEXT PRIMARY KEY,
         job_id TEXT NOT NULL,
@@ -655,6 +733,27 @@ async function ensureSchema(db: D1Database): Promise<void> {
   await ensureColumn(db, "evaluations", "relevance_reason", "TEXT DEFAULT ''");
   await ensureColumn(db, "evaluations", "created_at", "TEXT");
 
+  await ensureColumn(db, "critic_flags", "id", "TEXT");
+  await ensureColumn(db, "critic_flags", "job_id", "TEXT");
+  await ensureColumn(db, "critic_flags", "paper_id", "TEXT");
+  await ensureColumn(db, "critic_flags", "paper_rank", "INTEGER DEFAULT 0");
+  await ensureColumn(db, "critic_flags", "severity", "TEXT DEFAULT 'low'");
+  await ensureColumn(db, "critic_flags", "flag_type", "TEXT DEFAULT ''");
+  await ensureColumn(db, "critic_flags", "message", "TEXT DEFAULT ''");
+  await ensureColumn(db, "critic_flags", "evidence", "TEXT");
+  await ensureColumn(db, "critic_flags", "created_at", "TEXT");
+
+  await ensureColumn(db, "job_outputs", "id", "TEXT");
+  await ensureColumn(db, "job_outputs", "job_id", "TEXT");
+  await ensureColumn(db, "job_outputs", "output_type", "TEXT DEFAULT ''");
+  await ensureColumn(db, "job_outputs", "status", "TEXT DEFAULT 'planned'");
+  await ensureColumn(db, "job_outputs", "storage", "TEXT DEFAULT 'planned'");
+  await ensureColumn(db, "job_outputs", "object_key", "TEXT");
+  await ensureColumn(db, "job_outputs", "url_path", "TEXT");
+  await ensureColumn(db, "job_outputs", "content_type", "TEXT");
+  await ensureColumn(db, "job_outputs", "detail", "TEXT");
+  await ensureColumn(db, "job_outputs", "created_at", "TEXT");
+
   await ensureColumn(db, "agent_traces", "id", "TEXT");
   await ensureColumn(db, "agent_traces", "job_id", "TEXT");
   await ensureColumn(db, "agent_traces", "step_order", "INTEGER DEFAULT 0");
@@ -673,6 +772,9 @@ async function ensureSchema(db: D1Database): Promise<void> {
   await db.batch([
     db.prepare("CREATE INDEX IF NOT EXISTS idx_papers_job_id ON papers(job_id)"),
     db.prepare("CREATE INDEX IF NOT EXISTS idx_evaluations_paper_id ON evaluations(paper_id)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_critic_flags_job_id ON critic_flags(job_id)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_critic_flags_paper_id ON critic_flags(paper_id)"),
+    db.prepare("CREATE INDEX IF NOT EXISTS idx_job_outputs_job_id ON job_outputs(job_id)"),
     db.prepare("CREATE INDEX IF NOT EXISTS idx_agent_traces_job_id ON agent_traces(job_id)"),
     db.prepare("CREATE INDEX IF NOT EXISTS idx_agent_traces_job_order ON agent_traces(job_id, step_order)")
   ]);
@@ -785,6 +887,35 @@ async function getMissingColumns(db: D1Database): Promise<DiagnosticsColumnCheck
       ]
     },
     {
+      table: "critic_flags",
+      columns: [
+        "id",
+        "job_id",
+        "paper_id",
+        "paper_rank",
+        "severity",
+        "flag_type",
+        "message",
+        "evidence",
+        "created_at"
+      ]
+    },
+    {
+      table: "job_outputs",
+      columns: [
+        "id",
+        "job_id",
+        "output_type",
+        "status",
+        "storage",
+        "object_key",
+        "url_path",
+        "content_type",
+        "detail",
+        "created_at"
+      ]
+    },
+    {
       table: "agent_traces",
       columns: [
         "id",
@@ -886,6 +1017,77 @@ async function recordAgentTrace(db: D1Database, job: SearchJob, trace: AgentTrac
       now
     )
     .run();
+}
+
+function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
+  const flags: CriticFlag[] = [];
+  for (const paper of papers) {
+    if (!paper.doi) {
+      flags.push({ paperRank: paper.rank, severity: "high", flagType: "missing_doi", message: "DOI is missing, so bibliographic verification is incomplete.", evidence: paper.title });
+    }
+    if (paper.verificationStatus !== "verified") {
+      flags.push({ paperRank: paper.rank, severity: paper.verificationStatus === "partial" ? "medium" : "high", flagType: "crossref_verification", message: "Crossref did not fully verify this paper.", evidence: paper.verificationReason || "No Crossref verification reason recorded." });
+    }
+    if ((paper.relevanceScore ?? paper.abstractScore) < 0.45) {
+      flags.push({ paperRank: paper.rank, severity: "medium", flagType: "low_relevance", message: "The relevance score is low for the requested research question.", evidence: paper.relevanceReason });
+    }
+    if (paper.includeStatus !== "include") {
+      flags.push({ paperRank: paper.rank, severity: paper.includeStatus === "exclude" ? "high" : "medium", flagType: "screening_status", message: "The ranking stage did not mark this paper as a clean include.", evidence: paper.includeStatus + ": " + paper.relevanceReason });
+    }
+    if (!paper.oaPdfUrl && !paper.oaLandingPageUrl && !paper.driveWebUrl) {
+      flags.push({ paperRank: paper.rank, severity: "low", flagType: "access_path", message: "No direct OA PDF, OA landing page, or Drive archive is available.", evidence: paper.unpaywallReason || "No access path recorded." });
+    }
+  }
+  return flags;
+}
+
+function summarizeCriticFlags(flags: CriticFlag[]) {
+  return {
+    total: flags.length,
+    high: flags.filter((flag) => flag.severity === "high").length,
+    medium: flags.filter((flag) => flag.severity === "medium").length,
+    low: flags.filter((flag) => flag.severity === "low").length,
+    byType: flags.reduce<Record<string, number>>((counts, flag) => {
+      counts[flag.flagType] = (counts[flag.flagType] ?? 0) + 1;
+      return counts;
+    }, {})
+  };
+}
+
+async function persistCriticFlags(db: D1Database, jobId: string, flags: CriticFlag[]): Promise<void> {
+  if (!flags.length) return;
+  const now = new Date().toISOString();
+  await db.batch(flags.map((flag, index) => db
+    .prepare("INSERT INTO critic_flags (id, job_id, paper_id, paper_rank, severity, flag_type, message, evidence, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(
+      jobId + "-critic-" + String(index + 1).padStart(3, "0"),
+      jobId,
+      jobId + "-paper-" + flag.paperRank,
+      flag.paperRank,
+      flag.severity,
+      flag.flagType,
+      flag.message,
+      flag.evidence,
+      now
+    )));
+}
+
+async function persistJobOutputs(db: D1Database, jobId: string, outputs: JobOutputRecord[]): Promise<void> {
+  const now = new Date().toISOString();
+  await db.batch(outputs.map((output) => db
+    .prepare("INSERT INTO job_outputs (id, job_id, output_type, status, storage, object_key, url_path, content_type, detail, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
+    .bind(
+      jobId + "-output-" + output.outputType,
+      jobId,
+      output.outputType,
+      output.status,
+      output.storage,
+      output.key || null,
+      output.urlPath || null,
+      output.contentType,
+      output.detail,
+      now
+    )));
 }
 
 async function saveSearchResult(
@@ -1063,15 +1265,18 @@ async function processSearchJob(
     job = await updateSearchJobProgress(db, job, "ranking", "ranking");
     const rankedPapers = rankPapers(driveEnriched);
     await recordAgentTrace(db, job, { stepOrder: 7, stepId: "journal_evaluation", agentName: "Evaluation Agent", summary: "Calculated journal fit, verification, OA, citation, recency, and relevance scores.", inputCount: unpaywallEnriched.length, outputCount: rankedPapers.length });
-    await recordAgentTrace(db, job, { stepOrder: 8, stepId: "vectorize_relevance", agentName: "Relevance Agent", status: "skipped", summary: "Vectorize embedding relevance is not connected yet; keyword and metadata scoring were used.", inputCount: rankedPapers.length, outputCount: rankedPapers.length });
+    await recordAgentTrace(db, job, { stepOrder: 8, stepId: "vectorize_relevance", agentName: "Relevance Agent", summary: "Computed fallback relevance from keyword, title, abstract, journal, and metadata scores; Vectorize embeddings remain planned.", detail: JSON.stringify({ mode: "metadata_fallback", vectorizeConnected: false }), inputCount: rankedPapers.length, outputCount: rankedPapers.length });
     await recordAgentTrace(db, job, { stepOrder: 9, stepId: "ranking", agentName: "Ranking Agent", summary: "Ranked " + rankedPapers.length + " papers by final score.", inputCount: unpaywallEnriched.length, outputCount: rankedPapers.length });
-    await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", status: "skipped", summary: "Critic Agent persistence is not implemented yet; review flags are planned." });
+    const criticFlags = buildCriticFlags(rankedPapers);
+    await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags for review risk visibility.", detail: JSON.stringify(summarizeCriticFlags(criticFlags)), inputCount: rankedPapers.length, outputCount: criticFlags.length });
 
     const completedJob = completeSearchJob(job);
     await saveSearchResult(db, completedJob, rankedPapers, { sourceResultCount: candidates.length, allowedResultCount: allowedPapers.length });
-    await persistSearchOutputs(options.reports, { job: completedJob, papers: rankedPapers });
-    await recordAgentTrace(db, completedJob, { stepOrder: 11, stepId: "report_generation", agentName: "Report Agent", summary: "Generated CSV and Markdown report outputs; XLSX/PDF remain planned.", inputCount: rankedPapers.length, outputCount: 2 });
-    await recordAgentTrace(db, completedJob, { stepOrder: 12, stepId: "delivery", agentName: "Dashboard", summary: "Search job completed and is available through dashboard, CSV, Markdown, and trace APIs.", outputCount: rankedPapers.length });
+    await persistCriticFlags(db, completedJob.id, criticFlags);
+    const outputRecords = await persistSearchOutputs(options.reports, { job: completedJob, papers: rankedPapers });
+    await persistJobOutputs(db, completedJob.id, outputRecords);
+    await recordAgentTrace(db, completedJob, { stepOrder: 11, stepId: "report_generation", agentName: "Report Agent", summary: "Generated CSV and Markdown report outputs and recorded XLSX/PDF as planned outputs.", detail: JSON.stringify({ outputs: outputRecords.map((output) => ({ type: output.outputType, status: output.status, storage: output.storage })) }), inputCount: rankedPapers.length, outputCount: outputRecords.filter((output) => output.status === "generated" || output.status === "stored").length });
+    await recordAgentTrace(db, completedJob, { stepOrder: 12, stepId: "delivery", agentName: "Dashboard", summary: "Search job completed and is available through dashboard, CSV, Markdown, trace, critic flag, and output metadata APIs.", outputCount: rankedPapers.length });
   } catch (error) {
     await saveSearchFailure(db, job, error);
     await recordAgentTrace(db, job, { stepOrder: 12, stepId: "failure", agentName: "Worker Error Handler", status: "failed", summary: "Search job failed before completion.", errorMessage: getErrorMessage(error) });
@@ -2089,6 +2294,74 @@ async function getSearchResult(db: D1Database, jobId: string): Promise<{ job: Se
   };
 }
 
+async function listCriticFlags(db: D1Database, jobId: string) {
+  const rows = await db
+    .prepare(
+      "SELECT id, job_id, paper_id, paper_rank, severity, flag_type, message, evidence, created_at " +
+        "FROM critic_flags WHERE job_id = ? " +
+        "ORDER BY paper_rank ASC, severity DESC, flag_type ASC"
+    )
+    .bind(jobId)
+    .all<{
+      id: string;
+      job_id: string;
+      paper_id: string;
+      paper_rank: number;
+      severity: string;
+      flag_type: string;
+      message: string;
+      evidence: string | null;
+      created_at: string;
+    }>();
+
+  return rows.results.map((row) => ({
+    id: row.id,
+    jobId: row.job_id,
+    paperId: row.paper_id,
+    paperRank: row.paper_rank,
+    severity: row.severity,
+    flagType: row.flag_type,
+    message: row.message,
+    evidence: row.evidence ?? "",
+    createdAt: row.created_at
+  }));
+}
+
+async function listJobOutputs(db: D1Database, jobId: string) {
+  const rows = await db
+    .prepare(
+      "SELECT id, job_id, output_type, status, storage, object_key, url_path, content_type, detail, created_at " +
+        "FROM job_outputs WHERE job_id = ? " +
+        "ORDER BY CASE output_type WHEN 'csv' THEN 1 WHEN 'markdown' THEN 2 WHEN 'xlsx' THEN 3 WHEN 'pdf' THEN 4 ELSE 99 END"
+    )
+    .bind(jobId)
+    .all<{
+      id: string;
+      job_id: string;
+      output_type: string;
+      status: string;
+      storage: string;
+      object_key: string | null;
+      url_path: string | null;
+      content_type: string | null;
+      detail: string | null;
+      created_at: string;
+    }>();
+
+  return rows.results.map((row) => ({
+    id: row.id,
+    jobId: row.job_id,
+    outputType: row.output_type,
+    status: row.status,
+    storage: row.storage,
+    objectKey: row.object_key ?? "",
+    urlPath: row.url_path ?? "",
+    contentType: row.content_type ?? "",
+    detail: row.detail ?? "",
+    createdAt: row.created_at
+  }));
+}
+
 async function listAgentTraces(db: D1Database, jobId: string): Promise<AgentTrace[]> {
   const rows = await db
     .prepare(
@@ -2205,25 +2478,56 @@ function json(data: unknown, status = 200): Response {
 
 type SearchResult = { job: SearchJob; papers: PaperSummary[] };
 
-async function persistSearchOutputs(reports: R2Bucket | undefined, result: SearchResult): Promise<void> {
-  if (!reports) return;
+async function persistSearchOutputs(reports: R2Bucket | undefined, result: SearchResult): Promise<JobOutputRecord[]> {
+  const csvOutput: JobOutputRecord = {
+    outputType: "csv",
+    status: reports ? "stored" : "generated",
+    storage: reports ? "r2" : "dynamic",
+    key: getCsvOutputKey(result.job.id),
+    urlPath: "/api/search-jobs/" + result.job.id + "/papers.csv",
+    contentType: "text/csv; charset=utf-8",
+    detail: reports ? "CSV persisted to R2." : "CSV is generated dynamically from D1 when requested."
+  };
+  const markdownOutput: JobOutputRecord = {
+    outputType: "markdown",
+    status: reports ? "stored" : "generated",
+    storage: reports ? "r2" : "dynamic",
+    key: getMarkdownReportOutputKey(result.job.id),
+    urlPath: "/api/search-jobs/" + result.job.id + "/report.md",
+    contentType: "text/markdown; charset=utf-8",
+    detail: reports ? "Markdown report persisted to R2." : "Markdown report is generated dynamically from D1 when requested."
+  };
+  const plannedOutputs: JobOutputRecord[] = [
+    { outputType: "xlsx", status: "planned", storage: "planned", key: "", urlPath: "", contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", detail: "XLSX generation remains planned after full workflow skeleton completion." },
+    { outputType: "pdf", status: "planned", storage: "planned", key: "", urlPath: "", contentType: "application/pdf", detail: "PDF generation remains planned after full workflow skeleton completion." }
+  ];
+
+  if (!reports) return [csvOutput, markdownOutput, ...plannedOutputs];
+
   try {
     await Promise.all([
-      reports.put(getCsvOutputKey(result.job.id), getCsvBody(result), {
+      reports.put(csvOutput.key, getCsvBody(result), {
         httpMetadata: {
-          contentType: "text/csv; charset=utf-8",
+          contentType: csvOutput.contentType,
           contentDisposition: `attachment; filename="${getCsvFileName(result)}"`
         }
       }),
-      reports.put(getMarkdownReportOutputKey(result.job.id), getMarkdownReportBody(result), {
+      reports.put(markdownOutput.key, getMarkdownReportBody(result), {
         httpMetadata: {
-          contentType: "text/markdown; charset=utf-8",
+          contentType: markdownOutput.contentType,
           contentDisposition: `attachment; filename="${getMarkdownReportFileName(result)}"`
         }
       })
     ]);
+    return [csvOutput, markdownOutput, ...plannedOutputs];
   } catch (error) {
-    console.warn(`R2 output persistence failed for ${result.job.id}: ${getErrorMessage(error)}`);
+    const detail = "R2 output persistence failed: " + getErrorMessage(error);
+    console.warn("R2 output persistence failed for " + result.job.id + ": " + getErrorMessage(error));
+    return [
+      { ...csvOutput, status: "failed", detail },
+      { ...markdownOutput, status: "failed", detail },
+      ...plannedOutputs
+    ];
   }
 }
 

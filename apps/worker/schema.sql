@@ -63,6 +63,34 @@ CREATE TABLE IF NOT EXISTS evaluations (
   FOREIGN KEY (paper_id) REFERENCES papers(id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS critic_flags (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL,
+  paper_id TEXT NOT NULL,
+  paper_rank INTEGER NOT NULL,
+  severity TEXT NOT NULL,
+  flag_type TEXT NOT NULL,
+  message TEXT NOT NULL,
+  evidence TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE,
+  FOREIGN KEY (paper_id) REFERENCES papers(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS job_outputs (
+  id TEXT PRIMARY KEY,
+  job_id TEXT NOT NULL,
+  output_type TEXT NOT NULL,
+  status TEXT NOT NULL,
+  storage TEXT NOT NULL,
+  object_key TEXT,
+  url_path TEXT,
+  content_type TEXT,
+  detail TEXT,
+  created_at TEXT NOT NULL,
+  FOREIGN KEY (job_id) REFERENCES search_jobs(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS agent_traces (
   id TEXT PRIMARY KEY,
   job_id TEXT NOT NULL,
@@ -83,5 +111,8 @@ CREATE TABLE IF NOT EXISTS agent_traces (
 
 CREATE INDEX IF NOT EXISTS idx_papers_job_id ON papers(job_id);
 CREATE INDEX IF NOT EXISTS idx_evaluations_paper_id ON evaluations(paper_id);
+CREATE INDEX IF NOT EXISTS idx_critic_flags_job_id ON critic_flags(job_id);
+CREATE INDEX IF NOT EXISTS idx_critic_flags_paper_id ON critic_flags(paper_id);
+CREATE INDEX IF NOT EXISTS idx_job_outputs_job_id ON job_outputs(job_id);
 CREATE INDEX IF NOT EXISTS idx_agent_traces_job_id ON agent_traces(job_id);
 CREATE INDEX IF NOT EXISTS idx_agent_traces_job_order ON agent_traces(job_id, step_order);
