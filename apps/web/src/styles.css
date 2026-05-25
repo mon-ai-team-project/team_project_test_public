@@ -558,7 +558,7 @@ h1 {
   align-items: start;
   display: grid;
   gap: 18px;
-  grid-template-columns: minmax(0, 1fr) 390px;
+  grid-template-columns: minmax(760px, 1fr) minmax(320px, 370px);
 }
 
 .mainColumn,
@@ -594,12 +594,57 @@ h2 {
 
 .tableScroll {
   overflow-x: auto;
+  padding-bottom: 8px;
+  scrollbar-gutter: stable both-edges;
 }
 
 table {
   border-collapse: collapse;
   min-width: 980px;
   width: 100%;
+}
+
+.rankedPapersTable {
+  min-width: 1080px;
+  table-layout: fixed;
+}
+
+.rankedPapersTable .rankCol {
+  width: 72px;
+}
+
+.rankedPapersTable .titleCol {
+  width: 34%;
+}
+
+.rankedPapersTable .journalCol {
+  width: 18%;
+}
+
+.rankedPapersTable .fieldRankCol {
+  width: 128px;
+}
+
+.rankedPapersTable .yearCol {
+  width: 78px;
+}
+
+.rankedPapersTable .statusCol {
+  width: 112px;
+}
+
+.rankedPapersTable .oaCol {
+  width: 104px;
+}
+
+.rankedPapersTable .scoreCol {
+  width: 94px;
+}
+
+.rankedPapersTable th:last-child,
+.rankedPapersTable td:last-child {
+  padding-right: 22px;
+  text-align: right;
 }
 
 th,
@@ -667,7 +712,7 @@ tbody tr.selected {
 }
 
 .paperTitleCell {
-  min-width: 300px;
+  min-width: 0;
 }
 
 .paperTitleCell strong,
@@ -676,7 +721,11 @@ tbody tr.selected {
 }
 
 .paperTitleCell strong {
+  display: -webkit-box;
   line-height: 1.35;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .paperTitleCell small {
@@ -809,6 +858,16 @@ dd {
   }
 }
 
+@media (max-width: 1180px) {
+  .contentGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .sideColumn {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 900px) {
   .toolbar,
   .operationsGrid,
@@ -849,6 +908,10 @@ dd {
   .diagnosticsPanel,
   .sideColumn {
     margin-top: 18px;
+  }
+
+  .sideColumn {
+    grid-template-columns: 1fr;
   }
 }
 

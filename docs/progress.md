@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-24 (codex dashboard mock clarity)
+Updated: 2026-05-25 (codex blueprint and ranked table layout)
+
+## codex - Blueprint Refresh And Ranked Table Layout (2026-05-25)
+
+- Docs: Refreshed `docs/workflow.md` so the project blueprint matches the current implemented state: D1 `agent_traces`, `critic_flags`, `job_outputs`, R2 CSV/Markdown/XLSX/PDF, and conditional Google Drive OA PDF archive. (codex)
+- Fixed: Updated the Research dashboard Ranked Papers table with stable column sizing, title clamping, horizontal scroll padding, and earlier responsive stacking of the side panel so Score remains reachable on interactive screens. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -115,7 +121,7 @@ Updated: 2026-05-24 (codex dashboard mock clarity)
 - Added: Worker request payload accepts `enrichmentLimit`, defaulting to 10 and capped at 20, to limit Crossref and Unpaywall subrequests separately from `maxResults`. (codex)
 - Changed: Crossref and Unpaywall enrichment now process only the first `enrichmentLimit` rows and mark the remaining rows as skipped with explicit subrequest-limit reasons. (codex)
 - Changed: Main dashboard and Ops launch payloads send `enrichmentLimit` so production runs avoid the previous Worker subrequest overflow. (codex)
-- Verification: `npm run typecheck`, `npm run build:web`, and `git diff --check` passed in this session. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## codex - Google Drive OA PDF Archive (2026-05-24)
 

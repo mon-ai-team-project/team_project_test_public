@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-25 - Blueprint Refresh And Ranked Table Layout
+
+- Context: The workflow blueprint still described Drive upload, Critic Agent records, XLSX, PDF, and full report artifacts as planned or partial even though the current Worker/Dashboard implementation now exposes those paths. The Research dashboard Ranked Papers table also compressed the main column beside the detail panel, causing the right-side Status/OA/Score columns to be hidden in the interactive screen. (codex)
+- Change: Rewrote `docs/workflow.md` to separate implemented, partial, and planned workflow stages. Added fixed ranked-table column widths, title clamping, extra horizontal-scroll space, and a 1180px responsive breakpoint that stacks the side panel below the table before the score column is squeezed out. (codex)
+- Expected effect: Future agents can continue from the updated blueprint without treating completed artifacts as planned, and users can reach the Score column from the Research dashboard table without the right side being visually covered. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
 ## 2026-05-25 - PDF Report Output
 
 - Context: CSV, Markdown, and XLSX were implemented; PDF remained the last planned report artifact. (codex)
@@ -40,7 +47,7 @@
 - Context: The deployed job confirmed Google Drive wiring, but Crossref plus Unpaywall calls over 50 results hit Cloudflare Worker subrequest limits. (codex)
 - Change: Added `enrichmentLimit` to cap Crossref and Unpaywall processing, defaulting to 10 and recording skipped rows instead of attempting every allowed paper. (codex)
 - Expected effect: Search jobs should complete without Unpaywall-wide `Too many subrequests` failures; Drive upload can be tested when one of the enriched top rows has an OA PDF URL. (codex)
-- Verification: `npm run typecheck`, `npm run build:web`, and `git diff --check` passed in this session. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## 2026-05-24 - Google Drive OA PDF Archive
 

@@ -499,7 +499,17 @@ function ResearchDashboard() {
               </div>
             </div>
             <div className="tableScroll">
-              <table>
+              <table className="rankedPapersTable">
+                <colgroup>
+                  <col className="rankCol" />
+                  <col className="titleCol" />
+                  <col className="journalCol" />
+                  <col className="fieldRankCol" />
+                  <col className="yearCol" />
+                  <col className="statusCol" />
+                  <col className="oaCol" />
+                  <col className="scoreCol" />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>Rank</th>
