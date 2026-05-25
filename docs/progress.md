@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-25 (codex blueprint and ranked table layout)
+Updated: 2026-05-25 (codex responsive research panels)
+
+## codex - Responsive Research Panels (2026-05-25)
+
+- Fixed: Converted Ranked Papers to a labeled stacked-row layout below 720px so mobile users can read Rank, Title, Journal, Status, OA, and Score without horizontal-scroll dependence. (codex)
+- Fixed: Adjusted Report Preview width, wrapping, panel actions, and viewport-relative height so Markdown output scales on mobile screens. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## codex - Research Table Detail Panel Separation (2026-05-25)
 

@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-25 - Responsive Research Panels
+
+- Context: After separating Paper Detail from Ranked Papers, mobile users still had to drag a horizontal scrollbar to inspect the table and Report Preview was not optimized for narrow screens. (codex)
+- Change: Added cell labels and mobile CSS that renders Ranked Papers as stacked cards under 720px. Report Preview now has stronger wrapping, responsive height, and stacked header actions on small screens. (codex)
+- Expected effect: Mobile review should be primarily vertical scrolling, with Score and report text visible without horizontal table navigation. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
 ## 2026-05-25 - Research Table Detail Panel Separation
 
 - Context: The first Ranked Papers sizing fix improved the table columns, but Paper Detail still shared the same desktop grid row and could continue to cover or squeeze the Score column. (codex)

@@ -444,8 +444,10 @@ h1 {
 .reportPreviewHeader {
   align-items: center;
   display: flex;
+  gap: 12px;
   justify-content: space-between;
   margin-bottom: 12px;
+  min-width: 0;
 }
 
 .recentJobsList {
@@ -507,6 +509,7 @@ h1 {
   background: #ffffff;
   border: 1px solid #d9e0e7;
   border-radius: 8px;
+  min-width: 0;
   padding: 16px;
 }
 
@@ -529,7 +532,8 @@ h1 {
   background: #fbfcfd;
   border: 1px solid #e8edf2;
   border-radius: 8px;
-  max-height: 460px;
+  max-height: min(460px, 58vh);
+  min-width: 0;
   overflow: auto;
 }
 
@@ -539,6 +543,8 @@ h1 {
   font-size: 13px;
   line-height: 1.55;
   margin: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
   padding: 16px;
   white-space: pre-wrap;
   word-break: break-word;
@@ -906,6 +912,113 @@ dd {
 
   .sideColumn {
     grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 720px) {
+  .panelTitle,
+  .reportPreviewHeader {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .panelActions {
+    align-self: stretch;
+    justify-content: flex-end;
+  }
+
+  .tableScroll {
+    overflow-x: visible;
+    padding: 0;
+  }
+
+  .rankedPapersTable {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    min-width: 0;
+  }
+
+  .rankedPapersTable colgroup,
+  .rankedPapersTable thead {
+    display: none;
+  }
+
+  .rankedPapersTable tbody,
+  .rankedPapersTable tr,
+  .rankedPapersTable td {
+    display: block;
+    width: 100%;
+  }
+
+  .rankedPapersTable tr {
+    background: #ffffff;
+    border: 1px solid #e1e8ef;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .rankedPapersTable tr:hover,
+  .rankedPapersTable tr.selected {
+    background: #eef5ff;
+  }
+
+  .rankedPapersTable td {
+    align-items: flex-start;
+    border-bottom: 0;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 86px minmax(0, 1fr);
+    padding: 7px 0;
+  }
+
+  .rankedPapersTable td::before {
+    color: #607080;
+    content: attr(data-label);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .rankedPapersTable .emptyCell {
+    display: block;
+    text-align: center;
+  }
+
+  .rankedPapersTable .emptyCell::before {
+    content: none;
+  }
+
+  .rankedPapersTable .paperTitleCell {
+    grid-template-columns: 1fr;
+  }
+
+  .rankedPapersTable .paperTitleCell::before {
+    margin-bottom: -4px;
+  }
+
+  .rankedPapersTable th:last-child,
+  .rankedPapersTable td:last-child {
+    padding-right: 0;
+    text-align: left;
+  }
+
+  .paperTitleCell small {
+    max-width: none;
+    white-space: normal;
+  }
+
+  .reportPreviewPanel {
+    padding: 12px;
+  }
+
+  .reportPreviewBody {
+    max-height: 55vh;
+  }
+
+  .reportPreviewBody pre {
+    font-size: 12px;
+    line-height: 1.5;
+    padding: 12px;
   }
 }
 

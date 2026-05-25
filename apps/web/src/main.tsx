@@ -526,23 +526,23 @@ function ResearchDashboard() {
                   {papers.length ? (
                     papers.map((paper) => (
                       <tr key={paper.id} className={paper.id === selected?.id ? "selected" : ""} onClick={() => setSelectedId(paper.id)}>
-                        <td>
+                        <td data-label="Rank">
                           <span className="rankPill">{paper.rank}</span>
                         </td>
-                        <td className="paperTitleCell">
+                        <td className="paperTitleCell" data-label="Title">
                           <strong>{paper.title}</strong>
                           <small>{paper.authors}</small>
                         </td>
-                        <td>{paper.journalName}</td>
-                        <td>
+                        <td data-label="Journal">{paper.journalName}</td>
+                        <td data-label="Field / Rank">
                           <JournalRankBadge paper={paper} />
                         </td>
-                        <td>{paper.year || "-"}</td>
-                        <td>
+                        <td data-label="Year">{paper.year || "-"}</td>
+                        <td data-label="Status">
                           <StatusBadge value={paper.includeStatus} tone={getIncludeTone(paper.includeStatus)} />
                         </td>
-                        <td>{paper.oaPdfUrl ? "PDF" : paper.oaLandingPageUrl ? "Page" : paper.oaStatus}</td>
-                        <td>
+                        <td data-label="OA">{paper.oaPdfUrl ? "PDF" : paper.oaLandingPageUrl ? "Page" : paper.oaStatus}</td>
+                        <td data-label="Score">
                           <span className="scorePill">{paper.finalScore.toFixed(2)}</span>
                         </td>
                       </tr>
