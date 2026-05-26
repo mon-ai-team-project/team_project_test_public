@@ -18,13 +18,18 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+- No unreleased changes.
+
+## 2026-05-26 (gemini)
+
+- Added: Integrated LLM-backed Critic Agent using Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for qualitative evaluation of abstracts. (gemini)
 - Added: Integrated Cloudflare Vectorize and Workers AI for semantic relevance scoring. (gemini)
 - Added: Created `apps/worker/src/vectorize.ts` for abstract embedding generation and semantic similarity search. (gemini)
-- Changed: Updated `scoring.ts` to combine semantic similarity scores (60% weight) with keyword overlap scores (40% weight). (gemini)
-- Changed: Modularized `apps/worker/src/index.ts` into specialized modules (`types.ts`, `utils.ts`, `scoring.ts`, `providers.ts`, `enrichment.ts`, `persistence.ts`) to improve maintainability and code clarity. (gemini)
-- Docs: Updated `CHANGELOG.md`, `docs/progress.md`, and `docs/debug-log.md` with refactoring and Vectorize integration details. (gemini)
-
-- No unreleased changes.
+- Added: Created `apps/worker/src/critic.ts` to centralize rule-based and LLM-backed qualitative analysis. (gemini)
+- Changed: Updated ranking formula to combine semantic similarity scores (60% weight) with keyword overlap scores (40% weight). (gemini)
+- Changed: Modularized `apps/worker/src/index.ts` into specialized modules (`types.ts`, `utils.ts`, `scoring.ts`, `providers.ts`, `enrichment.ts`, `persistence.ts`, `critic.ts`) to improve maintainability and code clarity. (gemini)
+- Docs: Updated `GEMINI.md` with strict file management and historical preservation rules. (gemini)
+- Docs: Updated project progress and debug logs with refactoring, Vectorize, and LLM Critic integration details. (gemini)
 
 ## 2026-05-26 (codex)
 

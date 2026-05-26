@@ -223,29 +223,6 @@ function isCloseJournalNameMatch(sourceName: string): boolean {
   return normalized.endsWith("s") && isBusinessSchoolJournal(normalized.slice(0, -1));
 }
 
-export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
-  const flags: CriticFlag[] = [];
-  for (const paper of papers) {
-    if (!paper.doi) {
-      flags.push({ paperRank: paper.rank, severity: "high", flagType: "missing_doi", message: "DOI is missing, so bibliographic verification is incomplete.", evidence: paper.title });
-    }
-    if (paper.verificationStatus !== "verified") {
-      flags.push({ paperRank: paper.rank, severity: paper.verificationStatus === "partial" ? "medium" : "high", flagType: "crossref_verification", message: "Crossref did not fully verify this paper.", evidence: paper.verificationReason || "No Crossref verification reason recorded." });
-    }
-    const score = paper.relevanceScore ?? paper.abstractScore ?? 0;
-    if (score < 0.45) {
-      flags.push({ paperRank: paper.rank, severity: "medium", flagType: "low_relevance", message: "The relevance score is low for the requested research question.", evidence: paper.relevanceReason });
-    }
-    if (paper.includeStatus !== "include") {
-      flags.push({ paperRank: paper.rank, severity: paper.includeStatus === "exclude" ? "high" : "medium", flagType: "screening_status", message: "The ranking stage did not mark this paper as a clean include.", evidence: paper.includeStatus + ": " + paper.relevanceReason });
-    }
-    if (!paper.oaPdfUrl && !paper.oaLandingPageUrl && !paper.driveWebUrl) {
-      flags.push({ paperRank: paper.rank, severity: "low", flagType: "access_path", message: "No direct OA PDF, OA landing page, or Drive archive is available.", evidence: paper.unpaywallReason || "No access path recorded." });
-    }
-  }
-  return flags;
-}
-
 export function roundScore(score: number): number {
   return Math.round(score * 1000) / 1000;
 }

@@ -1,5 +1,18 @@
 # Debug Log
 
+## 2026-05-26 - LLM-backed Critic Agent Integration
+
+- Context: Rule-based flags were insufficient for qualitative research fit and methodological evaluation. The goal was to use Workers AI to provide deep qualitative reasoning. (gemini)
+- Change: 
+    - Created `apps/worker/src/critic.ts` and moved `buildCriticFlags` from `scoring.ts`.
+    - Implemented `runLlmCritic` using `@cf/meta/llama-3-8b-instruct`.
+    - Implemented chunked parallel AI processing (3 papers at a time) to prevent Worker timeouts.
+    - Updated `index.ts` workflow to augment rule-based flags with LLM qualitative analysis. (gemini)
+- Expected effect: Papers will now have detailed, context-aware critiques regarding their methodology and contribution, visible in the dashboard detail panel. (gemini)
+- Verification: 
+    - `npm run typecheck` passed for all modules.
+    - Verified JSON-schema enforcement in LLM prompt for structured output. (gemini)
+
 ## 2026-05-26 - Vectorize Semantic Relevance Integration
 
 - Context: The project required a more robust way to measure paper relevance than simple keyword overlap. The goal was to use Cloudflare Vectorize to implement semantic similarity search. (gemini)

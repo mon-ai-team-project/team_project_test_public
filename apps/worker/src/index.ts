@@ -40,10 +40,14 @@ import {
 } from "./utils";
 
 import {
-  buildCriticFlags,
   filterAllowedBusinessSchoolJournals,
   rankPapers
 } from "./scoring";
+
+import {
+  buildCriticFlags,
+  runLlmCritic
+} from "./critic";
 
 import {
   searchOpenAlex,
@@ -519,8 +523,26 @@ async function processSearchJob(
     await recordAgentTrace(db, job, { stepOrder: 7, stepId: "journal_evaluation", agentName: "Evaluation Agent", summary: "Calculated journal fit, verification, OA, citation, recency, and relevance scores.", inputCount: driveEnriched.length, outputCount: rankedPapers.length });
     await recordAgentTrace(db, job, { stepOrder: 9, stepId: "ranking", agentName: "Ranking Agent", summary: "Ranked " + rankedPapers.length + " papers by final score.", inputCount: driveEnriched.length, outputCount: rankedPapers.length });
     
-    const criticFlags = buildCriticFlags(rankedPapers);
-    await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags for review risk visibility.", detail: JSON.stringify({}), inputCount: rankedPapers.length, outputCount: criticFlags.length });
+    let criticFlags = buildCriticFlags(rankedPapers);
+    if (options.ai) {
+      try {
+        criticFlags = await runLlmCritic(options.ai, keyword, rankedPapers, criticFlags);
+        await recordAgentTrace(db, job, { 
+          stepOrder: 10, 
+          stepId: "critic_review", 
+          agentName: "Critic Agent", 
+          summary: "Generated " + criticFlags.length + " critic flags (including LLM qualitative analysis).", 
+          detail: JSON.stringify({ ruleBasedCount: buildCriticFlags(rankedPapers).length, llmCount: criticFlags.filter(f => f.flagType === 'llm_critique').length }), 
+          inputCount: rankedPapers.length, 
+          outputCount: criticFlags.length 
+        });
+      } catch (error) {
+        console.error("LLM Critic Agent error:", error);
+        await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags; LLM analysis failed.", detail: JSON.stringify({ error: getErrorMessage(error) }), inputCount: rankedPapers.length, outputCount: criticFlags.length });
+      }
+    } else {
+      await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags; LLM analysis skipped (AI not bound).", detail: JSON.stringify({}), inputCount: rankedPapers.length, outputCount: criticFlags.length });
+    }
 
     const completedJob = completeSearchJob(job);
     await saveSearchResult(db, completedJob, rankedPapers, { sourceResultCount: candidates.length, allowedResultCount: allowedPapers.length });
