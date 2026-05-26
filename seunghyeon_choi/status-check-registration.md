@@ -1,0 +1,1 @@
+- Test: Triggered Agent rules status check after workflow merge. (codex)
