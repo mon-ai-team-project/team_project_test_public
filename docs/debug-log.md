@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-26 - Gemini Handoff And Worker Report Module Split
+
+- Context: The user wants Gemini to take over due to token usage, while Codex remains available for later review. The in-progress Worker report/export extraction needed to be left in a stable, documented state before pushing to the personal repository. (codex)
+- Change: Added `apps/worker/src/reports.ts`, updated `apps/worker/src/index.ts` to import report helpers, and created `docs/gemini-handoff-blueprint.md` for the next agent. (codex)
+- Expected effect: Gemini can continue from repository files rather than chat memory, with report/export code isolated from Worker routing and orchestration. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
 ## 2026-05-25 - Staging Separation Scripts
 
 - Context: Staging resource guidance and Worker/MCP staging example configs existed, but routine commands for deploying/checking staging and Pages staging examples were incomplete. (codex)

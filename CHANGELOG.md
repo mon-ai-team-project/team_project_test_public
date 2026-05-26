@@ -20,6 +20,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-26 (codex)
+
+- Changed: Split Worker report/export generation into `apps/worker/src/reports.ts` while keeping Worker routing and search orchestration in `apps/worker/src/index.ts`. (codex)
+- Docs: Added `docs/gemini-handoff-blueprint.md` so Gemini can continue from the current architecture, repository policy, verification baseline, and deferred-task list. (codex)
+
 ## 2026-05-25 (codex)
 
 - Docs: Added `docs/human-ai-work-split.md` to separate human-only Cloudflare/GitHub/secret decisions from AI-agent-safe repo, staging, verification, and handoff work. (codex)

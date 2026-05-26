@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-25 (codex human-ai work split)
+Updated: 2026-05-26 (codex gemini handoff)
+
+## codex - Gemini Handoff And Worker Report Module Split (2026-05-26)
+
+- Changed: Moved Worker CSV, Markdown, XLSX, PDF, R2 output persistence, output filename/key helpers, and report-specific critic summary helpers from `apps/worker/src/index.ts` to `apps/worker/src/reports.ts`. (codex)
+- Docs: Added `docs/gemini-handoff-blueprint.md` with the current architecture, personal-repo-first policy, deferred tasks, next recommended work, and verification baseline for Gemini. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## codex - Human AI Work Split Document (2026-05-25)
 
