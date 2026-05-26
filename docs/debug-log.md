@@ -1,28 +1,56 @@
 # Debug Log
 
+<<<<<<< HEAD
 ## 2026-05-26 - LLM-backed Critic Agent Integration
 
 - Context: Rule-based flags were insufficient for qualitative research fit and methodological evaluation. The goal was to use Workers AI to provide deep qualitative reasoning. (gemini)
 - Change: 
+=======
+## 2026-05-26 - Gemini Review Corrections
+
+- Context: Gemini's local work added useful Worker modularization plus AI/Vectorize code paths, but also added production Wrangler bindings before the corresponding Cloudflare resources were confirmed and included local reference artifacts in the local branch history. (codex)
+- Change: Prepared a clean personal-repo update from `origin/main` with only source/docs/config changes, removed unverified AI/Vectorize bindings from tracked configs, and added ignore rules for local reference inputs. (codex)
+- Expected effect: The next deployment should not fail due to missing Vectorize/AI resources, while the optional code paths remain ready for deliberate activation later. (codex)
+- Change: Added Gemini memory continuity rules and `docs/gemini-session-state.md` so future Gemini sessions must restore context from repository files before acting. (codex)
+- Change: LLM Critic severity values are now sanitized to `low`, `medium`, or `high` before persistence. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## 2026-05-26 - LLM-backed Critic Agent Integration
+
+- Context: Rule-based flags were insufficient for qualitative research fit and methodological evaluation. The goal was to use Workers AI to provide deep qualitative reasoning. (gemini)
+- Change:
+>>>>>>> origin/main
     - Created `apps/worker/src/critic.ts` and moved `buildCriticFlags` from `scoring.ts`.
     - Implemented `runLlmCritic` using `@cf/meta/llama-3-8b-instruct`.
     - Implemented chunked parallel AI processing (3 papers at a time) to prevent Worker timeouts.
     - Updated `index.ts` workflow to augment rule-based flags with LLM qualitative analysis. (gemini)
 - Expected effect: Papers will now have detailed, context-aware critiques regarding their methodology and contribution, visible in the dashboard detail panel. (gemini)
+<<<<<<< HEAD
 - Verification: 
+=======
+- Verification:
+>>>>>>> origin/main
     - `npm run typecheck` passed for all modules.
     - Verified JSON-schema enforcement in LLM prompt for structured output. (gemini)
 
 ## 2026-05-26 - Vectorize Semantic Relevance Integration
 
 - Context: The project required a more robust way to measure paper relevance than simple keyword overlap. The goal was to use Cloudflare Vectorize to implement semantic similarity search. (gemini)
+<<<<<<< HEAD
 - Change: 
+=======
+- Change:
+>>>>>>> origin/main
     - Updated `wrangler.toml` with `AI` and `VECTOR_INDEX` bindings.
     - Created `apps/worker/src/vectorize.ts` for handling embeddings and vector queries.
     - Integrated logic into `index.ts` to upsert vectors during search processing and fetch semantic scores.
     - Modified `scoring.ts` to use a hybrid relevance formula (40% keyword, 60% semantic). (gemini)
 - Expected effect: Papers that are semantically related to the research question but use different terminology will now be correctly identified and ranked higher. (gemini)
+<<<<<<< HEAD
 - Verification: 
+=======
+- Verification:
+>>>>>>> origin/main
     - `npm run typecheck` passed for all modules.
     - Verified `VectorizeVector` metadata structure against Cloudflare documentation. (gemini)
 
@@ -31,7 +59,11 @@
 - Context: The `index.ts` file in `apps/worker` had grown into a 100KB monolith, making it difficult to maintain and integrate new features. The goal was to separate concerns into specialized modules as recommended in the Gemini Handoff Blueprint. (gemini)
 - Change: Extracted core logic into `types.ts`, `utils.ts`, `scoring.ts`, `providers.ts`, `enrichment.ts`, and `persistence.ts`. Refactored `index.ts` to be a slim orchestrator importing these modules. (gemini)
 - Expected effect: Improved code readability, easier unit testing of individual components, and reduced merge conflict risk during team collaboration. (gemini)
+<<<<<<< HEAD
 - Verification: 
+=======
+- Verification:
+>>>>>>> origin/main
     - Initial `npm run typecheck` after refactoring failed with 11 errors due to missing helper functions (`getDiagnostics`, `processSearchJob`, etc.) and a typo in `persistJobOutputs`. (gemini)
     - Fix: Restored orchestration logic and missing imports in `index.ts`, and fixed typo in `persistence.ts`. (gemini)
     - Final `npm run typecheck --workspace=apps/worker` passed successfully. (gemini)

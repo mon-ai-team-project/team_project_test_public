@@ -23,10 +23,21 @@ docs/progress.md
 docs/workflow.md
 docs/human-ai-work-split.md
 docs/debug-log.md
+docs/gemini-review-feedback.md
+docs/gemini-session-state.md
 CHANGELOG.md
 ```
 
 Do not work from a previous chat transcript. Repository files are the source of truth.
+
+
+## Gemini Memory Limitation
+
+Gemini must assume previous-session memory is unreliable. Use repository files as durable memory:
+
+- Start by reading `GEMINI.md`, `docs/gemini-handoff-blueprint.md`, and `docs/gemini-session-state.md`.
+- End by updating `docs/gemini-session-state.md` with the exact current task status, changed files, verification, blockers, and next action.
+- Treat chat history as secondary context only after the repo files have been checked.
 
 ## Current Branch And Repository Policy
 
@@ -89,4 +100,8 @@ For Worker endpoint smoke after deployment, use the existing scripts documented 
 
 - Refactoring of `apps/worker/src/index.ts` into specialized modules is complete. (gemini)
 - Stability verified with `npm run typecheck`. (gemini)
+<<<<<<< HEAD
 - Next session can proceed with feature enhancements or benchmark integration. (gemini)
+=======
+- Next session can proceed with feature enhancements or benchmark integration. (gemini)
+>>>>>>> origin/main

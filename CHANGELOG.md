@@ -33,6 +33,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-26 (codex)
 
+- Docs: Added `docs/gemini-session-state.md` and Gemini memory-continuity rules so Gemini can resume from repository state instead of unreliable session memory. (codex)
+- Fixed: Sanitized LLM Critic severity values before adding AI-generated critic flags. (codex)
+- Fixed: Reviewed Gemini Worker modularization, removed unverified Cloudflare AI/Vectorize deployment bindings from tracked Wrangler configs, and added `.gitignore` safeguards for local reference artifacts. (codex)
+- Docs: Added `docs/gemini-review-feedback.md` with accepted work, corrections, and future Gemini guidance. (codex)
 - Changed: Split Worker report/export generation into `apps/worker/src/reports.ts` while keeping Worker routing and search orchestration in `apps/worker/src/index.ts`. (codex)
 - Docs: Added `docs/gemini-handoff-blueprint.md` so Gemini can continue from the current architecture, repository policy, verification baseline, and deferred-task list. (codex)
 

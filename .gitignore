@@ -15,3 +15,9 @@ apps/worker/wrangler.staging.toml
 apps/mcp/wrangler.staging.toml
 !.env.staging.example
 !apps/web/.env.staging.example
+.worktrees/
+01_interactive_*.html
+02_interactive_*.html
+03_interactive_*.html
+AI_Agent_프로젝트_전체_통합본.pdf
+경영대학 학술지 목록.docx

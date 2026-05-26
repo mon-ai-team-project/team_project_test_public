@@ -2,6 +2,16 @@
 
 Updated: 2026-05-26 (gemini critic & vectorize)
 
+<<<<<<< HEAD
+=======
+## codex - Gemini Work Review And Push Prep (2026-05-26)
+
+- Reviewed: Gemini's Worker modularization, optional LLM Critic path, optional Vectorize relevance path, and repository-rule updates were inspected before personal-repo push. (codex)
+- Fixed: Removed `AI` and `VECTOR_INDEX` bindings from tracked Wrangler configs because those Cloudflare resources are human-gated and were not confirmed for this deployment. The source code remains optional and falls back when bindings are absent. (codex)
+- Docs: Added `docs/gemini-review-feedback.md`, `docs/gemini-session-state.md`, and Gemini memory continuity rules so future Gemini sessions can resume from durable repo state. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+>>>>>>> origin/main
 ## gemini - LLM Critic Agent Integration (2026-05-26)
 
 - Added: Integrated LLM-backed Critic Agent using Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for qualitative evaluation of abstracts. (gemini)

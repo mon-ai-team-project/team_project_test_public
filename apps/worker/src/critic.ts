@@ -55,6 +55,7 @@ Return ONLY a JSON object with the following structure:
           const resultStr = typeof response === "string" ? response : (response.response || JSON.stringify(response));
           const critique = JSON.parse(resultStr);
 
+<<<<<<< HEAD
           if (critique.severity && critique.message) {
             flags.push({
               paperRank: paper.rank,
@@ -62,6 +63,16 @@ Return ONLY a JSON object with the following structure:
               flagType: "llm_critique",
               message: critique.message,
               evidence: critique.evidence || "LLM qualitative analysis."
+=======
+          const severity = normalizeCriticSeverity(critique.severity);
+          if (severity && critique.message) {
+            flags.push({
+              paperRank: paper.rank,
+              severity,
+              flagType: "llm_critique",
+              message: String(critique.message),
+              evidence: critique.evidence ? String(critique.evidence) : "LLM qualitative analysis."
+>>>>>>> origin/main
             });
           }
         } catch (error) {
@@ -130,3 +141,10 @@ export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
   }
   return flags;
 }
+<<<<<<< HEAD
+=======
+
+function normalizeCriticSeverity(value: unknown): CriticFlag["severity"] | null {
+  return value === "low" || value === "medium" || value === "high" ? value : null;
+}
+>>>>>>> origin/main

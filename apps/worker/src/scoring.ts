@@ -6,7 +6,10 @@ import {
   type PaperSummary
 } from "@paper-agent/shared";
 import { type PaperRecord, type EvaluationScores } from "./types";
+<<<<<<< HEAD
 import { type CriticFlag } from "./reports";
+=======
+>>>>>>> origin/main
 
 export type SubtopicRule = {
   label: string;
