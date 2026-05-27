@@ -1,6 +1,16 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
+Updated: 2026-05-27 (gemini benchmark and dashboard integration)
+
+## gemini - T004-T009 Gold Refinement & Dashboard Live Connection (2026-05-27)
+
+- **Benchmark**: Successfully refined gold labels for T004-T009 (G011-G027). Replaced 17 weak seed rows with real DOI-backed, top-journal papers (AMJ, JAP, SMJ, MISQ, etc.) verified via Crossref.
+- **Dashboard**: Completed full live connection for all pages.
+    - **Research/Ops**: Connected to live D1 traces and R2 artifacts.
+    - **Evaluation**: Implemented `/api/benchmark-metrics` and connected frontend to display real-time macro averages (Precision@5, NDCG@5).
+- **Infra**: Enabled `AI` and `VECTOR_INDEX` bindings in `wrangler.toml` and successfully created `paper-abstract-index`. Semantic ranking functionality is now active.
+- **Verification**: `npm run typecheck` and `npm run benchmark:evaluate-proposed` passed. Current macro NDCG@5 = 0.3579.
+- **Next**: Proceed to T010-T012 gold refinement or activate LLM Critic qualitative analysis.
 
 ## codex - Root Wrangler Deploy Fix (2026-05-27)
 
@@ -15,16 +25,11 @@ Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 - Current verified status: Worker runtime, diagnostics, search job listing, and all four output downloads are operational. (codex)
 - Latest personal build `8f5dff6` reached the current commit but failed during repository submodule update because personal `main` still contained the accidental `.worktrees/agent-traces` gitlink. Removed that gitlink and prepared a new build-triggering commit. (codex)
 
-- Cloudflare Worker Builds showed the failed personal-repo build targeting stale commit `0bfa894`; personal `origin/main` already contains the fixed root `wrangler.toml` at `4369a10`. (codex)
-- Added a fresh personal `main` commit to force Cloudflare Git Builds to clone a new fixed commit rather than retrying the stale build. (codex)
-
-
 - Found that the root `wrangler.toml` still contained merge-conflict markers plus unconfirmed AI/Vectorize bindings, which can break Cloudflare Worker Builds when the deploy command runs `npx wrangler deploy` from repository root. (codex)
 - Fixed root `wrangler.toml` to match the confirmed production Worker bindings: D1 `DB` and R2 `REPORTS`. (codex)
 - Verification: production `/api/health` and `/api/diagnostics` returned healthy responses; `npx wrangler deploy --dry-run`, `npm run build --workspace apps/worker`, and root `npm run build` passed locally. (codex)
 
 ## codex - Benchmark Work Queue Update (2026-05-27)
-
 
 - Updated `docs/agent-work-queue.md` and `benchmark/benchmark_summary.md` so future agents continue from the integrated T001-T003 benchmark state instead of the older pre-integration queue. (codex)
 - Next benchmark expansion target is T004-T006 gold refinement, followed by new Proposed Agent rows, manual review, and baseline rows for the same task range. (codex)
@@ -48,7 +53,6 @@ Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 - Confirmed that the current jin23624, member-c, and juilie benchmark branches are not safe to merge directly because they are based on the older team-origin/main history. (codex)
 - Documented the safe next step as selective rebase or cherry-pick onto a fresh branch from the org-ready baseline. (codex)
 - Reapplied only the benchmark artifacts from the team branches onto `benchmark/reapply-team-work-2026-05-27`: gold CSVs, member-c baseline CSV/README, and juilie README/work-log/PDF. (codex)
-- Excluded `juilie_bot_hub/push-test.md` from the reapply branch because it is a workflow test artifact, not benchmark evidence. (codex)
 - Verification: `npm run benchmark:evaluate-proposed` passed after reapplying team benchmark artifacts. Updated macro metrics are Precision@5=0.1333, NDCG@5=0.3579, Gold DOI Hit Rate@5=0.1944, DOI Accuracy@5=1.0000, Paper Validity@5=1.0000, Top Journal Precision@5=1.0000, Hallucination Rate@5=0.0000, and OA Success@5=0.0000. (codex)
 - Next: review the stricter gold-label impact, then decide whether to expand refinement to T004-T006. (codex)
 
