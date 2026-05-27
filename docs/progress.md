@@ -804,3 +804,9 @@ R2 object check:
 R2 -> paper-agent-outputs -> reports/<job_id>/papers.csv
 R2 -> paper-agent-outputs -> reports/<job_id>/report.md
 ```
+
+## 2026-05-27 — member-c baseline collection
+- Added 15 rule-based baseline rows across T001, T002, T003.
+- Added 15 single-LLM baseline rows across T001, T002, T003.
+- 3 rows marked ambiguous; maintainer review recommended.
+- shonshinemin_cmd can rerun benchmark:evaluate-proposed after maintainer confirms baseline scope.

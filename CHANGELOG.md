@@ -16,6 +16,12 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Do not remove historical entries.
 - If a change is intentionally not user-visible, still record it as `Infra`, `Docs`, or `Changed`.
 
+## [Unreleased] - 2026-05-27
+### Benchmark
+- Benchmark: Collected T001-T003 rule-based baseline rows (5 per task, 15 total) using keyword search with DOI verification. (member-c)
+- Benchmark: Collected T001-T003 single-LLM baseline rows (5 per task, 15 total) using GPT-4o with DOI verification. (member-c)
+- Docs: Updated unassigned_member_c/README.md with row counts and known limitations. (member-c)
+
 ## Unreleased
 
 - No unreleased changes.
