@@ -20,6 +20,15 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (codex)
+
+- Docs: Recorded the personal-repo sync and organization PR merge that restored the org-ready baseline in `docs/progress.md` and `docs/debug-log.md`. (codex)
+- Docs: Added `docs/team-branch-evaluation-2026-05-27.md` with team-branch status, recommendations, and troubleshooting notes. (codex)
+
+## 2026-05-27 (codex)
+
+- Docs: Added docs/benchmark-branch-review-2026-05-27.md to record that the benchmark branches need rebase or cherry-pick before merging onto the current org-ready baseline. (codex)
+
 ## 2026-05-27 (jin23624)
 
 - Benchmark: Refined T001-T003 gold labels (G001-G009) with real DOI-backed, top-journal papers verified via Crossref. (jin23624)
@@ -35,8 +44,15 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Docs: Updated `GEMINI.md` with strict file management and historical preservation rules. (gemini)
 - Docs: Updated project progress and debug logs with refactoring, Vectorize, and LLM Critic integration details. (gemini)
 
+## 2026-05-27 (codex)
+
+- Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings and salvage guidance for the latest divergent Gemini local branch. (codex)
+
 ## 2026-05-26 (codex)
 
+- Docs: Added `docs/gemini-debug-handoff.md` and strict Worker debug discipline for Gemini so local/production Worker findings are transferred without relying on memory. (codex)
+- Fixed: Relaxed local Worker smoke diagnostics readiness when `REQUIRE_READY=false` so local runs without provider secrets can still verify health, schema, and recent-job routes. (codex)
+- Docs: Added `docs/local-worker-troubleshooting.md` and explicit local Worker dev/smoke scripts after verifying production and local Worker behavior. (codex)
 - Docs: Added `docs/gemini-session-state.md` and Gemini memory-continuity rules so Gemini can resume from repository state instead of unreliable session memory. (codex)
 - Fixed: Sanitized LLM Critic severity values before adding AI-generated critic flags. (codex)
 - Fixed: Reviewed Gemini Worker modularization, removed unverified Cloudflare AI/Vectorize deployment bindings from tracked Wrangler configs, and added `.gitignore` safeguards for local reference artifacts. (codex)

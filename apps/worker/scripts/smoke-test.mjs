@@ -25,7 +25,7 @@ assert(health.ok, `Worker health failed: ${JSON.stringify(health)}`);
 
 const diagnostics = await fetchJson(`${workerUrl}/api/diagnostics`);
 summary.checks.diagnostics = diagnostics;
-assert(diagnostics.ok, `Worker diagnostics failed: ${JSON.stringify(diagnostics)}`);
+assert(diagnostics.ok || !requireReady, `Worker diagnostics failed: ${JSON.stringify(diagnostics)}`);
 assert(diagnostics.db?.bound, "D1 binding is missing.");
 assert((diagnostics.db?.missingColumns ?? []).length === 0, `D1 missing columns: ${diagnostics.db?.missingColumns?.join(", ")}`);
 

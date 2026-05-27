@@ -23,6 +23,9 @@ docs/team-collaboration.md
 docs/agent-work-queue.md
 CHANGELOG.md
 docs/debug-log.md
+docs/gemini-session-state.md
+docs/gemini-debug-handoff.md
+docs/local-worker-troubleshooting.md
 ```
 
 Do not start from memory or an old chat transcript.
@@ -104,6 +107,29 @@ Before ending a session:
 4. Update `docs/debug-log.md` when a defect, review correction, or verification workflow occurred.
 5. Run `git status --short --branch` and include any remaining uncommitted or untracked files in the handoff note.
 >>>>>>> origin/main
+
+## Worker Debug Discipline
+
+When Worker behavior is involved, Gemini must treat `docs/gemini-debug-handoff.md` and `docs/local-worker-troubleshooting.md` as mandatory instructions, not optional references.
+
+Gemini must not change Worker source code until it has classified the issue as one of:
+
+- source-code defect
+- local environment or missing `.dev.vars`
+- Cloudflare runtime/configuration issue
+- expected local Wrangler noise
+
+Required baseline commands:
+
+```bash
+npm run smoke:worker
+npm run dev:worker:local
+npm run smoke:worker:local
+```
+
+Do not use `npm run dev:worker -- --port 8787`; use `npm run dev:worker:local` instead.
+
+Do not re-add `AI` or `VECTOR_INDEX` to tracked Wrangler configs unless the user confirms the Cloudflare resources and asks for activation.
 
 ## Verification
 
