@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Research Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg:#f7f9fc;
+  --surface:#ffffff;
+  --surface-soft:#f8fafc;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --blue-soft:#dbeafe;
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+  --amber:#d97706;
+  --amber-soft:#fef3c7;
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+  --purple:#7c3aed;
+  --purple-soft:#ede9fe;
+  --shadow:0 18px 48px rgba(15,23,42,.08);
+  --shadow-soft:0 10px 28px rgba(15,23,42,.06);
+  --font-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-display:Poppins,Inter,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(37,99,235,.10),transparent 30%),
+    radial-gradient(circle at 92% 2%,rgba(124,58,237,.10),transparent 26%),
+    linear-gradient(180deg,#fff 0%,var(--bg) 44%,#eef2f7 100%);
+}
+body.dark{
+  color:#e5e7eb;
+  background:
+    linear-gradient(rgba(7,12,24,.92),rgba(7,12,24,.92)),
+    repeating-linear-gradient(90deg,rgba(148,163,184,.06) 0 1px,transparent 1px 84px),
+    repeating-linear-gradient(0deg,rgba(148,163,184,.05) 0 1px,transparent 1px 84px),
+    #070c18;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+a{text-decoration:none;color:inherit}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:rgba(248,250,252,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(226,232,240,.85);
+}
+.dark .topbar{background:rgba(8,13,28,.88);border-color:rgba(255,255,255,.12)}
+.topbar-inner{
+  max-width:1540px;
+  margin:0 auto;
+  padding:14px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{
+  width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+  color:#fff;font-family:var(--font-display);font-weight:800;
+  background:linear-gradient(135deg,var(--blue),#60a5fa);
+  box-shadow:0 16px 34px rgba(37,99,235,.28)
+}
+.brand strong{display:block;color:var(--ink);font-family:var(--font-display);font-size:17px;line-height:1.15;white-space:nowrap}
+.brand span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.dark .brand strong{color:#fff}.dark .brand span{color:#94a3b8}
+.nav{display:flex;gap:8px;padding:6px;border-radius:999px;background:#e9eef7;border:1px solid #dbe3ef;overflow-x:auto}
+.dark .nav{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12)}
+.nav a{border-radius:999px;padding:10px 15px;color:#475569;font-size:13px;font-weight:900;white-space:nowrap}
+.dark .nav a{color:#cbd5e1}
+.nav a.active{background:#fff;color:var(--blue);box-shadow:0 10px 24px rgba(15,23,42,.12)}
+.dark .nav a.active{color:#111827}
+.shell{max-width:1540px;margin:0 auto;padding:24px}
+.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:32px;
+  background:#fff;box-shadow:var(--shadow);padding:30px;margin-bottom:20px;
+}
+.dark .hero,.dark .panel,.dark .metric{background:rgba(15,23,42,.84);border-color:rgba(148,163,184,.18);box-shadow:0 24px 60px rgba(0,0,0,.20)}
+.hero:before{content:"";position:absolute;inset:0 0 auto;height:6px;background:linear-gradient(90deg,var(--blue),#60a5fa,var(--purple),#b38b59)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:24px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.eyebrow:before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor}
+h1{max-width:920px;color:var(--ink);font-family:var(--font-display);font-size:clamp(34px,4vw,56px);line-height:1.04;letter-spacing:-.045em}
+.dark h1,.dark .panel-head h2,.dark .mini-card h3,.dark .step strong{color:#fff}
+.hero p{max-width:900px;margin-top:16px;color:#526173;font-size:15px;line-height:1.75}
+.dark .hero p,.dark .panel-head p,.dark .mini-card p,.dark .mini-card li{color:#cbd5e1}
+.hero-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:24px}
+.flow-item{min-height:106px;padding:15px;border-radius:18px;background:var(--surface-soft);border:1px solid var(--line)}
+.dark .flow-item,.dark .search-card,.dark .mini-card,.dark .step,.dark .score-panel{background:rgba(2,6,23,.58);border-color:rgba(148,163,184,.18)}
+.flow-item strong{display:block;color:var(--blue-dark);font-size:13px;margin-bottom:7px}
+.dark .flow-item strong{color:#e0f2fe}
+.flow-item span{color:var(--muted);font-size:12px;line-height:1.48}
+.dark .flow-item span{color:#94a3b8}
+.search-card{padding:20px;border-radius:24px;border:1px solid var(--line);background:var(--surface-soft)}
+.search-card h2{font-family:var(--font-display);font-size:20px;margin-bottom:6px}
+.search-card p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.55}
+.field{display:grid;gap:7px;margin-bottom:12px}
+.field label{color:#334155;font-size:12px;font-weight:900}
+.dark .field label{color:#a5f3fc}
+.field input,.field select,.field textarea{
+  width:100%;min-height:44px;outline:none;border-radius:14px;border:1px solid #dbe3ed;
+  background:#fff;color:var(--ink);padding:0 12px;transition:160ms ease
+}
+.dark .field input,.dark .field select,.dark .field textarea{background:#020617;color:#e5e7eb;border-color:#334155}
+.field textarea{min-height:82px;padding:12px;resize:vertical}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{min-height:42px;border:0;border-radius:14px;padding:0 15px;font-weight:900;transition:transform 150ms ease,box-shadow 150ms ease,filter 150ms ease;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.btn-primary{color:#fff;background:linear-gradient(135deg,var(--blue),#60a5fa);box-shadow:0 14px 28px rgba(37,99,235,.22)}
+.btn-green{color:#02130d;background:#10b981;box-shadow:0 14px 28px rgba(16,185,129,.16)}
+.btn-soft{color:#1e293b;background:#f1f5f9;border:1px solid #dbe3ed}
+.dark .btn-soft{color:#e5e7eb;background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.18)}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.metric{padding:17px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-soft)}
+.metric span{display:block;color:var(--muted);font-size:11px;font-weight:950;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.metric strong{display:block;color:var(--ink);font-family:var(--font-display);font-size:26px;letter-spacing:-.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.metric small{display:block;color:var(--muted);margin-top:6px;font-size:11px;line-height:1.35}
+.dark .metric span,.dark .metric small,.dark .step small,.dark dt{color:#94a3b8}
+.dark .metric strong,.dark dd{color:#e5e7eb}
+.metric.green strong{color:var(--green)}.metric.blue strong{color:var(--blue)}.metric.amber strong{color:var(--amber)}.metric.purple strong{color:var(--purple)}.metric.red strong{color:var(--red)}
+.panel{overflow:hidden;border-radius:28px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-soft)}
+.panel + .panel{margin-top:20px}
+.panel-head{min-height:72px;padding:0 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dark .panel-head{border-color:rgba(148,163,184,.18)}
+.panel-head h2{color:var(--ink);font-family:var(--font-display);font-size:18px;margin-bottom:4px}
+.panel-head p{color:var(--muted);font-size:13px;line-height:1.45}
+.panel-body{padding:20px}
+.actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;white-space:nowrap}
+.pill:before{content:"";width:6px;height:6px;border-radius:999px;background:currentColor}
+.pill-blue{color:var(--blue);background:var(--blue-soft);border:1px solid #bfdbfe}
+.pill-green{color:var(--green);background:var(--green-soft);border:1px solid #bbf7d0}
+.pill-amber{color:var(--amber);background:var(--amber-soft);border:1px solid #fde68a}
+.pill-red{color:var(--red);background:var(--red-soft);border:1px solid #fecaca}
+.pill-purple{color:var(--purple);background:var(--purple-soft);border:1px solid #ddd6fe}
+.pill-gray{color:#475569;background:#f1f5f9;border:1px solid #dbe3ed}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:start}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.stack{display:grid;gap:20px}
+.steps-12{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.step{min-height:104px;border-radius:18px;padding:13px;background:var(--surface-soft);border:1px solid var(--line);transition:160ms ease}
+.step:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft)}
+.step.done{background:#f0fdf4;border-color:#bbf7d0}
+.step.active{background:#eff6ff;border-color:#bfdbfe}
+.step.warn{background:#fffbeb;border-color:#fde68a}
+.dark .step.done{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25)}
+.dark .step.active{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25)}
+.dark .step.warn{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.25)}
+.step .num{width:26px;height:26px;display:inline-grid;place-items:center;border-radius:999px;background:#e2e8f0;color:#475569;font-size:12px;font-weight:950;margin-bottom:9px}
+.step.done .num{background:var(--green);color:#fff}.step.active .num{background:var(--blue);color:#fff}.step.warn .num{background:var(--amber);color:#fff}
+.step strong{display:block;color:var(--ink);font-size:12px;line-height:1.25;margin-bottom:5px}
+.step small{display:block;color:var(--muted);font-size:11px;line-height:1.35}
+.progress-track{height:10px;border-radius:999px;overflow:hidden;background:#e8eef6;margin-bottom:16px}
+.dark .progress-track{background:rgba(148,163,184,.14)}
+.progress-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#60a5fa,var(--green));transition:width .3s ease}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:1200px;border-collapse:collapse}
+th,td{text-align:left;vertical-align:middle;padding:14px 16px;border-bottom:1px solid #edf1f5;font-size:13px}
+.dark th,.dark td{border-color:rgba(148,163,184,.15);color:#e5e7eb}
+th{color:var(--muted);background:var(--surface-soft);font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.02em}
+.dark th{background:rgba(2,6,23,.52);color:#94a3b8}
+tbody tr{transition:160ms ease}
+tbody tr:hover,tbody tr.selected{background:#f1f6ff}
+.dark tbody tr:hover,.dark tbody tr.selected{background:rgba(16,185,129,.08)}
+.title-cell strong,.title-cell small{display:block}
+.title-cell strong{color:var(--ink);line-height:1.35;margin-bottom:5px}
+.dark .title-cell strong{color:#e5e7eb}
+.title-cell small{color:var(--muted);font-size:12px}
+.mini-card{border-radius:18px;padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.mini-card h3{color:var(--ink);font-size:15px;margin-bottom:8px}
+.mini-card p,.mini-card li{color:#334155;font-size:13px;line-height:1.65}
+.score-panel{border-radius:18px;padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.score-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.score-head span{color:var(--muted);font-size:12px;font-weight:900}
+.score-head strong{color:var(--blue);font-family:var(--font-display);font-size:30px;letter-spacing:-.04em}
+.bar-item{margin-top:12px}
+.bar-label{display:flex;justify-content:space-between;color:#475569;font-size:12px;font-weight:850;margin-bottom:6px}
+.dark .bar-label{color:#94a3b8}
+.bar{height:8px;border-radius:999px;overflow:hidden;background:#e8eef6}
+.dark .bar{background:rgba(148,163,184,.14)}
+.bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .35s ease}
+dl{margin:0;display:grid;gap:13px}
+dt{color:var(--muted);font-size:12px;font-weight:900;margin-bottom:4px}
+dd{margin:0;color:#334155;font-size:14px;line-height:1.55}
+.terminal{min-height:280px;max-height:420px;overflow:auto;padding:16px;border-radius:18px;background:#020617;border:1px solid #1e293b;color:#a7f3d0;font-family:var(--mono);font-size:12px;line-height:1.65}
+.terminal .prompt{color:#38bdf8}.terminal .ok{color:#86efac}.terminal .warn{color:#fde68a}.terminal .err{color:#fca5a5}.terminal .muted{color:#94a3b8}
+.system-grid{display:grid;gap:10px}
+.system-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);padding:13px;transition:.16s ease}
+.system-item:hover{transform:translateY(-1px)}
+.system-item strong{font-size:13px}.system-item span{color:var(--green);font-size:12px;font-weight:900}
+.dark .system-item{background:rgba(2,6,23,.58);border-color:rgba(148,163,184,.18)}.dark .system-item strong{color:#e5e7eb}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filter-btn{border:1px solid #dbe3ed;background:#fff;border-radius:999px;padding:8px 12px;color:#475569;font-weight:900;font-size:12px}
+.filter-btn.active,.filter-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.toast{position:fixed;right:22px;bottom:22px;z-index:100;display:none;max-width:380px;padding:14px 16px;border-radius:18px;background:#0f172a;color:#e5e7eb;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 60px rgba(0,0,0,.26);font-size:13px;line-height:1.5}
+.toast.show{display:block;animation:fadeIn .18s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1280px){.hero-grid,.grid-2{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.steps-12{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){.topbar-inner{align-items:flex-start;flex-direction:column}.nav{width:100%}.hero-flow,.grid-3,.grid-4,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.steps-12{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-head{align-items:flex-start;flex-direction:column;padding:18px 20px}}
+@media(max-width:640px){.shell{padding:16px}.hero{padding:22px}.hero-flow,.grid-3,.grid-4,.metrics,.steps-12,.field-grid{grid-template-columns:1fr}table{min-width:900px}}
+</style>
+</head>
+<body data-page="research">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">PA</div>
+      <div>
+        <strong>Paper Agent Interactive Dashboard</strong>
+        <span>Top-Journal-Aware Literature Review Assistant</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <a data-page="research" href="01_interactive_research_studio.html">1. Research Studio</a>
+      <a data-page="ops" href="02_interactive_agent_ops.html">2. Agent Ops</a>
+      <a data-page="eval" href="03_interactive_evaluation_dashboard.html">3. Evaluation</a>
+    </nav>
+  </div>
+</header>
+
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow">Interactive Research Studio</span>
+          <h1>논문 탐색, 검증, 비교 분석, 보고서 생성을 한 화면에서 수행합니다.</h1>
+          <p>검색 버튼을 누르면 12단계 workflow가 순차적으로 진행되고, 논문 행을 클릭하면 우측 상세 패널과 문헌검토 미리보기가 함께 갱신됩니다.</p>
+          <div class="hero-flow">
+            <div class="flow-item"><strong>Research Input</strong><span>키워드, 연구 질문, 초록, 분야 입력</span></div>
+            <div class="flow-item"><strong>Top Journal Filter</strong><span>Top Journal Pool과 Q1 기준 적용</span></div>
+            <div class="flow-item"><strong>Paper Verification</strong><span>DOI, Crossref, OA, Drive 저장 확인</span></div>
+            <div class="flow-item"><strong>Review Output</strong><span>Summary, Commonality, Difference, Gap 생성</span></div>
+          </div>
+        </div>
+
+        <aside class="search-card">
+          <h2>Search Setup</h2>
+          <p>입력값을 바꾸고 Generate를 눌러 workflow 실행을 확인하세요.</p>
+          <div class="field"><label>Research keyword</label><input id="keywordInput" value="AI interview employer branding" /></div>
+          <div class="field"><label>User research abstract / proposal</label><textarea id="abstractInput">기업의 AI 면접 활용과 AI 사용 공개가 지원자의 고용주 브랜드 가치 인식에 미치는 영향을 분석한다.</textarea></div>
+          <div class="field-grid">
+            <div class="field"><label>Field</label><select id="fieldInput"><option>Marketing / HRM</option><option>Information Systems</option><option>Management</option></select></div>
+            <div class="field"><label>Top Journal Rule</label><select><option>Top Journal + Q1</option><option>Q1 only</option><option>FT50 / ABS</option></select></div>
+            <div class="field"><label>Max papers</label><input id="maxInput" value="20" /></div>
+            <div class="field"><label>Year range</label><input value="2020 - 2026" /></div>
+          </div>
+          <button id="runWorkflow" class="btn btn-primary" style="width:100%; margin-top:6px;">Generate Literature Review</button>
+        </aside>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric blue"><span>Retrieved</span><strong id="mRetrieved">128</strong><small>candidate papers</small></div>
+      <div class="metric purple"><span>Top Journal Pool</span><strong id="mPool">18</strong><small>selected journals</small></div>
+      <div class="metric green"><span>DOI Validity</span><strong id="mDoi">96%</strong><small>Crossref matched</small></div>
+      <div class="metric green"><span>Included</span><strong id="mIncluded">8</strong><small>final papers</small></div>
+      <div class="metric amber"><span>Review Needed</span><strong id="mReview">3</strong><small>critic flagged</small></div>
+      <div class="metric blue"><span>Outputs</span><strong id="mOutput">Ready</strong><small>R2 + Drive ready</small></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2>12-Step Literature Review Workflow</h2>
+          <p id="workflowDesc">검색을 실행하면 단계가 순차적으로 활성화됩니다.</p>
+        </div>
+        <span id="workflowBadge" class="pill pill-gray">Ready</span>
+      </div>
+      <div class="panel-body">
+        <div class="progress-track"><span id="progressBar" style="width:0%"></span></div>
+        <div id="workflowSteps" class="steps-12"></div>
+      </div>
+    </section>
+
+    <section class="grid-2" style="margin-top:20px;">
+      <div class="stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Ranked Papers with Verification</h2>
+              <p>필터를 누르거나 논문 행을 클릭하면 상세 정보가 갱신됩니다.</p>
+            </div>
+            <div class="actions">
+              <button class="btn btn-soft" data-toast="Excel 파일 다운로드 예시입니다.">Download XLSX</button>
+              <button class="btn btn-soft" data-toast="PDF 보고서 다운로드 예시입니다.">Download PDF</button>
+            </div>
+          </div>
+          <div class="panel-body" style="padding-bottom:0">
+            <div class="filter-row">
+              <button class="filter-btn active" data-filter="all">All</button>
+              <button class="filter-btn" data-filter="include">Include</button>
+              <button class="filter-btn" data-filter="review">Review</button>
+              <button class="filter-btn" data-filter="noPdf">No PDF</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>Rank</th><th>Title</th><th>Journal</th><th>DOI</th><th>Top Journal</th><th>Q1</th><th>OA / Drive</th><th>Relevance</th><th>Critic</th><th>Status</th></tr>
+              </thead>
+              <tbody id="paperRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div>
+              <h2>Generated Literature Review Preview</h2>
+              <p>선택된 논문을 기준으로 문헌검토 문장이 바뀝니다.</p>
+            </div>
+          </div>
+          <div id="reviewPreview" class="panel-body grid-3"></div>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Top Journal Pool</h2><p>클릭하면 해당 분야 필터가 적용됩니다.</p></div>
+            <span class="pill pill-blue">18 journals</span>
+          </div>
+          <div class="panel-body system-grid">
+            <button class="system-item journal-filter" data-journal="Marketing"><strong>Marketing: JM, JMR, Marketing Science, JCR</strong><span>Q1</span></button>
+            <button class="system-item journal-filter" data-journal="Information Systems"><strong>Information Systems: MISQ, ISR</strong><span>Q1</span></button>
+            <button class="system-item journal-filter" data-journal="Management"><strong>Management: AMJ, SMJ, ASQ</strong><span>FT50</span></button>
+            <button class="system-item journal-filter" data-journal="HRM"><strong>HRM / Psychology: Personnel Psychology, JAP</strong><span>Adjacent</span></button>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Selected Paper Detail</h2><p>검증, 점수, Critic 상태를 보여줍니다.</p></div>
+            <span id="detailBadge" class="pill pill-green">Approved</span>
+          </div>
+          <div id="paperDetail" class="panel-body"></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+
+<script>
+const page = document.body.dataset.page;
+document.querySelectorAll('.nav a').forEach(a => { if (a.dataset.page === page) a.classList.add('active'); });
+
+const steps = [
+  ['User Input','키워드·연구초록 입력'], ['Create Job','search_jobs 생성'], ['Journal Pool','Top journal universe 설정'],
+  ['Search Candidates','OpenAlex / WoS 검색'], ['Metadata Enrich','DOI·저자·연도 보강'], ['OA PDF Check','Unpaywall 접근성 확인'],
+  ['Drive Upload','PDF 원본 저장'], ['D1 Save','papers/evaluations 저장'], ['Q1 / Top Journal','저널 품질 평가'],
+  ['Abstract Relevance','초록 관련성 평가'], ['Critic Review','3건 재검토 플래그'], ['Report Export','PDF / XLSX / MD 생성']
+];
+
+const papers = [
+  {
+    id:'p1', rank:1, title:'Artificial Intelligence in Recruitment and Employer Branding', authors:'Choi, Kim, Lee · 2025',
+    journal:'Journal of Business Research', area:'Marketing', doi:'Verified', top:'Top Pool', q1:'Q1', oa:'Drive saved', relevance:.95, critic:'Approved', status:'include',
+    score:.91, summary:'AI 채용 기술이 지원자 신뢰와 조직 매력도에 미치는 영향을 분석합니다.',
+    common:'사용자 연구와 공통적으로 AI 기반 채용 맥락에서 지원자 반응과 조직 평가를 다룹니다.',
+    diff:'기존 연구는 신뢰와 공정성 중심이고, 사용자 연구는 고용주 브랜드 가치와 disclosure를 직접 다룹니다.',
+    gap:'AI 사용 공개와 AI 활용 정도의 차별적 효과는 충분히 검증되지 않았습니다.',
+    note:'DOI와 저널 정보가 검증되어 핵심 문헌으로 포함 가능합니다.'
+  },
+  {
+    id:'p2', rank:2, title:'Algorithmic Hiring, Trust, and Applicant Reactions', authors:'Park, Han · 2024',
+    journal:'Information Systems Research', area:'Information Systems', doi:'Verified', top:'Top Pool', q1:'Q1', oa:'Landing only', relevance:.89, critic:'Approved', status:'include',
+    score:.88, summary:'알고리즘 채용에서 신뢰와 지원자 반응의 관계를 설명합니다.',
+    common:'AI 채용 시스템에 대한 지원자 인식을 다룬다는 점에서 연구 주제와 연결됩니다.',
+    diff:'해당 논문은 정보시스템 관점이 강하고, 사용자 연구는 마케팅/HRM 브랜드 가치에 초점을 둡니다.',
+    gap:'AI 채용 disclosure가 브랜드 가치로 전환되는 경로는 추가 설명이 필요합니다.',
+    note:'OA PDF는 직접 확보되지 않았으나 landing page가 확인되었습니다.'
+  },
+  {
+    id:'p3', rank:3, title:'AI Disclosure and Candidate Perceived Fairness', authors:'Lee, Song · 2023',
+    journal:'Personnel Psychology', area:'HRM', doi:'Verified', top:'Adjacent', q1:'Q1', oa:'No PDF', relevance:.78, critic:'Review', status:'review',
+    score:.74, summary:'AI 사용 공개가 지원자의 공정성 지각에 미치는 영향을 다룹니다.',
+    common:'AI disclosure와 지원자 반응을 직접 다룬다는 점에서 사용자 연구와 가깝습니다.',
+    diff:'고용주 브랜드 가치가 아니라 공정성 지각이 중심 종속변수입니다.',
+    gap:'공정성 지각이 브랜드 가치로 이어지는 이론적 연결을 추가 검토해야 합니다.',
+    note:'OA PDF가 없고 top journal pool과는 인접 영역이므로 보조 문헌으로 검토합니다.'
+  }
+];
+
+let selectedId = 'p1';
+let filter = 'all';
+let currentStep = 0;
+let running = false;
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function pillClass(v){
+  if(['Verified','Top Pool','Q1','Drive saved','Approved','include','Include'].includes(v)) return 'pill-green';
+  if(['Review','Landing only','Adjacent','review'].includes(v)) return 'pill-amber';
+  if(['No PDF'].includes(v)) return 'pill-red';
+  return 'pill-blue';
+}
+
+function getVisible(){
+  return papers.filter(p => {
+    if(filter==='all') return true;
+    if(filter==='include') return p.status==='include';
+    if(filter==='review') return p.status==='review';
+    if(filter==='noPdf') return p.oa==='No PDF';
+    return p.area===filter;
+  });
+}
+
+function renderPapers(){
+  const rows=document.getElementById('paperRows');
+  rows.innerHTML='';
+  getVisible().forEach(p => {
+    rows.insertAdjacentHTML('beforeend', `
+      <tr data-id="${p.id}" class="${p.id===selectedId?'selected':''}">
+        <td><span class="pill pill-gray">${p.rank}</span></td>
+        <td class="title-cell"><strong>${p.title}</strong><small>${p.authors}</small></td>
+        <td>${p.journal}</td>
+        <td><span class="pill ${pillClass(p.doi)}">${p.doi}</span></td>
+        <td><span class="pill ${pillClass(p.top)}">${p.top}</span></td>
+        <td><span class="pill ${pillClass(p.q1)}">${p.q1}</span></td>
+        <td><span class="pill ${pillClass(p.oa)}">${p.oa}</span></td>
+        <td><span class="pill pill-blue">${p.relevance.toFixed(2)}</span></td>
+        <td><span class="pill ${pillClass(p.critic)}">${p.critic}</span></td>
+        <td><span class="pill ${pillClass(p.status)}">${p.status}</span></td>
+      </tr>
+    `);
+  });
+  document.querySelectorAll('#paperRows tr').forEach(row => row.addEventListener('click', () => {
+    selectedId=row.dataset.id; renderPapers(); renderDetail(); renderPreview(); toast('선택 논문 상세 정보가 갱신되었습니다.');
+  }));
+}
+
+function selectedPaper(){ return papers.find(p=>p.id===selectedId) || papers[0]; }
+
+function renderDetail(){
+  const p=selectedPaper();
+  const badge=document.getElementById('detailBadge');
+  badge.className='pill '+pillClass(p.critic);
+  badge.textContent=p.critic;
+  document.getElementById('paperDetail').innerHTML = `
+    <span class="pill pill-blue">Score ${p.score.toFixed(2)} · ${p.area}</span>
+    <h3 style="font-size:18px;line-height:1.45;margin:14px 0;">${p.title}</h3>
+    <div class="score-panel">
+      <div class="score-head"><span>Score Breakdown</span><strong>${p.score.toFixed(2)}</strong></div>
+      <div class="bar-item"><div class="bar-label"><span>Abstract Relevance</span><span>${p.relevance.toFixed(2)}</span></div><div class="bar"><span style="width:${Math.round(p.relevance*100)}%"></span></div></div>
+      <div class="bar-item"><div class="bar-label"><span>Journal Quality</span><span>${p.top==='Top Pool' ? '0.90' : '0.76'}</span></div><div class="bar"><span style="width:${p.top==='Top Pool' ? 90 : 76}%"></span></div></div>
+      <div class="bar-item"><div class="bar-label"><span>Metadata Confidence</span><span>${p.doi==='Verified' ? '0.96' : '0.62'}</span></div><div class="bar"><span style="width:${p.doi==='Verified' ? 96 : 62}%"></span></div></div>
+      <div class="bar-item"><div class="bar-label"><span>OA Availability</span><span>${p.oa==='Drive saved' ? '0.82' : p.oa==='Landing only' ? '0.55' : '0.20'}</span></div><div class="bar"><span style="width:${p.oa==='Drive saved' ? 82 : p.oa==='Landing only' ? 55 : 20}%"></span></div></div>
+    </div>
+    <dl>
+      <div><dt>DOI / Crossref</dt><dd>${p.doi}. Title, authors, year, and journal metadata checked.</dd></div>
+      <div><dt>OA / Drive</dt><dd>${p.oa}.</dd></div>
+      <div><dt>Critic Review</dt><dd>${p.note}</dd></div>
+    </dl>`;
+}
+
+function renderPreview(){
+  const p=selectedPaper();
+  document.getElementById('reviewPreview').innerHTML = `
+    <div class="mini-card"><h3>Summary</h3><p>${p.summary}</p></div>
+    <div class="mini-card"><h3>Commonality</h3><p>${p.common}</p></div>
+    <div class="mini-card"><h3>Difference</h3><p>${p.diff}</p></div>
+    <div class="mini-card"><h3>Research Gap</h3><p>${p.gap}</p></div>
+    <div class="mini-card"><h3>Critic Note</h3><p>${p.note}</p></div>
+    <div class="mini-card"><h3>Use in Paper</h3><p>서론, 이론적 배경, 가설 개발, 변수 조작화 근거로 활용할 수 있습니다.</p></div>`;
+}
+
+function renderSteps(){
+  const box=document.getElementById('workflowSteps');
+  box.innerHTML='';
+  steps.forEach((s,i)=>{
+    const state = i < currentStep ? 'done' : i === currentStep && running ? 'active' : i===10 && currentStep>=12 ? 'warn' : '';
+    box.insertAdjacentHTML('beforeend', `<div class="step ${state}"><span class="num">${i+1}</span><strong>${s[0]}</strong><small>${s[1]}</small></div>`);
+  });
+  const pct=Math.round((currentStep/12)*100);
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('workflowBadge').className='pill '+(pct===100?'pill-green':running?'pill-blue':'pill-gray');
+  document.getElementById('workflowBadge').textContent=pct===100?'Complete':running?'Running':'Ready';
+  document.getElementById('workflowDesc').textContent=pct===100?'모든 단계가 완료되어 보고서와 Excel 파일을 다운로드할 수 있습니다.':running?steps[Math.min(currentStep,11)][1]:'검색을 실행하면 단계가 순차적으로 활성화됩니다.';
+}
+
+function run(){
+  if(running) return;
+  running=true; currentStep=0; renderSteps();
+  toast('12단계 문헌검토 workflow를 실행합니다.');
+  const timer=setInterval(()=>{
+    currentStep++;
+    document.getElementById('mRetrieved').textContent = String(Math.min(128, 18 + currentStep*10));
+    document.getElementById('mDoi').textContent = currentStep < 5 ? '—' : '96%';
+    document.getElementById('mOutput').textContent = currentStep < 12 ? 'Building' : 'Ready';
+    renderSteps();
+    if(currentStep>=12){
+      clearInterval(timer); running=false;
+      document.getElementById('mRetrieved').textContent='128';
+      document.getElementById('mOutput').textContent='Ready';
+      toast('완료되었습니다. 검증된 문헌검토 결과가 준비되었습니다.');
+    }
+  }, 420);
+}
+
+document.getElementById('runWorkflow').addEventListener('click', run);
+document.querySelectorAll('.filter-btn').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); filter=btn.dataset.filter; renderPapers(); toast('논문 목록 필터가 적용되었습니다.');
+}));
+document.querySelectorAll('.journal-filter').forEach(btn => btn.addEventListener('click', () => {
+  filter=btn.dataset.journal; document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  renderPapers(); toast(btn.dataset.journal+' 분야 저널 기준으로 필터링했습니다.');
+}));
+document.querySelectorAll('[data-toast]').forEach(btn=>btn.addEventListener('click',()=>toast(btn.dataset.toast)));
+renderSteps(); renderPapers(); renderDetail(); renderPreview();
+</script>
+</body>
+</html>

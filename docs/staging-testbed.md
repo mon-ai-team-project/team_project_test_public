@@ -1,6 +1,6 @@
 # Staging Test Bed
 
-Updated: 2026-05-20
+Updated: 2026-05-25
 
 This project uses the personal repository as the active development source of truth. The staging test bed exists to verify Worker, Pages, MCP, D1, R2, and benchmark flows before production-facing changes are treated as stable.
 
@@ -14,7 +14,7 @@ Staging must verify:
 - D1 schema compatibility.
 - Web of Science, Crossref, and Unpaywall readiness.
 - Search job creation and step progression.
-- CSV and Markdown report output.
+- CSV, Markdown, XLSX, and PDF report output.
 - R2 report object creation.
 - MCP read-only tool access.
 - Dashboard routing and API connectivity.
@@ -26,7 +26,7 @@ Create these resources separately from production:
 | Resource | Production | Staging |
 | --- | --- | --- |
 | Worker API | `paper-agent-project` | `paper-agent-project-staging` |
-| Dashboard Pages | `paper-agent-project` | `paper-agent-project-staging` |
+| Dashboard Pages | `paper-agent-dashboard` or current Pages project | `paper-agent-dashboard-staging` |
 | MCP Worker | `paper-agent-mcp` | `paper-agent-mcp-staging` |
 | D1 database | `paper_agent_db` | `paper_agent_db_staging` |
 | R2 bucket | `paper-agent-outputs` | `paper-agent-outputs-staging` |
@@ -222,11 +222,11 @@ npx wrangler deploy --config apps/mcp/wrangler.staging.toml
 Create a separate Cloudflare Pages project:
 
 ```text
-Project name: paper-agent-project-staging
+Project name: paper-agent-dashboard-staging
 Repository: Vulter3653/paper-agent-project
 Production branch: staging
 Root directory: /
-Build command: npm run build:web
+Build command: npm run build:web:staging
 Build output directory: apps/web/dist
 ```
 
@@ -234,6 +234,20 @@ Set:
 
 ```text
 VITE_API_BASE_URL=https://paper-agent-project-staging.<account-subdomain>.workers.dev
+```
+
+Tracked frontend staging examples:
+
+```text
+apps/web/.env.staging.example
+apps/web/wrangler.staging.example.toml
+```
+
+Local Pages staging build/deploy commands:
+
+```bash
+npm run build:web:staging
+npm run deploy:web:staging
 ```
 
 If no staging branch exists yet, create it from personal `main` only after local checks pass.
@@ -246,6 +260,24 @@ Run locally before deploying:
 npm run typecheck
 npm run build:web
 npm run smoke:mcp
+```
+
+Root staging convenience commands:
+
+```bash
+npm run deploy:worker:staging
+npm run deploy:mcp:staging
+npm run deploy:web:staging
+npm run smoke:worker:staging
+npm run smoke:mcp:staging
+npm run staging:check
+```
+
+`npm run staging:check` uses `STAGING_WORKER_URL` and `STAGING_MCP_URL` when set. If they are not set, it falls back to:
+
+```text
+https://paper-agent-project-staging.shch3653.workers.dev
+https://paper-agent-mcp-staging.shch3653.workers.dev/mcp
 ```
 
 Run a no-quota Worker smoke check against production or staging:
@@ -276,6 +308,8 @@ POST /api/search-jobs
 GET /api/search-jobs/:id
 GET /api/search-jobs/:id/papers.csv
 GET /api/search-jobs/:id/report.md
+GET /api/search-jobs/:id/papers.xlsx
+GET /api/search-jobs/:id/report.pdf
 ```
 
 Use a low quota request:
@@ -315,8 +349,8 @@ Promote staging work to the personal `main` production path only when:
 - Web build passes.
 - Staging diagnostics return `ok: true`.
 - One low-quota staging search completes or fails with a known external quota/auth reason.
-- CSV and Markdown endpoints return HTTP 200 for a completed job.
-- R2 contains the expected report objects.
+- CSV, Markdown, XLSX, and PDF endpoints return HTTP 200 for a completed job.
+- R2 contains the expected report objects for CSV, Markdown, XLSX, and PDF.
 - `CHANGELOG.md` and `docs/progress.md` are updated.
 - Defect investigations are recorded in `docs/debug-log.md`.
 

@@ -2,7 +2,7 @@
 
 AI Agent 기반 학술논문 탐색 및 문헌검토 자동화 시스템입니다.
 
-이 저장소는 개인 GitHub repo에서 시작해 Cloudflare Pages 대시보드와 Cloudflare Workers backend를 함께 관리하는 monorepo입니다. 이후 GitHub Organization으로 이전해도 같은 구조를 유지할 수 있습니다.
+이 저장소는 개인 GitHub repo에서 시작해 Cloudflare Pages 대시보드와 Cloudflare Workers backend를 함께 관리하는 monorepo입니다. 이 후 GitHub Organization으로 이전해도 같은 구조를 유지할 수 있습니다.
 
 ## Architecture
 

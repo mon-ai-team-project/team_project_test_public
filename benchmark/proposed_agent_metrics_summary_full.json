@@ -1,25 +1,25 @@
 {
-  "results": "benchmark/proposed_agent_results.csv",
+  "results": "benchmark/proposed_agent_results_full.csv",
   "gold": "benchmark/gold_relevant_papers.verified.csv",
-  "taskOutput": "benchmark/proposed_agent_metrics.csv",
-  "summaryOutput": "benchmark/proposed_agent_metrics_summary.json",
+  "taskOutput": "benchmark/proposed_agent_metrics_full.csv",
+  "summaryOutput": "benchmark/proposed_agent_metrics_summary_full.json",
   "k": 5,
   "totals": {
-    "tasks": 3,
-    "results": 15,
-    "gold": 9,
-    "verifiedGold": 9,
-    "goldMatches": 5,
-    "doiMatches": 5
+    "tasks": 16,
+    "results": 80,
+    "gold": 48,
+    "verifiedGold": 7,
+    "goldMatches": 1,
+    "doiMatches": 1
   },
   "macroAverages": {
-    "precision_at_k": 0.3333,
-    "ndcg_at_k": 0.5649,
-    "gold_doi_hit_rate_at_k": 0.5556,
+    "precision_at_k": 0.0125,
+    "ndcg_at_k": 0.0189,
+    "gold_doi_hit_rate_at_k": 0.0625,
     "doi_accuracy_at_k": 1,
-    "paper_validity_rate_at_k": 1,
+    "paper_validity_rate_at_k": 0.9875,
     "top_journal_precision_at_k": 1,
-    "hallucination_rate_at_k": 0,
+    "hallucination_rate_at_k": 0.0125,
     "oa_success_rate_at_k": 0
   },
   "interpretation": {

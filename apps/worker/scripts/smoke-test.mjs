@@ -59,9 +59,13 @@ if (runSearch) {
 
   const csv = await fetchOk(`${workerUrl}/api/search-jobs/${jobId}/papers.csv`);
   const report = await fetchOk(`${workerUrl}/api/search-jobs/${jobId}/report.md`);
+  const xlsx = await fetchOk(`${workerUrl}/api/search-jobs/${jobId}/papers.xlsx`);
+  const pdf = await fetchOk(`${workerUrl}/api/search-jobs/${jobId}/report.pdf`);
   summary.search.endpoints = {
     csvStatus: csv.status,
-    markdownStatus: report.status
+    markdownStatus: report.status,
+    xlsxStatus: xlsx.status,
+    pdfStatus: pdf.status
   };
 }
 

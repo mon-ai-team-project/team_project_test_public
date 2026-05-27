@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Activity, BarChart3, Cloud, FileText, Play, ShieldCheck } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Activity, BarChart3, Cloud, FileText, Play, RefreshCw, ShieldCheck } from "lucide-react";
 import {
   agentStatuses,
   criticReviews,
@@ -19,9 +19,25 @@ import {
   type FeatureImplementationItem,
   type FeatureImplementationStatus
 } from "./mockData";
+import type { AgentTrace, SearchJob } from "@paper-agent/shared";
 import "./dashboard.css";
 
 export type DashboardRoute = "research" | "ops" | "evaluation";
+
+const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "https://paper-agent-project.shch3653.workers.dev").replace(/\/$/, "");
+
+function apiUrl(path: string): string {
+  return `${apiBaseUrl}${path}`;
+}
+
+type TraceResponse = { job: SearchJob; traces: AgentTrace[] };
+type JobsResponse = { jobs: SearchJob[] };
+type CriticFlag = { id: string; paperRank: number; severity: "low" | "medium" | "high" | string; flagType: string; message: string; evidence: string };
+type JobOutput = { id: string; outputType: string; status: string; storage: string; urlPath: string; detail: string };
+type CriticFlagsResponse = { job: SearchJob; criticFlags: CriticFlag[] };
+type JobOutputsResponse = { job: SearchJob; outputs: JobOutput[] };
+type TraceDetail = Record<string, string | number | boolean | null>;
+type EnrichmentOverview = { limit: string; crossrefProcessed: string; crossrefSkipped: string; unpaywallProcessed: string; unpaywallSkipped: string };
 
 export function resolveDashboardRoute(pathname = window.location.pathname): DashboardRoute {
   if (pathname.includes("/dashboard/ops")) return "ops";
@@ -59,8 +75,95 @@ export function DashboardNav({ activeRoute }: { activeRoute: DashboardRoute }) {
 }
 
 export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) {
-  const completedCount = isRunning ? 7 : 10;
-  const progress = Math.round((completedCount / literatureWorkflowStages.length) * 100);
+  const [activeJob, setActiveJob] = useState<SearchJob | null>(null);
+  const [traces, setTraces] = useState<AgentTrace[]>([]);
+  const [report, setReport] = useState<string>("");
+  const [error, setError] = useState("");
+  const completedTraceCount = traces.filter((trace) => trace.status === "completed" || trace.status === "skipped").length;
+  const progress = traces.length ? Math.round((completedTraceCount / 12) * 100) : 0;
+  const liveStages = traces.length ? mapTracesToWorkflowStages(traces) : literatureWorkflowStages;
+
+  // 리포트 마크다운에서 섹션 파싱
+  const livePreview = useMemo(() => {
+    if (!report) return literaturePreview;
+    
+    const sections = [
+      { title: "Summary", marker: "## Executive Summary", fallback: literaturePreview[0].body },
+      { title: "Commonality", marker: "### Common Themes", fallback: literaturePreview[1].body },
+      { title: "Difference", marker: "### Methodological Differences", fallback: literaturePreview[2].body },
+      { title: "Research Gap", marker: "### Identified Research Gaps", fallback: literaturePreview[3].body },
+      { title: "Critic Note", marker: "### Screening Notes", fallback: literaturePreview[4].body },
+      { title: "Use in Paper", marker: "### Suggested Reading Order", fallback: literaturePreview[5].body }
+    ];
+
+    return sections.map(sec => {
+      const startIdx = report.indexOf(sec.marker);
+      if (startIdx === -1) return { title: sec.title, body: sec.fallback };
+      
+      const contentStart = startIdx + sec.marker.length;
+      let nextHeaderIdx = report.indexOf("##", contentStart);
+      let subHeaderIdx = report.indexOf("###", contentStart);
+      
+      // 마커 자체가 포함된 경우 제외
+      if (nextHeaderIdx === startIdx) nextHeaderIdx = report.indexOf("##", contentStart + 1);
+      
+      const endIdx = nextHeaderIdx === -1 ? (subHeaderIdx === -1 ? report.length : subHeaderIdx) : (subHeaderIdx === -1 ? nextHeaderIdx : Math.min(nextHeaderIdx, subHeaderIdx));
+      
+      let body = report.substring(contentStart, endIdx).trim();
+      body = body.replace(/^\s*[\-\*]\s+/gm, "").split("\n")[0]; 
+      return { title: sec.title, body: body || sec.fallback };
+    });
+  }, [report]);
+
+  useEffect(() => {
+    void loadLatestJob();
+  }, []);
+
+  useEffect(() => {
+    if (!activeJob || activeJob.status === "completed" || activeJob.status === "failed") return;
+    const timer = window.setInterval(() => {
+      void loadJobTraces(activeJob.id);
+    }, 2500);
+    return () => window.clearInterval(timer);
+  }, [activeJob?.id, activeJob?.status]);
+
+  async function loadLatestJob() {
+    try {
+      const response = await fetch(apiUrl("/api/search-jobs?limit=1"));
+      if (!response.ok) return;
+      const data = (await response.json()) as JobsResponse;
+      const latest = data.jobs[0];
+      if (latest) {
+        await loadJobTraces(latest.id);
+        if (latest.status === "completed") await loadReport(latest.id);
+      }
+    } catch {
+      // Fail silently
+    }
+  }
+
+  async function loadJobTraces(jobId: string) {
+    try {
+      const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
+      if (!response.ok) return;
+      const data = (await response.json()) as TraceResponse;
+      setActiveJob(data.job);
+      setTraces(data.traces);
+      if (data.job.status === "completed" && !report) await loadReport(jobId);
+    } catch {
+      // Fail silently
+    }
+  }
+
+  async function loadReport(jobId: string) {
+    try {
+      const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/report.md`));
+      if (!response.ok) return;
+      setReport(await response.text());
+    } catch {
+      // Fail silently
+    }
+  }
 
   return (
     <>
@@ -79,15 +182,15 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
           </div>
           <aside className="uxSearchSummary">
             <h2>Workflow Snapshot</h2>
-            <p>현재 실제 Run 버튼은 아래 검색 영역과 연결되어 있으며, 이 패널은 최종 UI 기준의 진행 시각화입니다.</p>
+            <p>{activeJob ? `Job ${activeJob.id} 실행 상태입니다.` : "최근 실행된 검색 작업이 없습니다. 아래에서 검색을 시작하세요."}</p>
             <div className="uxProgressTrack">
               <span style={{ width: `${progress}%` }} />
             </div>
             <div className="uxSnapshotGrid">
-              <MetricTile label="Retrieved" value="128" detail="candidate papers" tone="blue" />
-              <MetricTile label="DOI Validity" value="96%" detail="Crossref matched" tone="green" />
-              <MetricTile label="Top Pool" value="18" detail="approved journals" tone="purple" />
-              <MetricTile label="Review" value="3" detail="critic flagged" tone="amber" />
+              <MetricTile label="Status" value={activeJob?.status || "Idle"} detail={activeJob?.currentStep || "ready"} tone="green" />
+              <MetricTile label="Steps" value={`${completedTraceCount}/12`} detail="completed" tone="blue" />
+              <MetricTile label="Top Pool" value="부분 구현" detail="allowlist exists" tone="purple" />
+              <MetricTile label="Review" value={activeJob?.status === "completed" ? "Ready" : "Pending"} detail="critic analysis" tone={activeJob?.status === "completed" ? "green" : "amber"} />
             </div>
           </aside>
         </div>
@@ -95,7 +198,7 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
 
       <ImplementationStatusPanel
         title="Research Route Implementation Status"
-        description="이 페이지는 실제 API 기능과 최종 UI mock 패널이 함께 있습니다."
+        description="실제 API 기능과 미완성 Mock 패널을 분리 표시합니다. Mock 표시는 실제 결과가 아닙니다."
         items={researchImplementationStatus}
       />
 
@@ -103,15 +206,15 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
         <div className="uxPanelHead">
           <div>
             <h2>12-step Literature Review Workflow</h2>
-            <p>Planner부터 Delivery까지 agent별 담당 단계와 진행률을 시각화합니다.</p>
+            <p>{traces.length ? "실제 D1 agent_traces 기반의 실시간 실행 단계입니다." : "미완성 Mock: 실제 agent_traces 연결 전의 단계 구조 preview입니다."}</p>
           </div>
-          <span className={`uxPill ${isRunning ? "blue" : "green"}`}>{isRunning ? "Running" : "Ready"}</span>
+          <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "Live D1 traces" : "미완성 Mock"}</span>
         </div>
         <div className="uxProgressTrack">
           <span style={{ width: `${progress}%` }} />
         </div>
         <div className="uxSteps12">
-          {literatureWorkflowStages.map((stage) => (
+          {liveStages.map((stage) => (
             <article key={stage.id} className={`uxStep ${stage.status}`}>
               <span>{stage.order}</span>
               <strong>{stage.title}</strong>
@@ -126,7 +229,7 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
           <div className="uxPanelHead">
             <div>
               <h2>Top Journal Pool</h2>
-              <p>경영대학 학술지 목록을 검색 우선순위와 Q1 상태로 분리합니다.</p>
+              <p>부분 구현: allowlist는 실제 데이터 기반이고, Q1/외부 지표 표시는 아직 미연결입니다.</p>
             </div>
             <span className="uxPill blue">S then A1</span>
           </div>
@@ -145,12 +248,12 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
           <div className="uxPanelHead">
             <div>
               <h2>Literature Review Preview</h2>
-              <p>선택 논문과 job 결과를 기반으로 생성될 보고서 섹션 구조입니다.</p>
+              <p>{report ? "실제 Report Agent가 생성한 섹션별 핵심 요약입니다." : "미완성 Mock: 실제 Report Agent API 연결 전의 섹션 preview입니다."}</p>
             </div>
             <FileText size={18} />
           </div>
           <div className="uxPreviewGrid">
-            {literaturePreview.map((item) => (
+            {livePreview.map((item) => (
               <article key={item.title} className="uxMiniCard">
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
@@ -165,24 +268,106 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
 
 export function AgentOpsPage() {
   const [running, setRunning] = useState(false);
-  const [step, setStep] = useState(8);
+  const [keyword, setKeyword] = useState("AI interview employer branding");
+  const [activeJob, setActiveJob] = useState<SearchJob | null>(null);
+  const [traces, setTraces] = useState<AgentTrace[]>([]);
+  const [traceError, setTraceError] = useState("");
+  const [artifactError, setArtifactError] = useState("");
+  const [criticFlags, setCriticFlags] = useState<CriticFlag[]>([]);
+  const [outputs, setOutputs] = useState<JobOutput[]>([]);
   const [logs, setLogs] = useState(toolCallLogs);
-  const progress = Math.round((step / literatureWorkflowStages.length) * 100);
+  const completedTraceCount = traces.filter((trace) => trace.status === "completed" || trace.status === "skipped").length;
+  const progress = traces.length ? Math.round((completedTraceCount / 12) * 100) : 0;
+  const liveStages = traces.length ? mapTracesToWorkflowStages(traces) : literatureWorkflowStages;
+  const liveAgentCards = traces.length ? mapTracesToAgentCards(traces) : agentStatuses;
+  const enrichmentOverview = useMemo(() => summarizeEnrichmentTraces(traces), [traces]);
+  const criticSummary = useMemo(() => summarizeCriticFlags(criticFlags), [criticFlags]);
 
-  function launchJob() {
+  useEffect(() => {
+    void loadLatestJob();
+  }, []);
+
+  useEffect(() => {
+    if (!activeJob || activeJob.status === "completed" || activeJob.status === "failed") return;
+    const timer = window.setInterval(() => {
+      void loadJobTraces(activeJob.id);
+    }, 2500);
+    return () => window.clearInterval(timer);
+  }, [activeJob?.id, activeJob?.status]);
+
+  async function loadLatestJob() {
+    setTraceError("");
+    try {
+      const response = await fetch(apiUrl("/api/search-jobs?limit=1"));
+      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to load recent job"));
+      const data = (await response.json()) as JobsResponse;
+      const latest = data.jobs[0];
+      if (latest) await loadJobTraces(latest.id);
+    } catch (error) {
+      setTraceError(error instanceof Error ? error.message : "Failed to load recent job");
+    }
+  }
+
+  async function loadJobTraces(jobId: string) {
+    setTraceError("");
+    try {
+      const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
+      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to load agent traces"));
+      const data = (await response.json()) as TraceResponse;
+      setActiveJob(data.job);
+      setTraces(data.traces);
+      setLogs(data.traces.map((trace) => ({ level: getTraceLogLevel(trace.status), message: formatTraceConsoleMessage(trace) })));
+      await loadJobArtifacts(data.job.id);
+      if (data.job.status === "completed" || data.job.status === "failed") setRunning(false);
+    } catch (error) {
+      setTraceError(error instanceof Error ? error.message : "Failed to load agent traces");
+      setRunning(false);
+    }
+  }
+
+  async function loadJobArtifacts(jobId: string) {
+    setArtifactError("");
+    try {
+      const [flagsResponse, outputsResponse] = await Promise.all([
+        fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
+        fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
+      ]);
+      if (!flagsResponse.ok) throw new Error(await readDashboardError(flagsResponse, "Failed to load critic flags"));
+      if (!outputsResponse.ok) throw new Error(await readDashboardError(outputsResponse, "Failed to load output artifacts"));
+      const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
+      const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
+      setCriticFlags(flagsData.criticFlags);
+      setOutputs(outputsData.outputs);
+    } catch (error) {
+      setArtifactError(error instanceof Error ? error.message : "Failed to load job artifacts");
+      setCriticFlags([]);
+      setOutputs([]);
+    }
+  }
+
+  async function launchJob() {
     setRunning(true);
-    setStep(12);
-    setLogs([
-      ...toolCallLogs,
-      { level: "ok", message: "Vectorize.upsert abstract_embeddings=128" },
-      { level: "warn", message: "Critic flagged adjacent journal ambiguity=2" },
-      { level: "ok", message: "ReportAgent.export completed PDF / XLSX / Markdown" }
-    ]);
-    window.setTimeout(() => setRunning(false), 700);
+    setTraceError("");
+    setLogs([{ level: "muted", message: `POST /api/search-jobs keyword="${keyword}"` }]);
+    try {
+      const response = await fetch(apiUrl("/api/search-jobs"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ keyword, maxResults: 20, enrichmentLimit: 10 })
+      });
+      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to launch agent job"));
+      const data = (await response.json()) as { job: SearchJob };
+      setActiveJob(data.job);
+      await loadJobTraces(data.job.id);
+    } catch (error) {
+      setTraceError(error instanceof Error ? error.message : "Failed to launch agent job");
+      setRunning(false);
+    }
   }
 
   function inspectAgent(name: string) {
-    setLogs((current) => [...current, { level: "muted", message: `${name}.inspect status requested` }]);
+    const trace = traces.find((item) => item.agentName === name);
+    setLogs((current) => [...current, { level: trace ? getTraceLogLevel(trace.status) : "muted", message: trace ? `${trace.agentName}.inspect ${formatTraceConsoleMessage(trace)}` : `${name}.inspect no live trace loaded` }]);
   }
 
   return (
@@ -192,50 +377,53 @@ export function AgentOpsPage() {
           <div>
             <span className="uxEyebrow cyan">Interactive Agent Ops</span>
             <h1>Multi-Agent 실행 상태와 tool call 흐름을 운영 관점에서 추적합니다.</h1>
-            <p>Launch 버튼은 agent card, 12단계 pipeline, console log, D1/R2/Drive/Vectorize 상태를 함께 갱신합니다.</p>
+            <p>실제 Worker job과 D1 agent_traces를 기반으로 최신 실행 상태를 표시합니다.</p>
           </div>
           <aside className="uxSearchSummary">
             <h2>Launch Agent Job</h2>
             <label className="uxField">
               <span>Keyword</span>
-              <input defaultValue="AI interview employer branding" />
+              <input value={keyword} onChange={(event) => setKeyword(event.target.value)} />
             </label>
             <div className="uxFieldGrid">
               <label className="uxField">
                 <span>Provider</span>
-                <select defaultValue="wos">
-                  <option value="wos">Web of Science</option>
-                  <option value="openalex">OpenAlex test mode</option>
+                <select defaultValue="wos" disabled>
+                  <option value="wos">Worker configured provider</option>
                 </select>
               </label>
               <label className="uxField">
                 <span>Pipeline</span>
-                <select defaultValue="full">
-                  <option value="full">Full 12-step</option>
-                  <option value="search">Search only</option>
+                <select defaultValue="full" disabled>
+                  <option value="full">Full 12-step trace</option>
                 </select>
               </label>
             </div>
-            <button className="uxButton green" type="button" onClick={launchJob}>
-              <Play size={18} />
+            <button className="uxButton green" type="button" onClick={launchJob} disabled={running || !keyword.trim()}>
+              {running ? <RefreshCw size={18} className="spin" /> : <Play size={18} />}
               Launch Agent Job
             </button>
+            {activeJob ? <p className="uxTinyStatus">job_id: {activeJob.id}</p> : null}
+            {traceError ? <p className="uxTinyError">{traceError}</p> : null}
           </aside>
         </div>
       </section>
 
       <section className="uxMetrics">
-        <MetricTile label="Job" value={running ? "Running" : "Completed"} detail="job_id: preview" tone="green" />
-        <MetricTile label="Tool Calls" value={String(logs.length * 3 + 6)} detail="search / verify / export" tone="blue" />
-        <MetricTile label="Agents" value="12" detail="planner to report" tone="purple" />
-        <MetricTile label="Warnings" value="3" detail="critic review" tone="amber" />
-        <MetricTile label="Storage" value="Ready" detail="D1 / R2 / Drive" tone="green" />
-        <MetricTile label="Vectorize" value={step >= 10 ? "Indexed" : "Waiting"} detail="abstract embeddings" tone="blue" />
+        <MetricTile label="Job" value={activeJob?.status ?? "No job"} detail={activeJob?.currentStep ?? "load or launch"} tone={activeJob?.status === "failed" ? "amber" : "green"} />
+        <MetricTile label="Trace Steps" value={String(traces.length)} detail={`${completedTraceCount} completed/skipped`} tone="blue" />
+        <MetricTile label="Agents" value={String(liveAgentCards.length)} detail="from D1 traces" tone="purple" />
+        <MetricTile label="Warnings" value={String(traces.filter((trace) => trace.status === "skipped" || trace.status === "failed").length)} detail="skipped or failed" tone="amber" />
+        <MetricTile label="Enrichment" value={enrichmentOverview.limit} detail={`Crossref ${enrichmentOverview.crossrefProcessed}/skip ${enrichmentOverview.crossrefSkipped} · Unpaywall ${enrichmentOverview.unpaywallProcessed}/skip ${enrichmentOverview.unpaywallSkipped}`} tone="blue" />
+        <MetricTile label="Storage" value={traces.some((trace) => trace.stepId === "drive_r2_storage" && trace.status === "completed") ? "R2 Ready" : "Pending"} detail="Drive uploads OA PDFs when configured" tone="green" />
+        <MetricTile label="Critic Flags" value={String(criticFlags.length)} detail={`high ${criticSummary.high} · medium ${criticSummary.medium} · low ${criticSummary.low}`} tone={criticSummary.high ? "amber" : "green"} />
+        <MetricTile label="Outputs" value={String(outputs.length)} detail={outputs.length ? outputs.map((output) => output.outputType + ":" + output.status).join(" · ") : "no metadata"} tone="purple" />
+        <MetricTile label="Vectorize" value={traces.some((trace) => trace.stepId === "vectorize_relevance" && trace.status === "completed") ? "Fallback" : "Pending"} detail="metadata fallback; embeddings planned" tone="blue" />
       </section>
 
       <ImplementationStatusPanel
         title="Ops Route Implementation Status"
-        description="운영 화면은 현재 최종 UI와 상호작용을 검증하는 단계이며, agent trace/API 연결이 다음 단계입니다."
+        description="운영 화면의 Agent board, pipeline, console은 최신 D1 agent_traces를 우선 사용하고 trace가 없을 때만 mock placeholder를 표시합니다."
         items={opsImplementationStatus}
       />
 
@@ -245,12 +433,12 @@ export function AgentOpsPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Multi-Agent Status Board</h2>
-                <p>Agent card를 클릭하면 해당 agent의 상태 로그가 console에 추가됩니다.</p>
+                <p>Agent card를 클릭하면 해당 agent의 trace summary가 console에 추가됩니다.</p>
               </div>
-              <span className={`uxPill ${running ? "blue" : "green"}`}>{running ? "Agents running" : "All core agents online"}</span>
+              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "Live D1 traces" : "No live trace"}</span>
             </div>
             <div className="uxAgentGrid">
-              {agentStatuses.map((agent) => (
+              {liveAgentCards.map((agent) => (
                 <button key={agent.name} className="uxMiniCard uxAgentCard" type="button" onClick={() => inspectAgent(agent.name)}>
                   <h3>{agent.name}</h3>
                   <p>{agent.role}</p>
@@ -266,14 +454,14 @@ export function AgentOpsPage() {
                 <h2>Pipeline Execution</h2>
                 <p>12단계 문헌검토 workflow의 운영 상태입니다.</p>
               </div>
-              <span className={`uxPill ${running ? "blue" : "green"}`}>{progress}%</span>
+              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? `${progress}%` : "No live trace"}</span>
             </div>
             <div className="uxProgressTrack">
               <span style={{ width: `${progress}%` }} />
             </div>
             <div className="uxSteps12">
-              {literatureWorkflowStages.map((stage, index) => (
-                <article key={stage.id} className={`uxStep ${index + 1 < step ? "done" : index + 1 === step && running ? "running" : index === 9 ? "review" : "idle"}`}>
+              {liveStages.map((stage) => (
+                <article key={stage.id} className={`uxStep ${stage.status === "done" ? "done" : stage.status === "running" ? "running" : stage.status === "review" ? "review" : "idle"}`}>
                   <span>{stage.order}</span>
                   <strong>{stage.title}</strong>
                   <small>{stage.detail}</small>
@@ -288,7 +476,7 @@ export function AgentOpsPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Tool Call Console</h2>
-                <p>Worker, MCP, 외부 API 호출 결과 로그입니다.</p>
+                <p>{traces.length ? "D1 agent_traces에서 생성한 실행 로그입니다." : "Live trace가 없으면 placeholder log를 표시합니다."}</p>
               </div>
               <button className="uxSoftButton" type="button" onClick={() => setLogs([])}>Clear</button>
             </div>
@@ -300,6 +488,10 @@ export function AgentOpsPage() {
               ))}
             </div>
           </section>
+
+          <OutputArtifactsPanel outputs={outputs} errorMessage={artifactError} />
+
+          <LiveCriticFlagsPanel flags={criticFlags} errorMessage={artifactError} />
 
           <section className="uxPanel">
             <div className="uxPanelHead">
@@ -327,11 +519,190 @@ export function AgentOpsPage() {
   );
 }
 
+function OutputArtifactsPanel({ outputs, errorMessage }: { outputs: JobOutput[]; errorMessage: string }) {
+  return (
+    <section className="uxPanel">
+      <div className="uxPanelHead">
+        <div>
+          <h2>Output Artifacts</h2>
+          <p>CSV, Markdown, XLSX, PDF 산출물의 실제 저장 상태입니다.</p>
+        </div>
+        <FileText size={18} />
+      </div>
+      {errorMessage ? <p className="uxTinyError">{errorMessage}</p> : null}
+      <div className="uxArtifactList">
+        {outputs.length ? outputs.map((output) => (
+          <article key={output.id} className="uxArtifactItem">
+            <div>
+              <strong>{output.outputType.toUpperCase()}</strong>
+              <span>{output.storage} · {output.detail}</span>
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+            </div>
+            <span className={`uxPill ${output.status === "stored" || output.status === "generated" ? "green" : output.status === "failed" ? "amber" : "gray"}`}>{output.status}</span>
+          </article>
+        )) : <p className="uxEmptyNote">No output metadata loaded.</p>}
+      </div>
+    </section>
+  );
+}
+
+function LiveCriticFlagsPanel({ flags, errorMessage }: { flags: CriticFlag[]; errorMessage: string }) {
+  return (
+    <section className="uxPanel">
+      <div className="uxPanelHead">
+        <div>
+          <h2>Critic Review</h2>
+          <p>실제 D1 critic_flags에서 읽은 paper-level risk flag입니다.</p>
+        </div>
+        <ShieldCheck size={18} />
+      </div>
+      {errorMessage ? <p className="uxTinyError">{errorMessage}</p> : null}
+      <div className="uxArtifactList">
+        {flags.length ? flags.slice(0, 8).map((flag) => (
+          <article key={flag.id} className="uxArtifactItem">
+            <div>
+              <strong>#{flag.paperRank} · {flag.flagType}</strong>
+              <span>{flag.message}</span>
+              {flag.evidence ? <small>{flag.evidence}</small> : null}
+            </div>
+            <span className={`uxPill ${flag.severity === "high" ? "amber" : flag.severity === "medium" ? "blue" : "gray"}`}>{flag.severity}</span>
+          </article>
+        )) : <p className="uxEmptyNote">No critic flags loaded for this job.</p>}
+      </div>
+    </section>
+  );
+}
+
+function summarizeCriticFlags(flags: CriticFlag[]) {
+  return {
+    high: flags.filter((flag) => flag.severity === "high").length,
+    medium: flags.filter((flag) => flag.severity === "medium").length,
+    low: flags.filter((flag) => flag.severity === "low").length
+  };
+}
+
+function mapTracesToWorkflowStages(traces: AgentTrace[]) {
+  return traces.map((trace) => ({
+    id: trace.stepId,
+    order: trace.stepOrder,
+    title: titleFromTraceStep(trace.stepId),
+    owner: trace.agentName,
+    status: trace.status === "completed" ? "done" as const : trace.status === "running" ? "running" as const : trace.status === "failed" || trace.status === "skipped" ? "review" as const : "idle" as const,
+    progress: trace.status === "completed" || trace.status === "skipped" ? 100 : trace.status === "running" ? 50 : 0,
+    detail: summarizeTraceForCard(trace)
+  }));
+}
+
+function mapTracesToAgentCards(traces: AgentTrace[]) {
+  return traces.map((trace) => ({
+    name: trace.agentName,
+    role: summarizeTraceForCard(trace),
+    state: trace.status === "completed" ? "done" as const : trace.status === "running" ? "running" as const : trace.status === "failed" || trace.status === "skipped" ? "review" as const : "idle" as const,
+    tool: trace.stepId
+  }));
+}
+
+function titleFromTraceStep(stepId: string): string {
+  return stepId.split("_").map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join(" ");
+}
+
+function summarizeEnrichmentTraces(traces: AgentTrace[]): EnrichmentOverview {
+  const crossref = traces.find((trace) => trace.stepId === "crossref_enrichment");
+  const unpaywall = traces.find((trace) => trace.stepId === "unpaywall_check");
+  const crossrefDetail = parseTraceDetail(crossref?.detail);
+  const unpaywallDetail = parseTraceDetail(unpaywall?.detail);
+  const limit = formatTraceValue(crossrefDetail.enrichmentLimit) || formatTraceValue(unpaywallDetail.enrichmentLimit) || "not set";
+
+  return {
+    limit: limit === "not set" ? "No limit" : `limit ${limit}`,
+    crossrefProcessed: crossref?.outputCount !== undefined ? String(crossref.outputCount) : "0",
+    crossrefSkipped: formatTraceValue(crossrefDetail.skipped) || "0",
+    unpaywallProcessed: unpaywall?.outputCount !== undefined ? String(unpaywall.outputCount) : "0",
+    unpaywallSkipped: formatTraceValue(unpaywallDetail.skipped) || "0"
+  };
+}
+
+function summarizeTraceForCard(trace: AgentTrace): string {
+  const detail = parseTraceDetail(trace.detail);
+  const meta = buildTraceMetaItems(trace, detail);
+  return meta.length ? `${trace.summary} [${meta.join(" · ")}]` : trace.summary;
+}
+
+function formatTraceConsoleMessage(trace: AgentTrace): string {
+  const detail = parseTraceDetail(trace.detail);
+  const meta = buildTraceMetaItems(trace, detail);
+  return meta.length ? `${trace.stepId}: ${trace.summary} :: ${meta.join(" | ")}` : `${trace.stepId}: ${trace.summary}`;
+}
+
+function parseTraceDetail(detail?: string): TraceDetail {
+  if (!detail) return {};
+  try {
+    const parsed = JSON.parse(detail) as unknown;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as TraceDetail : {};
+  } catch {
+    return {};
+  }
+}
+
+function buildTraceMetaItems(trace: AgentTrace, detail: TraceDetail): string[] {
+  const items: string[] = [];
+  const enrichmentLimit = formatTraceValue(detail.enrichmentLimit);
+  const skipped = formatTraceValue(detail.skipped);
+  if (enrichmentLimit) items.push(`limit ${enrichmentLimit}`);
+  if (trace.inputCount !== undefined) items.push(`input ${trace.inputCount}`);
+  if (trace.outputCount !== undefined) items.push(`processed ${trace.outputCount}`);
+  if (skipped) items.push(`skipped ${skipped}`);
+
+  if (trace.stepId === "crossref_enrichment") {
+    const verified = formatTraceValue(detail.verified);
+    const partial = formatTraceValue(detail.partial);
+    if (verified) items.push(`verified ${verified}`);
+    if (partial) items.push(`partial ${partial}`);
+  }
+
+  if (trace.stepId === "unpaywall_check") {
+    const pdfUrls = formatTraceValue(detail.pdfUrls);
+    const landingPages = formatTraceValue(detail.landingPages);
+    if (pdfUrls) items.push(`OA PDF ${pdfUrls}`);
+    if (landingPages) items.push(`landing ${landingPages}`);
+  }
+
+  if (trace.stepId === "drive_r2_storage") {
+    const uploaded = formatTraceValue(detail.driveUploaded);
+    const failed = formatTraceValue(detail.driveFailed);
+    const driveSkipped = formatTraceValue(detail.driveSkipped);
+    if (uploaded) items.push(`Drive uploaded ${uploaded}`);
+    if (failed) items.push(`Drive failed ${failed}`);
+    if (driveSkipped) items.push(`Drive skipped ${driveSkipped}`);
+  }
+
+  return items;
+}
+
+function formatTraceValue(value: TraceDetail[string]): string {
+  return typeof value === "number" || typeof value === "string" ? String(value) : "";
+}
+
+function getTraceLogLevel(status: AgentTrace["status"]): "ok" | "warn" | "muted" {
+  if (status === "completed") return "ok";
+  if (status === "failed" || status === "skipped") return "warn";
+  return "muted";
+}
+
+async function readDashboardError(response: Response, fallback: string): Promise<string> {
+  try {
+    const body = (await response.json()) as { error?: string };
+    return body.error ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
 export function EvaluationDashboardPage() {
   const [scenarioKey, setScenarioKey] = useState<EvaluationScenarioKey>("strict");
   const [message, setMessage] = useState({
     title: "핵심 주장",
-    body: "단일 LLM은 추천과 요약은 가능하지만 DOI 검증, 저널 품질 판정, PDF 저장, research gap 도출까지 안정적으로 처리하기 어렵습니다. Proposed Multi-Agent는 단계를 분리하고 검증하여 더 신뢰 가능한 문헌검토 자동화를 제공합니다."
+    body: "미완성 Mock: 현재 baseline 비교 수치는 실제 benchmark 결과와 연결되지 않았습니다. Rule-based, Single LLM, Proposed full-run 결과 연결 후 주장을 확정합니다."
   });
   const scenario = useMemo<EvaluationScenario>(() => evaluationScenarios.find((item) => item.key === scenarioKey) ?? evaluationScenarios[0], [scenarioKey]);
   const overall = Math.round(scenario.bars.reduce((sum, item) => sum + item.value, 0) / scenario.bars.length);
@@ -371,7 +742,7 @@ export function EvaluationDashboardPage() {
 
       <ImplementationStatusPanel
         title="Evaluation Route Implementation Status"
-        description="평가 화면은 현재 benchmark 구조와 mock scenario가 공존합니다. 실제 점수 연결은 benchmark full run 이후 진행합니다."
+        description="평가 화면의 scenario 수치는 미완성 Mock입니다. 실제 baseline/proposed benchmark 연결 후 수치를 표시합니다."
         items={evaluationImplementationStatus}
       />
 
@@ -381,9 +752,9 @@ export function EvaluationDashboardPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Baseline Evaluation Dashboard</h2>
-                <p>Rule-based vs Single LLM vs Proposed Multi-Agent 비교입니다.</p>
+                <p>미완성 Mock: baseline CSV와 proposed full-run 결과 연결 전입니다.</p>
               </div>
-              <span className="uxPill green">Proposed Agent Best</span>
+              <span className="uxPill amber">미완성 Mock</span>
             </div>
             <div className="uxTableWrap">
               <table className="uxTable">
@@ -398,7 +769,7 @@ export function EvaluationDashboardPage() {
                 </thead>
                 <tbody>
                   {scenario.rows.map((row) => (
-                    <tr key={row.metric} onClick={() => setMessage({ title: row.metric, body: `${row.finding} 따라서 proposed agent의 단계별 검증 구조가 평가상 핵심 강점입니다.` })}>
+                    <tr key={row.metric} onClick={() => setMessage({ title: row.metric, body: `${row.finding} 실제 비교는 baseline CSV와 proposed full-run metric 연결 후 확정됩니다.` })}>
                       <td>{row.metric}</td>
                       <td><span className="uxPill amber">{row.ruleBased}</span></td>
                       <td><span className="uxPill blue">{row.singleLlm}</span></td>
@@ -435,9 +806,9 @@ export function EvaluationDashboardPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Score Breakdown</h2>
-                <p>Proposed Agent의 종합 평가 점수입니다.</p>
+                <p>미완성 Mock: 실제 benchmark 결과 연결 전에는 0으로 표시합니다.</p>
               </div>
-              <span className="uxPill green">Overall {overall}%</span>
+              <span className="uxPill amber">미완성 Mock</span>
             </div>
             <div className="uxScorePanel">
               <div className="uxScoreHead">

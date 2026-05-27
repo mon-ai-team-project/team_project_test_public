@@ -1,0 +1,52 @@
+# Gemini Session State
+
+Updated: 2026-05-26 (codex)
+
+This file exists because Gemini may not retain prior-session memory. Gemini must read and update this file at the start and end of every substantial session.
+
+## Current Source Of Truth
+
+Read these files before editing:
+
+- `AGENTS.md`
+- `GEMINI.md`
+- `docs/agent-writing-rules.md`
+- `docs/gemini-handoff-blueprint.md`
+- `docs/gemini-review-feedback.md`
+- `docs/progress.md`
+- `docs/debug-log.md`
+- `CHANGELOG.md`
+
+## Current Repository Policy
+
+- Work from the personal repository first unless the user explicitly asks for organization repo integration.
+- Do not push automatically. Ask for the target remote/branch unless the user has already specified it in the current session.
+- Do not enable production Cloudflare bindings for resources that have not been created and confirmed by the user.
+- Do not commit local attachment/reference files or worktree metadata.
+
+## Latest Reviewed State
+
+- Gemini's Worker modularization was reviewed by Codex. (codex)
+- Optional LLM Critic and Vectorize code paths are acceptable as code-ready features, but runtime activation remains gated by Cloudflare resource setup. (codex)
+- Tracked Wrangler configs currently exclude `AI` and `VECTOR_INDEX` bindings to avoid deployment failure before human setup. (codex)
+- LLM Critic severity values are sanitized before critic flags are persisted. (codex)
+
+## Required End-Of-Session Snapshot
+
+- Active task: T001-T003 Gold Label Refinement (jin23624_cpu 역할 수행)
+- Changed files:
+    - benchmark/gold_relevant_papers.csv
+    - benchmark/gold_relevant_papers.verified.csv (auto-generated)
+    - jin23624_cpu/README.md
+    - CHANGELOG.md
+    - docs/progress.md
+    - docs/debug-log.md
+- Verification run: `npm run benchmark:verify-gold` (Passed: 9 rows verified for T001-T003)
+- Verification not run and why: Deployed worker smoke tests (Not relevant to CSV changes), `npm run benchmark:evaluate-proposed` (Will run in next step to see metric improvement)
+- Human-gated blockers: None for this task.
+- Next recommended action: Run `npm run benchmark:evaluate-proposed` to confirm metric improvement for T001-T003. Then proceed to Baseline collection for T001-T003 or continue Gold refinement for T004-T006.
+- Git status summary: Modified benchmark CSVs, README, and doc files. No source code changes.
+
+## Memory Rule
+
+If Gemini is uncertain whether a fact came from the current repository state or from memory, it must re-read the repository file or run a local command before acting.

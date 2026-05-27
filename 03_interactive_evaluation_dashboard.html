@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interactive Evaluation Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+:root {
+  --bg:#f7f9fc;
+  --surface:#ffffff;
+  --surface-soft:#f8fafc;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --line:#e2e8f0;
+  --blue:#2563eb;
+  --blue-dark:#1d4ed8;
+  --blue-soft:#dbeafe;
+  --green:#16a34a;
+  --green-soft:#dcfce7;
+  --amber:#d97706;
+  --amber-soft:#fef3c7;
+  --red:#dc2626;
+  --red-soft:#fee2e2;
+  --purple:#7c3aed;
+  --purple-soft:#ede9fe;
+  --shadow:0 18px 48px rgba(15,23,42,.08);
+  --shadow-soft:0 10px 28px rgba(15,23,42,.06);
+  --font-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --font-display:Poppins,Inter,sans-serif;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:var(--font-body);
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 0%,rgba(37,99,235,.10),transparent 30%),
+    radial-gradient(circle at 92% 2%,rgba(124,58,237,.10),transparent 26%),
+    linear-gradient(180deg,#fff 0%,var(--bg) 44%,#eef2f7 100%);
+}
+body.dark{
+  color:#e5e7eb;
+  background:
+    linear-gradient(rgba(7,12,24,.92),rgba(7,12,24,.92)),
+    repeating-linear-gradient(90deg,rgba(148,163,184,.06) 0 1px,transparent 1px 84px),
+    repeating-linear-gradient(0deg,rgba(148,163,184,.05) 0 1px,transparent 1px 84px),
+    #070c18;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+h1,h2,h3,p{margin:0}
+a{text-decoration:none;color:inherit}
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:30;
+  background:rgba(248,250,252,.88);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid rgba(226,232,240,.85);
+}
+.dark .topbar{background:rgba(8,13,28,.88);border-color:rgba(255,255,255,.12)}
+.topbar-inner{
+  max-width:1540px;
+  margin:0 auto;
+  padding:14px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.brand-mark{
+  width:48px;height:48px;border-radius:16px;display:grid;place-items:center;
+  color:#fff;font-family:var(--font-display);font-weight:800;
+  background:linear-gradient(135deg,var(--blue),#60a5fa);
+  box-shadow:0 16px 34px rgba(37,99,235,.28)
+}
+.brand strong{display:block;color:var(--ink);font-family:var(--font-display);font-size:17px;line-height:1.15;white-space:nowrap}
+.brand span{display:block;color:var(--muted);font-size:12px;margin-top:4px}
+.dark .brand strong{color:#fff}.dark .brand span{color:#94a3b8}
+.nav{display:flex;gap:8px;padding:6px;border-radius:999px;background:#e9eef7;border:1px solid #dbe3ef;overflow-x:auto}
+.dark .nav{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12)}
+.nav a{border-radius:999px;padding:10px 15px;color:#475569;font-size:13px;font-weight:900;white-space:nowrap}
+.dark .nav a{color:#cbd5e1}
+.nav a.active{background:#fff;color:var(--blue);box-shadow:0 10px 24px rgba(15,23,42,.12)}
+.dark .nav a.active{color:#111827}
+.shell{max-width:1540px;margin:0 auto;padding:24px}
+.hero{
+  position:relative;overflow:hidden;border:1px solid var(--line);border-radius:32px;
+  background:#fff;box-shadow:var(--shadow);padding:30px;margin-bottom:20px;
+}
+.dark .hero,.dark .panel,.dark .metric{background:rgba(15,23,42,.84);border-color:rgba(148,163,184,.18);box-shadow:0 24px 60px rgba(0,0,0,.20)}
+.hero:before{content:"";position:absolute;inset:0 0 auto;height:6px;background:linear-gradient(90deg,var(--blue),#60a5fa,var(--purple),#b38b59)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:24px;align-items:start}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--blue);font-size:12px;font-weight:950;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.eyebrow:before{content:"";width:8px;height:8px;border-radius:999px;background:currentColor}
+h1{max-width:920px;color:var(--ink);font-family:var(--font-display);font-size:clamp(34px,4vw,56px);line-height:1.04;letter-spacing:-.045em}
+.dark h1,.dark .panel-head h2,.dark .mini-card h3,.dark .step strong{color:#fff}
+.hero p{max-width:900px;margin-top:16px;color:#526173;font-size:15px;line-height:1.75}
+.dark .hero p,.dark .panel-head p,.dark .mini-card p,.dark .mini-card li{color:#cbd5e1}
+.hero-flow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:24px}
+.flow-item{min-height:106px;padding:15px;border-radius:18px;background:var(--surface-soft);border:1px solid var(--line)}
+.dark .flow-item,.dark .search-card,.dark .mini-card,.dark .step,.dark .score-panel{background:rgba(2,6,23,.58);border-color:rgba(148,163,184,.18)}
+.flow-item strong{display:block;color:var(--blue-dark);font-size:13px;margin-bottom:7px}
+.dark .flow-item strong{color:#e0f2fe}
+.flow-item span{color:var(--muted);font-size:12px;line-height:1.48}
+.dark .flow-item span{color:#94a3b8}
+.search-card{padding:20px;border-radius:24px;border:1px solid var(--line);background:var(--surface-soft)}
+.search-card h2{font-family:var(--font-display);font-size:20px;margin-bottom:6px}
+.search-card p{margin:0 0 16px;color:var(--muted);font-size:13px;line-height:1.55}
+.field{display:grid;gap:7px;margin-bottom:12px}
+.field label{color:#334155;font-size:12px;font-weight:900}
+.dark .field label{color:#a5f3fc}
+.field input,.field select,.field textarea{
+  width:100%;min-height:44px;outline:none;border-radius:14px;border:1px solid #dbe3ed;
+  background:#fff;color:var(--ink);padding:0 12px;transition:160ms ease
+}
+.dark .field input,.dark .field select,.dark .field textarea{background:#020617;color:#e5e7eb;border-color:#334155}
+.field textarea{min-height:82px;padding:12px;resize:vertical}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{min-height:42px;border:0;border-radius:14px;padding:0 15px;font-weight:900;transition:transform 150ms ease,box-shadow 150ms ease,filter 150ms ease;white-space:nowrap}
+.btn:hover{transform:translateY(-1px);filter:brightness(1.02)}
+.btn-primary{color:#fff;background:linear-gradient(135deg,var(--blue),#60a5fa);box-shadow:0 14px 28px rgba(37,99,235,.22)}
+.btn-green{color:#02130d;background:#10b981;box-shadow:0 14px 28px rgba(16,185,129,.16)}
+.btn-soft{color:#1e293b;background:#f1f5f9;border:1px solid #dbe3ed}
+.dark .btn-soft{color:#e5e7eb;background:rgba(148,163,184,.12);border-color:rgba(148,163,184,.18)}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin-bottom:20px}
+.metric{padding:17px;border-radius:20px;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow-soft)}
+.metric span{display:block;color:var(--muted);font-size:11px;font-weight:950;margin-bottom:8px;text-transform:uppercase;letter-spacing:.04em}
+.metric strong{display:block;color:var(--ink);font-family:var(--font-display);font-size:26px;letter-spacing:-.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.metric small{display:block;color:var(--muted);margin-top:6px;font-size:11px;line-height:1.35}
+.dark .metric span,.dark .metric small,.dark .step small,.dark dt{color:#94a3b8}
+.dark .metric strong,.dark dd{color:#e5e7eb}
+.metric.green strong{color:var(--green)}.metric.blue strong{color:var(--blue)}.metric.amber strong{color:var(--amber)}.metric.purple strong{color:var(--purple)}.metric.red strong{color:var(--red)}
+.panel{overflow:hidden;border-radius:28px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow-soft)}
+.panel + .panel{margin-top:20px}
+.panel-head{min-height:72px;padding:0 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:16px}
+.dark .panel-head{border-color:rgba(148,163,184,.18)}
+.panel-head h2{color:var(--ink);font-family:var(--font-display);font-size:18px;margin-bottom:4px}
+.panel-head p{color:var(--muted);font-size:13px;line-height:1.45}
+.panel-body{padding:20px}
+.actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;justify-content:center;gap:5px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;white-space:nowrap}
+.pill:before{content:"";width:6px;height:6px;border-radius:999px;background:currentColor}
+.pill-blue{color:var(--blue);background:var(--blue-soft);border:1px solid #bfdbfe}
+.pill-green{color:var(--green);background:var(--green-soft);border:1px solid #bbf7d0}
+.pill-amber{color:var(--amber);background:var(--amber-soft);border:1px solid #fde68a}
+.pill-red{color:var(--red);background:var(--red-soft);border:1px solid #fecaca}
+.pill-purple{color:var(--purple);background:var(--purple-soft);border:1px solid #ddd6fe}
+.pill-gray{color:#475569;background:#f1f5f9;border:1px solid #dbe3ed}
+.grid-2{display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:start}
+.grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.grid-4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.stack{display:grid;gap:20px}
+.steps-12{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.step{min-height:104px;border-radius:18px;padding:13px;background:var(--surface-soft);border:1px solid var(--line);transition:160ms ease}
+.step:hover{transform:translateY(-2px);box-shadow:var(--shadow-soft)}
+.step.done{background:#f0fdf4;border-color:#bbf7d0}
+.step.active{background:#eff6ff;border-color:#bfdbfe}
+.step.warn{background:#fffbeb;border-color:#fde68a}
+.dark .step.done{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.25)}
+.dark .step.active{background:rgba(56,189,248,.12);border-color:rgba(56,189,248,.25)}
+.dark .step.warn{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.25)}
+.step .num{width:26px;height:26px;display:inline-grid;place-items:center;border-radius:999px;background:#e2e8f0;color:#475569;font-size:12px;font-weight:950;margin-bottom:9px}
+.step.done .num{background:var(--green);color:#fff}.step.active .num{background:var(--blue);color:#fff}.step.warn .num{background:var(--amber);color:#fff}
+.step strong{display:block;color:var(--ink);font-size:12px;line-height:1.25;margin-bottom:5px}
+.step small{display:block;color:var(--muted);font-size:11px;line-height:1.35}
+.progress-track{height:10px;border-radius:999px;overflow:hidden;background:#e8eef6;margin-bottom:16px}
+.dark .progress-track{background:rgba(148,163,184,.14)}
+.progress-track span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#60a5fa,var(--green));transition:width .3s ease}
+.table-wrap{overflow-x:auto}
+table{width:100%;min-width:1200px;border-collapse:collapse}
+th,td{text-align:left;vertical-align:middle;padding:14px 16px;border-bottom:1px solid #edf1f5;font-size:13px}
+.dark th,.dark td{border-color:rgba(148,163,184,.15);color:#e5e7eb}
+th{color:var(--muted);background:var(--surface-soft);font-size:11px;font-weight:950;text-transform:uppercase;letter-spacing:.02em}
+.dark th{background:rgba(2,6,23,.52);color:#94a3b8}
+tbody tr{transition:160ms ease}
+tbody tr:hover,tbody tr.selected{background:#f1f6ff}
+.dark tbody tr:hover,.dark tbody tr.selected{background:rgba(16,185,129,.08)}
+.title-cell strong,.title-cell small{display:block}
+.title-cell strong{color:var(--ink);line-height:1.35;margin-bottom:5px}
+.dark .title-cell strong{color:#e5e7eb}
+.title-cell small{color:var(--muted);font-size:12px}
+.mini-card{border-radius:18px;padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.mini-card h3{color:var(--ink);font-size:15px;margin-bottom:8px}
+.mini-card p,.mini-card li{color:#334155;font-size:13px;line-height:1.65}
+.score-panel{border-radius:18px;padding:16px;background:var(--surface-soft);border:1px solid var(--line)}
+.score-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.score-head span{color:var(--muted);font-size:12px;font-weight:900}
+.score-head strong{color:var(--blue);font-family:var(--font-display);font-size:30px;letter-spacing:-.04em}
+.bar-item{margin-top:12px}
+.bar-label{display:flex;justify-content:space-between;color:#475569;font-size:12px;font-weight:850;margin-bottom:6px}
+.dark .bar-label{color:#94a3b8}
+.bar{height:8px;border-radius:999px;overflow:hidden;background:#e8eef6}
+.dark .bar{background:rgba(148,163,184,.14)}
+.bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--blue),#60a5fa);transition:width .35s ease}
+dl{margin:0;display:grid;gap:13px}
+dt{color:var(--muted);font-size:12px;font-weight:900;margin-bottom:4px}
+dd{margin:0;color:#334155;font-size:14px;line-height:1.55}
+.terminal{min-height:280px;max-height:420px;overflow:auto;padding:16px;border-radius:18px;background:#020617;border:1px solid #1e293b;color:#a7f3d0;font-family:var(--mono);font-size:12px;line-height:1.65}
+.terminal .prompt{color:#38bdf8}.terminal .ok{color:#86efac}.terminal .warn{color:#fde68a}.terminal .err{color:#fca5a5}.terminal .muted{color:#94a3b8}
+.system-grid{display:grid;gap:10px}
+.system-item{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px solid var(--line);border-radius:16px;background:var(--surface-soft);padding:13px;transition:.16s ease}
+.system-item:hover{transform:translateY(-1px)}
+.system-item strong{font-size:13px}.system-item span{color:var(--green);font-size:12px;font-weight:900}
+.dark .system-item{background:rgba(2,6,23,.58);border-color:rgba(148,163,184,.18)}.dark .system-item strong{color:#e5e7eb}
+.filter-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.filter-btn{border:1px solid #dbe3ed;background:#fff;border-radius:999px;padding:8px 12px;color:#475569;font-weight:900;font-size:12px}
+.filter-btn.active,.filter-btn:hover{background:var(--blue);border-color:var(--blue);color:#fff}
+.toast{position:fixed;right:22px;bottom:22px;z-index:100;display:none;max-width:380px;padding:14px 16px;border-radius:18px;background:#0f172a;color:#e5e7eb;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 60px rgba(0,0,0,.26);font-size:13px;line-height:1.5}
+.toast.show{display:block;animation:fadeIn .18s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1280px){.hero-grid,.grid-2{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.steps-12{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:900px){.topbar-inner{align-items:flex-start;flex-direction:column}.nav{width:100%}.hero-flow,.grid-3,.grid-4,.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.steps-12{grid-template-columns:repeat(2,minmax(0,1fr))}.panel-head{align-items:flex-start;flex-direction:column;padding:18px 20px}}
+@media(max-width:640px){.shell{padding:16px}.hero{padding:22px}.hero-flow,.grid-3,.grid-4,.metrics,.steps-12,.field-grid{grid-template-columns:1fr}table{min-width:900px}}
+</style>
+</head>
+<body data-page="eval">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-mark">PA</div>
+      <div>
+        <strong>Paper Agent Interactive Dashboard</strong>
+        <span>Top-Journal-Aware Literature Review Assistant</span>
+      </div>
+    </div>
+    <nav class="nav">
+      <a data-page="research" href="01_interactive_research_studio.html">1. Research Studio</a>
+      <a data-page="ops" href="02_interactive_agent_ops.html">2. Agent Ops</a>
+      <a data-page="eval" href="03_interactive_evaluation_dashboard.html">3. Evaluation</a>
+    </nav>
+  </div>
+</header>
+
+  <main class="shell">
+    <section class="hero">
+      <div>
+        <span class="eyebrow">Interactive Evaluation Dashboard</span>
+        <h1>Rule-based, Single LLM, Proposed Multi-Agent를 비교하여 시스템 성능을 증명합니다.</h1>
+        <p>상단 scenario 버튼을 누르면 평가 수치, 표, score breakdown이 함께 바뀝니다. 발표에서 “왜 Multi-Agent가 필요한가”를 보여주는 화면입니다.</p>
+      </div>
+    </section>
+
+    <section class="panel" style="margin-bottom:20px;">
+      <div class="panel-head">
+        <div><h2>Evaluation Scenario</h2><p>시나리오를 선택하면 benchmark 수치가 갱신됩니다.</p></div>
+        <div class="actions">
+          <button class="btn btn-primary scenario active" data-scenario="strict">Strict Top Journal</button>
+          <button class="btn btn-soft scenario" data-scenario="broad">Broad Q1 Search</button>
+          <button class="btn btn-soft scenario" data-scenario="fast">Fast Demo Mode</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="metrics">
+      <div class="metric green"><span>Precision@5</span><strong id="precisionMetric">0.84</strong><small>Proposed Agent</small></div>
+      <div class="metric green"><span>DOI Accuracy</span><strong id="doiMetric">96%</strong><small>Crossref verified</small></div>
+      <div class="metric blue"><span>Top Journal Precision</span><strong id="journalMetric">88%</strong><small>Q1 / pool matched</small></div>
+      <div class="metric amber"><span>Hallucination Rate</span><strong id="hallucinationMetric">3%</strong><small>critic filtered</small></div>
+      <div class="metric purple"><span>Report Completeness</span><strong id="completeMetric">92%</strong><small>rubric score</small></div>
+      <div class="metric blue"><span>Avg Latency</span><strong id="latencyMetric">4.8m</strong><small>full workflow</small></div>
+    </section>
+
+    <section class="grid-2">
+      <div class="stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Baseline Comparison</h2><p>행을 클릭하면 우측 Score Breakdown이 해당 metric 중심으로 바뀝니다.</p></div>
+            <span id="bestBadge" class="pill pill-green">Proposed Agent Best</span>
+          </div>
+          <div class="table-wrap">
+            <table style="min-width:980px;">
+              <thead><tr><th>Metric</th><th>Rule-based Baseline</th><th>Single LLM Baseline</th><th>Proposed Multi-Agent</th><th>Interpretation</th></tr></thead>
+              <tbody id="evalRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Human Evaluation Rubric</h2><p>평가 기준 카드를 클릭하면 presentation message가 바뀝니다.</p></div>
+          </div>
+          <div class="panel-body grid-3" id="rubricCards"></div>
+        </section>
+      </div>
+
+      <aside class="stack">
+        <section class="panel">
+          <div class="panel-head">
+            <div><h2>Score Breakdown</h2><p id="scoreSubtitle">Proposed Agent의 종합 평가 점수입니다.</p></div>
+            <span id="overallBadge" class="pill pill-green">Overall 91%</span>
+          </div>
+          <div class="panel-body">
+            <div class="score-panel">
+              <div class="score-head"><span id="scoreTitle">Overall Quality</span><strong id="overallScore">0.91</strong></div>
+              <div id="scoreBars"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><h2>Error Analysis</h2><p>클릭하면 presentation message에 개선 방향이 표시됩니다.</p></div></div>
+          <div class="panel-body system-grid" id="errorItems"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head"><div><h2>Presentation Message</h2><p>선택한 평가 요소에 따라 발표 문구가 바뀝니다.</p></div></div>
+          <div class="panel-body"><div class="mini-card"><h3 id="messageTitle">핵심 주장</h3><p id="messageBody">단일 LLM은 논문 추천과 요약은 가능하지만, 실제 존재 여부, DOI 검증, 저널 품질 판정, PDF 저장, research gap 도출까지 안정적으로 처리하기 어렵습니다. Proposed Multi-Agent는 각 단계를 분리하고 검증하여 더 신뢰 가능한 문헌검토 자동화를 제공합니다.</p></div></div>
+        </section>
+      </aside>
+    </section>
+  </main>
+  <div id="toast" class="toast"></div>
+
+<script>
+const page=document.body.dataset.page;
+document.querySelectorAll('.nav a').forEach(a=>{if(a.dataset.page===page)a.classList.add('active')});
+
+const scenarios = {
+  strict: {
+    metrics:['0.84','96%','88%','3%','92%','4.8m'],
+    rows:[
+      ['Precision@5','0.52','0.68','0.84','상위 추천 논문의 실제 관련성이 가장 높음'],
+      ['Paper Validity Rate','82%','74%','97%','DOI / Crossref 검증으로 허위 논문 감소'],
+      ['DOI Accuracy','80%','71%','96%','Verifier Agent가 DOI와 서지정보를 교차 확인'],
+      ['Top Journal Precision','58%','66%','88%','Top Journal Pool과 Q1 기준을 함께 사용'],
+      ['Hallucination Rate','8%','21%','3%','Critic Agent와 Crossref 검증으로 오류 감소'],
+      ['Report Completeness','61%','78%','92%','Summary, Commonality, Difference, Gap, Critic Note 포함']
+    ],
+    bars:[['Relevance',84],['Validity',97],['DOI Accuracy',96],['Top Journal Precision',88],['Report Completeness',92]]
+  },
+  broad: {
+    metrics:['0.79','94%','81%','4%','89%','3.9m'],
+    rows:[
+      ['Precision@5','0.48','0.65','0.79','검색 범위가 넓어져 관련도는 소폭 하락'],
+      ['Paper Validity Rate','80%','76%','95%','검증 단계로 논문 실재성 유지'],
+      ['DOI Accuracy','78%','73%','94%','Crossref matching이 핵심 안전장치로 작동'],
+      ['Top Journal Precision','50%','59%','81%','Q1 중심 검색에서 pool precision은 다소 낮아짐'],
+      ['Hallucination Rate','9%','18%','4%','Critic 검증으로 오류를 낮게 유지'],
+      ['Report Completeness','58%','76%','89%','비교 분석과 gap 도출이 유지됨']
+    ],
+    bars:[['Relevance',79],['Validity',95],['DOI Accuracy',94],['Top Journal Precision',81],['Report Completeness',89]]
+  },
+  fast: {
+    metrics:['0.73','91%','77%','6%','83%','1.6m'],
+    rows:[
+      ['Precision@5','0.44','0.61','0.73','시연 속도를 위해 일부 검증을 축약'],
+      ['Paper Validity Rate','76%','70%','91%','빠른 모드에서도 DOI 검증은 유지'],
+      ['DOI Accuracy','74%','68%','91%','metadata enrichment를 제한적으로 수행'],
+      ['Top Journal Precision','49%','55%','77%','Top journal 판단은 캐시 기반으로 수행'],
+      ['Hallucination Rate','11%','23%','6%','검증 축약으로 오류율은 소폭 증가'],
+      ['Report Completeness','52%','72%','83%','보고서 품질은 full mode보다 낮음']
+    ],
+    bars:[['Relevance',73],['Validity',91],['DOI Accuracy',91],['Top Journal Precision',77],['Report Completeness',83]]
+  }
+};
+
+const rubrics = [
+  ['Relevance','사용자 연구 주제와 논문 초록·이론·방법론이 얼마나 직접 연결되는가?'],
+  ['Validity','논문이 실제 존재하며 DOI, 저널명, 저자, 연도가 정확히 검증되었는가?'],
+  ['Journal Quality','Q1, Top Journal Pool, FT50, ABS 등 품질 기준에 부합하는가?'],
+  ['Usefulness','서론, 이론적 배경, 가설 개발, 변수 조작화에 활용 가능한가?'],
+  ['Gap Clarity','기존 연구와 사용자 연구의 차별점 및 research gap이 명확한가?'],
+  ['Evidence Traceability','추천 이유와 점수 산출 근거가 검증 가능한 데이터에 기반하는가?']
+];
+
+const errors = [
+  ['OA PDF unavailable','3 cases','원문 PDF 확보가 실패한 경우에는 landing page 또는 metadata 기반 요약으로 대체합니다.'],
+  ['Adjacent journal ambiguity','2 cases','Top journal pool에는 없지만 Q1 인접 분야 저널인 경우 critic review로 넘깁니다.'],
+  ['Metadata mismatch','1 case','제목, 저자, 연도 불일치가 발생하면 Crossref 재검증을 수행합니다.'],
+  ['Low abstract relevance','4 cases','초록 관련성이 낮은 논문은 제외 또는 보조 문헌으로 분류합니다.']
+];
+
+let current='strict';
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function renderScenario(){
+  const s=scenarios[current];
+  const ids=['precisionMetric','doiMetric','journalMetric','hallucinationMetric','completeMetric','latencyMetric'];
+  ids.forEach((id,i)=>document.getElementById(id).textContent=s.metrics[i]);
+  const rows=document.getElementById('evalRows');
+  rows.innerHTML='';
+  s.rows.forEach((r,i)=>{
+    rows.insertAdjacentHTML('beforeend', `<tr data-metric="${r[0]}"><td>${r[0]}</td><td><span class="pill pill-amber">${r[1]}</span></td><td><span class="pill pill-blue">${r[2]}</span></td><td><span class="pill pill-green">${r[3]}</span></td><td>${r[4]}</td></tr>`);
+  });
+  document.querySelectorAll('#evalRows tr').forEach(row=>row.addEventListener('click',()=>{
+    document.getElementById('scoreTitle').textContent=row.dataset.metric;
+    document.getElementById('messageTitle').textContent=row.dataset.metric;
+    document.getElementById('messageBody').textContent=row.lastElementChild.textContent + ' 따라서 proposed agent의 단계별 검증 구조가 평가상 핵심 강점입니다.';
+    toast(row.dataset.metric+' 기준 설명을 표시했습니다.');
+  }));
+  renderBars(s.bars);
+  document.getElementById('overallScore').textContent=(s.bars.reduce((a,b)=>a+b[1],0)/s.bars.length/100).toFixed(2);
+  document.getElementById('overallBadge').textContent='Overall '+Math.round(s.bars.reduce((a,b)=>a+b[1],0)/s.bars.length)+'%';
+}
+
+function renderBars(bars){
+  const box=document.getElementById('scoreBars');
+  box.innerHTML='';
+  bars.forEach(([label,val])=>{
+    box.insertAdjacentHTML('beforeend', `<div class="bar-item"><div class="bar-label"><span>${label}</span><span>${val}%</span></div><div class="bar"><span style="width:${val}%"></span></div></div>`);
+  });
+}
+
+function renderRubrics(){
+  const box=document.getElementById('rubricCards');
+  box.innerHTML='';
+  rubrics.forEach(r=>{
+    box.insertAdjacentHTML('beforeend', `<button class="mini-card rubric-card" data-title="${r[0]}" data-body="${r[1]}"><h3>${r[0]}</h3><p>${r[1]}</p></button>`);
+  });
+  document.querySelectorAll('.rubric-card').forEach(card=>card.addEventListener('click',()=>{
+    document.getElementById('messageTitle').textContent=card.dataset.title;
+    document.getElementById('messageBody').textContent=card.dataset.body + ' 이 기준은 문헌 추천의 품질뿐 아니라 보고서 활용 가능성을 평가하기 위한 핵심 지표입니다.';
+    toast(card.dataset.title+' rubric 설명을 표시했습니다.');
+  }));
+}
+
+function renderErrors(){
+  const box=document.getElementById('errorItems');
+  box.innerHTML='';
+  errors.forEach(e=>{
+    box.insertAdjacentHTML('beforeend', `<button class="system-item error-item" data-title="${e[0]}" data-body="${e[2]}"><strong>${e[0]}</strong><span>${e[1]}</span></button>`);
+  });
+  document.querySelectorAll('.error-item').forEach(item=>item.addEventListener('click',()=>{
+    document.getElementById('messageTitle').textContent=item.dataset.title;
+    document.getElementById('messageBody').textContent=item.dataset.body;
+    toast('Error analysis 설명을 표시했습니다.');
+  }));
+}
+
+document.querySelectorAll('.scenario').forEach(btn=>btn.addEventListener('click',()=>{
+  document.querySelectorAll('.scenario').forEach(b=>{b.classList.remove('active','btn-primary'); b.classList.add('btn-soft');});
+  btn.classList.add('active','btn-primary'); btn.classList.remove('btn-soft');
+  current=btn.dataset.scenario; renderScenario(); toast(btn.textContent+' 시나리오로 변경했습니다.');
+}));
+renderScenario(); renderRubrics(); renderErrors();
+</script>
+</body>
+</html>
