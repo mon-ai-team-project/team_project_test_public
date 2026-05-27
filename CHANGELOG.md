@@ -20,6 +20,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (juilie)
+
+- Docs: Added `juilie_bot_hub/paper_agent_enhanced_report.pdf` to the repository as the submission-oriented benchmark/reference report used by the juilie manual review notes. (juilie)
+
 ## 2026-05-22 (codex)
 
 - Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)
@@ -29,6 +33,13 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Infra: Added CODEOWNERS and updated PR template so maintainer review, shared rules, and personal work-log updates are required for team PRs. (codex)
 
 - Docs: Added shared writing rules for Codex, Gemini, Claude, and future agents, and added/updated agent-specific operating guides. (codex)
+
+## 2026-05-20 (juilie)
+
+- Docs: Updated `juilie_bot_hub/README.md` with 2026-05-20 direct branch push notes. (juilie)
+- Docs: Added `juilie_bot_hub/work-log-2026-05-20.md` to record continued personal-folder work and automatic branch push workflow. (juilie)
+- Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access for the personal workspace branch. (juilie)
+- Docs: Updated `docs/progress.md` with the juilie direct-push test handoff. (juilie)
 
 ## 2026-05-20 (codex)
 
@@ -54,7 +65,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 ## 2026-05-18 (codex)
 
 - Docs: Added `docs/github-main-protection.md` and updated team agent guidance to reserve organization `main` for `seunghyeon_choi` maintainer-reviewed integration. (codex)
-- Benchmark: Completed `benchmark/manual_review_proposed.csv` for all 15 T001-T003 Proposed Agent rows using REPRO-Bench-style human relevance review from `paper_agent_enhanced_report.pdf` section 8. (juilie)
+- Benchmark: Completed `benchmark/manual_review_proposed.csv` for all 15 T001-T003 Proposed Agent rows using REPRO-Bench-style human relevance review from `juilie_bot_hub/paper_agent_enhanced_report.pdf` section 8. (juilie)
 - Docs: Updated `juilie_bot_hub/README.md` with the manual review summary and Paper-Agent-Bench evaluation basis. (juilie)
 - Docs: Added `docs/cloudflare-org-repo-migration.md` with Worker, Pages, and MCP settings for switching Cloudflare Git builds to the organization repository. (codex)
 - Security: Audited tracked files, Git history, and local workspace for GitHub PAT, Cloudflare token, OpenAlex key, private key, AWS, npm, and Slack token patterns; no actual token values were found. (codex)
