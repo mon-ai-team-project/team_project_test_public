@@ -3,6 +3,7 @@
 Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 
 ## codex - Organization Worker Build Hotfix (2026-05-27)
+- Found the next Cloudflare Git Build failure: `.worktrees/agent-traces` was tracked as a gitlink/submodule entry without a `.gitmodules` definition. Removed the tracked gitlink so Cloudflare clone no longer attempts a broken submodule update. (codex)
 
 - Found that team-origin/main still had root wrangler.toml merge-conflict markers while personal origin/main was already fixed. This explains Cloudflare Git Build failure when the Worker is connected to the organization repository. (codex)
 - Prepared a minimal organization hotfix branch that only cleans the root Worker deploy config and records the troubleshooting outcome. (codex)
