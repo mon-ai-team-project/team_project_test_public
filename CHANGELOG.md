@@ -21,6 +21,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - No unreleased changes.
 
 ## 2026-05-27 (codex)
+
+- Docs: Added `docs/gemini-t004-t006-benchmark-handoff.md` and cleaned Gemini handoff conflict-marker remnants so Gemini can safely continue T004-T006 benchmark work from personal repo state. (codex)
 - Docs: Added `docs/cloudflare-worker-build-troubleshooting.md` with the resolved Worker build incident, root causes, verification commands, and recurrence-prevention checklist. (codex)
 
 - Fixed: Removed the accidentally tracked .worktrees/agent-traces gitlink from personal `main` so Cloudflare Git Builds no longer fail while updating repository submodules. (codex)

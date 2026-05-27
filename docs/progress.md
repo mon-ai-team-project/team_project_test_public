@@ -4,6 +4,12 @@ Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 
 ## codex - Root Wrangler Deploy Fix (2026-05-27)
 
+## codex - Gemini T004-T006 Benchmark Handoff (2026-05-27)
+
+- Added `docs/gemini-t004-t006-benchmark-handoff.md` to transfer the next benchmark task to Gemini conservatively: T004-T006 gold-label refinement only, personal repo first, no Worker/dashboard/deployment edits. (codex)
+- Cleaned leftover conflict-marker remnants from `GEMINI.md` and `docs/gemini-handoff-blueprint.md` so Gemini startup instructions are unambiguous. (codex)
+- Next Gemini action: create `benchmark/gemini-t004-t006-gold-refinement`, update only the allowed benchmark/docs files, run `git diff --check` and `npm run benchmark:evaluate-proposed`, then ask before pushing. (codex)
+
 ## codex - Personal Cloudflare Build Retrigger (2026-05-27)
 - Added `docs/cloudflare-worker-build-troubleshooting.md` so future sessions can diagnose Cloudflare Worker Build failures without relying on chat history. It records symptoms, root causes, fixed commits, verification commands, and recurrence-prevention checks. (codex)
 - Current verified status: Worker runtime, diagnostics, search job listing, and all four output downloads are operational. (codex)
@@ -18,6 +24,7 @@ Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 - Verification: production `/api/health` and `/api/diagnostics` returned healthy responses; `npx wrangler deploy --dry-run`, `npm run build --workspace apps/worker`, and root `npm run build` passed locally. (codex)
 
 ## codex - Benchmark Work Queue Update (2026-05-27)
+
 
 - Updated `docs/agent-work-queue.md` and `benchmark/benchmark_summary.md` so future agents continue from the integrated T001-T003 benchmark state instead of the older pre-integration queue. (codex)
 - Next benchmark expansion target is T004-T006 gold refinement, followed by new Proposed Agent rows, manual review, and baseline rows for the same task range. (codex)

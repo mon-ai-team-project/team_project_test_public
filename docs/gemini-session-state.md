@@ -28,6 +28,15 @@ Read these files before editing:
 
 ## Latest Reviewed State
 
+
+## 2026-05-27 Codex Handoff For Gemini
+
+- Active next task: T004-T006 benchmark gold-label refinement only. (codex)
+- Required guide: `docs/gemini-t004-t006-benchmark-handoff.md`. (codex)
+- Stable system state: Worker runtime, diagnostics, search jobs, and CSV/Markdown/XLSX/PDF artifact downloads are operational. (codex)
+- Do not edit Worker, dashboard, Cloudflare, D1, R2, MCP, package, or deployment files for the T004-T006 benchmark task. (codex)
+- Work from personal repo first and ask the user before pushing. (codex)
+
 - Gemini's Worker modularization was reviewed by Codex. (codex)
 - Optional LLM Critic and Vectorize code paths are acceptable as code-ready features, but runtime activation remains gated by Cloudflare resource setup. (codex)
 - Tracked Wrangler configs currently exclude `AI` and `VECTOR_INDEX` bindings to avoid deployment failure before human setup. (codex)

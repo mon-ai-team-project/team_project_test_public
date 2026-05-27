@@ -21,6 +21,13 @@
 
 ## 2026-05-27 - Benchmark Work Queue Update
 
+
+## 2026-05-27 - Gemini T004-T006 Handoff Preparation
+
+- Context: The user asked to hand off the next work to Gemini and to make the guide conservative and stable in the personal repo. (codex)
+- Finding: `GEMINI.md` and `docs/gemini-handoff-blueprint.md` still contained old conflict-marker remnants, which could mislead Gemini startup behavior. (codex)
+- Fix: Removed those remnants and added `docs/gemini-t004-t006-benchmark-handoff.md` with allowed files, forbidden files, conservative DOI verification rules, T004-T006 starting state, and required verification commands. (codex)
+
 - Context: After the selective team-output reapply reached personal `main`, the handoff queue still described the older T001-T003 startup state. (codex)
 - Fix: Updated the work queue, benchmark summary date, sample metric values, and next-step wording to point agents toward T004-T006 expansion. (codex)
 - Verification: `git diff --check` and `npm run benchmark:evaluate-proposed` passed before committing this branch. (codex)

@@ -100,8 +100,4 @@ For Worker endpoint smoke after deployment, use the existing scripts documented 
 
 - Refactoring of `apps/worker/src/index.ts` into specialized modules is complete. (gemini)
 - Stability verified with `npm run typecheck`. (gemini)
-<<<<<<< HEAD
 - Next session can proceed with feature enhancements or benchmark integration. (gemini)
-=======
-- Next session can proceed with feature enhancements or benchmark integration. (gemini)
->>>>>>> origin/main
