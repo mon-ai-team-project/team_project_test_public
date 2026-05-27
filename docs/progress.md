@@ -1,6 +1,14 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex team task briefing)
+Updated: 2026-05-27 (member-c baseline collection)
+
+## member-c - Baseline Result Collection (2026-05-27)
+
+- Benchmark: Added 15 rule-based baseline rows across T001-T003 in `benchmark/baseline_rule_based_results.csv`. (member-c)
+- Method: Deterministic title-keyword scoring over the existing Crossref-verified Proposed Agent candidate pool; ranked by lexical overlap, journal rank, year, and original row order. (member-c)
+- Limitation: No independent retrieval baseline or Single-LLM baseline was added in this pass; `benchmark/baseline_single_llm_results.csv` remains header-only. (member-c)
+- Verification: `npm run benchmark:evaluate-proposed` was run after the change and completed successfully; proposed-agent metrics were unchanged because baseline files are not consumed by that evaluator yet. (member-c)
+
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 

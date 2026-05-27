@@ -1,5 +1,39 @@
 # Debug Log
 
+## 2026-05-27 - Rule-based Baseline Collection for T001-T003 (member-c)
+
+### Context
+
+Assignment 3 needed comparable baseline rows for T001-T003. The first pass avoids new external API quota use and produces a reproducible lexical baseline from the already stored Proposed Agent candidate pool.
+
+### Method
+
+- Input: `benchmark/proposed_agent_results.csv`.
+- Filter: `verification_status=verified`.
+- Ranking: task-specific title keyword overlap, then journal rank, year, and original row order.
+- Output: `benchmark/baseline_rule_based_results.csv`.
+
+### Result
+
+- T001: 5 rule-based rows.
+- T002: 5 rule-based rows.
+- T003: 5 rule-based rows.
+- `benchmark/baseline_single_llm_results.csv` remains header-only.
+
+### Verification
+
+Run:
+
+```bash
+npm run benchmark:evaluate-proposed
+```
+
+Expected: proposed-agent metrics should remain unchanged because the current evaluator reads proposed-agent and gold files, not baseline files.
+
+### Limitation
+
+This is a candidate-pool baseline rather than an independent retrieval baseline. It is useful for a first reproducible comparison scaffold, but it should not be presented as a final external rule-based system benchmark.
+
 This file records debugging and troubleshooting work that affects implementation, deployment, or verification. Update it whenever a defect is investigated or a verification run changes project confidence.
 
 ## 2026-05-20 - Worker Smoke Test Verification (codex)

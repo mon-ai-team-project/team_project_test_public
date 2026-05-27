@@ -20,6 +20,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (member-c)
+
+- Benchmark: Added 15 T001-T003 rule-based baseline rows in `benchmark/baseline_rule_based_results.csv` using a deterministic title-keyword scoring pass over Crossref-verified candidate rows. (member-c)
+- Docs: Updated `unassigned_member_c/README.md`, `docs/progress.md`, and `docs/debug-log.md` with baseline method, verification, and limitations. (member-c)
+
 ## 2026-05-22 (codex)
 
 - Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)
