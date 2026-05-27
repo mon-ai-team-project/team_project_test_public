@@ -1,6 +1,14 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex team task briefing)
+Updated: 2026-05-27 (jin23624 gold refinement)
+
+## jin23624 - Gold Label Refinement (2026-05-27)
+
+- Benchmark: Replaced T001-T003 weak seed gold rows G001-G009 with DOI-backed journal articles verified through Crossref metadata and DOI/publisher searches. (jin23624)
+- Benchmark: T001 now has three verified DOI rows; T002 has three verified DOI rows in approved A1 journals; T003 has three newly verified DOI rows plus existing verified G061. (jin23624)
+- Verification: `npm run benchmark:evaluate-proposed` passed after the gold update. Observed macro metrics: Precision@5=0.1333, NDCG@5=0.3579, Gold DOI Hit Rate@5=0.1944, verifiedGold=10, goldMatches=2. Metric output files were restored to `main` state because this branch is scoped to gold-label files, not Metric QA outputs. (jin23624)
+- Remaining uncertainty: T001 G003 is DOI-backed and relevant to AI recruitment/organizational attractiveness but not in the local approved S/A1 allowlist. (jin23624)
+
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 

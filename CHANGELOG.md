@@ -20,6 +20,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (jin23624)
+
+- Benchmark: Refined T001-T003 gold labels with DOI-backed, Crossref-verified journal articles in `benchmark/gold_relevant_papers.csv` and `benchmark/gold_relevant_papers.verified.csv`. (jin23624)
+- Docs: Updated `jin23624_cpu/README.md` and `docs/progress.md` with verification results, metric impact, and remaining uncertainty. (jin23624)
+
 ## 2026-05-22 (codex)
 
 - Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)
