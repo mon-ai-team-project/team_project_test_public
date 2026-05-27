@@ -22,6 +22,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-27 (codex)
 
+- Fixed: Corrected Gemini benchmark DOI/title mismatches for T012/T019, clarified /api/benchmark-metrics as a static snapshot, and recorded the review in docs/gemini-work-feedback-2026-05-27.md. (codex)
+
+
 - Docs: Added `docs/gemini-t004-t006-benchmark-handoff.md` and cleaned Gemini handoff conflict-marker remnants so Gemini can safely continue T004-T006 benchmark work from personal repo state. (codex)
 - Docs: Added `docs/cloudflare-worker-build-troubleshooting.md` with the resolved Worker build incident, root causes, verification commands, and recurrence-prevention checklist. (codex)
 

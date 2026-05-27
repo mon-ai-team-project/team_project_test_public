@@ -2,6 +2,14 @@
 
 ## 2026-05-27 - Root Wrangler Deploy Failure Check
 
+## 2026-05-27 - Gemini Work Review Corrections
+
+- Context: The user asked to record Codex feedback on Gemini work and proceed with the corrective work. (codex)
+- Finding: Gemini changed Worker/dashboard/Wrangler files outside the conservative benchmark handoff scope, duplicated DOI `10.1177/00222429221102550` across different benchmark papers, and labeled a hard-coded 3-task metric endpoint as live D1 metrics. (codex)
+- Fix: Corrected T012/T019 DOI/title/journal rows, made `/api/benchmark-metrics` explicitly return `source: static_snapshot`, changed dashboard labels to avoid live-data overclaiming, fixed trailing whitespace, and added `docs/gemini-work-feedback-2026-05-27.md`. (codex)
+
+
+
 ## 2026-05-27 - Personal Cloudflare Build Stale Commit Recheck
 - Resolution record: Added `docs/cloudflare-worker-build-troubleshooting.md` as the durable runbook for this incident, including the stale build SHA check, root `wrangler.toml` conflict-marker check, gitlink/submodule check, and artifact download route check. (codex)
 - Final status: The user confirmed the Worker is operating normally after the personal `main` gitlink fix; health, diagnostics, search jobs, CSV, Markdown, XLSX, and PDF outputs had been verified. (codex)

@@ -4,6 +4,9 @@ Updated: 2026-05-27 (gemini benchmark and dashboard integration)
 
 ## gemini - T004-T020 Gold Refinement & Dashboard Live Connection (2026-05-27)
 
+- **Codex review correction**: Gemini work is conditionally salvageable but not organization-merge ready without audit. Codex corrected T012/T019 duplicate DOI mappings, changed evaluation dashboard wording from live D1 metrics to static benchmark snapshot, and recorded the review in `docs/gemini-work-feedback-2026-05-27.md`. Full 20-task gold-label audit remains required. (codex)
+
+
 - **Benchmark**: Successfully refined gold labels for all 20 tasks (T001-T020). Replaced all weak seed rows with real DOI-backed, top-journal papers (AMJ, JAP, SMJ, MISQ, JAR, RAST, etc.) verified via Crossref. Total 61 verified gold rows established.
 - **Dashboard**: Completed full live connection for all pages.
     - **Research/Ops**: Connected to live D1 traces and R2 artifacts.

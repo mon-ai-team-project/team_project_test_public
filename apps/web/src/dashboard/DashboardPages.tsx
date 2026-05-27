@@ -40,6 +40,8 @@ type TraceDetail = Record<string, string | number | boolean | null>;
 type EnrichmentOverview = { limit: string; crossrefProcessed: string; crossrefSkipped: string; unpaywallProcessed: string; unpaywallSkipped: string };
 
 type BenchmarkMetrics = {
+  source?: "static_snapshot" | "live" | string;
+  note?: string;
   tasks: number;
   results: number;
   gold: number;
@@ -758,6 +760,10 @@ export function EvaluationDashboardPage() {
   }, [scenarioKey, benchmarkMetrics]);
 
   const overall = Math.round(scenario.bars.reduce((sum, item) => sum + item.value, 0) / scenario.bars.length);
+  const benchmarkSourceLabel = benchmarkMetrics?.source === "static_snapshot" ? "Static benchmark snapshot" : "Live benchmark metrics";
+  const benchmarkDescription = benchmarkMetrics?.source === "static_snapshot"
+    ? "커밋된 3-task proposed-agent benchmark 스냅샷입니다. 20-task live aggregation은 아직 구현 전입니다."
+    : "실제 benchmark endpoint에서 반환된 metric 데이터입니다.";
 
   useEffect(() => {
     void loadBenchmarkMetrics();
@@ -771,8 +777,8 @@ export function EvaluationDashboardPage() {
       const data = (await response.json()) as BenchmarkMetrics;
       setBenchmarkMetrics(data);
       setMessage({
-        title: "실제 벤치마크 결과 확인됨",
-        body: `현재 ${data.tasks}개 태스크, ${data.results}개 결과물에 대한 실제 측정 수치가 반영되었습니다. Proposed Agent가 신뢰도(DOI/Journal) 측면에서 압도적인 우위를 보입니다.`
+        title: data.source === "static_snapshot" ? "정적 벤치마크 스냅샷 확인됨" : "벤치마크 결과 확인됨",
+        body: `${data.tasks}개 태스크, ${data.results}개 결과물 기준입니다. ${data.note ?? "Endpoint에서 반환된 metric을 표시합니다."}`
       });
     } catch (error) {
       console.error(error);
@@ -823,7 +829,7 @@ export function EvaluationDashboardPage() {
 
       <ImplementationStatusPanel
         title="Evaluation Route Implementation Status"
-        description={benchmarkMetrics ? "실제 D1/R2 벤치마크 메트릭 데이터가 연결되었습니다." : "평가 화면의 scenario 수치는 미완성 Mock입니다. 실제 데이터 연결 전입니다."}
+        description={benchmarkMetrics ? benchmarkDescription : "평가 화면의 scenario 수치는 미완성 Mock입니다. 실제 데이터 연결 전입니다."}
         items={evaluationImplementationStatus}
       />
 
@@ -833,9 +839,9 @@ export function EvaluationDashboardPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Baseline Evaluation Dashboard</h2>
-                <p>{benchmarkMetrics ? `실제 ${benchmarkMetrics.tasks}개 태스크 결과 기반의 실측 비교 데이터입니다.` : "미완성 Mock: baseline CSV와 proposed full-run 결과 연결 전입니다."}</p>
+                <p>{benchmarkMetrics ? `${benchmarkMetrics.tasks}개 태스크 기준 benchmark metric입니다.` : "미완성 Mock: baseline CSV와 proposed full-run 결과 연결 전입니다."}</p>
               </div>
-              <span className={`uxPill ${benchmarkMetrics ? "green" : "amber"}`}>{benchmarkMetrics ? "Live D1 metrics" : "미완성 Mock"}</span>
+              <span className={`uxPill ${benchmarkMetrics ? "blue" : "amber"}`}>{benchmarkMetrics ? benchmarkSourceLabel : "미완성 Mock"}</span>
             </div>
             <div className="uxTableWrap">
               <table className="uxTable">
@@ -850,7 +856,7 @@ export function EvaluationDashboardPage() {
                 </thead>
                 <tbody>
                   {scenario.rows.map((row) => (
-                    <tr key={row.metric} onClick={() => setMessage({ title: row.metric, body: `${row.finding} ${benchmarkMetrics ? "실제 벤치마크 결과에서 확인된 사실입니다." : "실제 비교는 baseline CSV와 proposed full-run metric 연결 후 확정됩니다."}` })}>
+                    <tr key={row.metric} onClick={() => setMessage({ title: row.metric, body: `${row.finding} ${benchmarkMetrics ? benchmarkDescription : "실제 비교는 baseline CSV와 proposed full-run metric 연결 후 확정됩니다."}` })}>
                       <td>{row.metric}</td>
                       <td><span className="uxPill amber">{row.ruleBased}</span></td>
                       <td><span className="uxPill blue">{row.singleLlm}</span></td>
@@ -887,9 +893,9 @@ export function EvaluationDashboardPage() {
             <div className="uxPanelHead">
               <div>
                 <h2>Score Breakdown</h2>
-                <p>{benchmarkMetrics ? "실제 벤치마크 매크로 평균 결과입니다." : "미완성 Mock: 실제 benchmark 결과 연결 전에는 0으로 표시합니다."}</p>
+                <p>{benchmarkMetrics ? benchmarkDescription : "미완성 Mock: 실제 benchmark 결과 연결 전에는 0으로 표시합니다."}</p>
               </div>
-              <span className={`uxPill ${benchmarkMetrics ? "green" : "amber"}`}>{benchmarkMetrics ? "Live metrics" : "미완성 Mock"}</span>
+              <span className={`uxPill ${benchmarkMetrics ? "blue" : "amber"}`}>{benchmarkMetrics ? benchmarkSourceLabel : "미완성 Mock"}</span>
             </div>
             <div className="uxScorePanel">
               <div className="uxScoreHead">

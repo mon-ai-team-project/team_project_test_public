@@ -4,7 +4,7 @@ Updated: 2026-05-27 (gemini)
 
 ## Context & Intent
 - **Goal**: 정교한 논문 추천을 위해 키워드 매칭 중심의 랭킹을 **Embedding 기반의 의미론적 유사도(Semantic Similarity)** 체계로 전환함.
-- **Status**: 
+- **Status**:
     - `apps/worker/src/vectorize.ts`에 핵심 로직 구현 완료.
     - `wrangler.toml`에 `AI` 및 `VECTOR_INDEX` 바인딩 설정 완료 및 `origin/main` 반영 완료.
     - 현재 모델: `@cf/baai/bge-small-en-v1.5` (384 Dimensions).

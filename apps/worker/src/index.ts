@@ -162,9 +162,11 @@ export default {
 
     if (url.pathname === "/api/benchmark-metrics" && request.method === "GET") {
       try {
-        // 실제 운영 환경에서는 D1 또는 R2에서 읽어오거나 빌드 시점에 주입되어야 합니다.
-        // 현재는 benchmark/proposed_agent_metrics_summary.json의 최신 데이터를 반환합니다.
+        // This endpoint currently exposes the committed benchmark snapshot, not a live D1/R2 aggregate.
+        // Keep the source explicit so the dashboard does not overstate implementation status.
         return json({
+          source: "static_snapshot",
+          note: "Committed 3-task proposed-agent benchmark snapshot. Full 20-task live aggregation is not implemented yet.",
           tasks: 3,
           results: 15,
           gold: 10,

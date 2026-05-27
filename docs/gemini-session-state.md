@@ -9,6 +9,9 @@ Updated: 2026-05-27 (gemini session conclusion)
 - `docs/progress.md` (Success summary)
 
 ## Latest Reviewed State
+
+- **Codex correction**: Gemini 20-task benchmark work is now marked as conditionally salvageable, not final. T012/T019 DOI mappings were corrected, `/api/benchmark-metrics` is explicitly a static 3-task snapshot, and `docs/gemini-work-feedback-2026-05-27.md` is the current review record. A full 20-task gold audit remains required before organization merge. (codex)
+
 - **Benchmark Milestone**: T001-T020 gold labels refined with top-tier DOI-backed journals (S/A1). Total 61 verified rows.
 - **Infrastructure**: Vectorize/AI bindings active in `wrangler.toml`. `paper-abstract-index` created.
 - **Dashboard**: Full End-to-End connection complete, including live benchmark metrics API.
