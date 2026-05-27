@@ -1,5 +1,15 @@
 # Debug Log
 
+## 2026-05-27 - Team Branch Evaluation And Feedback
+
+- Context: The user asked to reflect organization team outputs into the personal repo, evaluate them, and then push the review back to the organization repo. (codex)
+- Finding: `team-origin/benchmark/member-c-baseline-t001-t003` contains a reproducible 15-row rule-based baseline for T001-T003, but it is still derived from the existing Proposed Agent candidate pool. (codex)
+- Finding: `team-origin/benchmark/jin23624-gold-t001-t003` is the clearest benchmark-quality improvement because it replaces weak seed rows with DOI-backed verified gold entries. (codex)
+- Finding: `team-origin/benchmark/juilie-proposed-review` is mostly documentation and PDF handoff material, with lower integration risk but some potential cleanup needed around the extra push-test artifact. (codex)
+- Recommendation: merge the gold-label branch first, then the baseline branch with its limitation clearly documented, and review the manual-review branch for unnecessary artifacts before merge. (codex)
+- Troubleshooting: `apply_patch` failed in this environment because of a bwrap file-capabilities issue, so the documentation edits were applied with a small Node script instead. (codex)
+- Verification: `git show`, `git diff --stat`, `git status --short`, `git diff --check`, and read-only branch inspection were used against `team-origin/main` and the three organization benchmark branches. (codex)
+
 ## 2026-05-27 - Gemini Latest Local Branch Evaluation
 
 - Context: The user requested evaluation and feedback after Gemini performed additional local work. (codex)

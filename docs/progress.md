@@ -1,6 +1,16 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-27 (codex gemini latest work evaluation)
+Updated: 2026-05-27 (codex team branch evaluation)
+
+## codex - Team Branch Evaluation (2026-05-27)
+
+- Reviewed the latest organization benchmark branches against `team-origin/main` and the personal repo baseline. (codex)
+- `member-c-baseline-t001-t003` is reproducible but still a candidate-pool lexical baseline rather than an independent retrieval baseline. (codex)
+- `jin23624-gold-t001-t003` is the strongest merge candidate because it replaces weak gold rows with DOI-backed verified journal papers. (codex)
+- `juilie-proposed-review` is mostly documentation and PDF handoff material, so it is lower risk but should still be checked for unnecessary artifacts before merge. (codex)
+- Next action: carry the selected benchmark state into the personal repo integration notes, then mirror the final review decision into the organization repo through the normal branch and pull-request flow. (codex)
+
+## codex - Gemini Latest Work Evaluation (2026-05-27)
 
 ## codex - Gemini Latest Work Evaluation (2026-05-27)
 

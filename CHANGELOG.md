@@ -20,6 +20,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (codex)
+
+- Docs: Added `docs/team-branch-evaluation-2026-05-27.md` with branch-by-branch evaluation, troubleshooting notes, and debug feedback for the latest organization benchmark work. (codex)
+
 ## 2026-05-26 (gemini)
 
 - Added: Integrated LLM-backed Critic Agent using Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for qualitative evaluation of abstracts. (gemini)
