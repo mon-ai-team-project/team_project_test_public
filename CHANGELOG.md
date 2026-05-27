@@ -21,11 +21,14 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - No unreleased changes.
 
 ## 2026-05-27 (codex)
+- Fixed: Cleaned the organization-main root wrangler.toml conflict markers so Cloudflare Git Builds can parse the Worker deploy config. (codex)
+
 
 - Docs: Recorded the personal-repo sync and organization PR merge that restored the org-ready baseline in `docs/progress.md` and `docs/debug-log.md`. (codex)
 - Docs: Added `docs/team-branch-evaluation-2026-05-27.md` with team-branch status, recommendations, and troubleshooting notes. (codex)
 
 ## 2026-05-27 (codex)
+
 
 - Docs: Added docs/benchmark-branch-review-2026-05-27.md to record that the benchmark branches need rebase or cherry-pick before merging onto the current org-ready baseline. (codex)
 
@@ -45,6 +48,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Docs: Updated project progress and debug logs with refactoring, Vectorize, and LLM Critic integration details. (gemini)
 
 ## 2026-05-27 (codex)
+
 
 - Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings and salvage guidance for the latest divergent Gemini local branch. (codex)
 

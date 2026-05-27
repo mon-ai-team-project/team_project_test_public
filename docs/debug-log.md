@@ -1,5 +1,11 @@
 # Debug Log
 
+## 2026-05-27 - Organization Worker Build Failure Recheck
+
+- Context: The user reported that the Cloudflare build still failed after the personal repo fix was deployed manually. (codex)
+- Finding: origin/main root wrangler.toml was clean, but team-origin/main still contained merge-conflict markers. Therefore a Worker Build connected to the organization repository would still fail before deployment. (codex)
+- Fix: Created a minimal organization-main hotfix branch from team-origin/main and cleaned root wrangler.toml to the confirmed D1 DB and R2 REPORTS bindings. (codex)
+
 ## 2026-05-27 - Personal Repo Sync And Organization PR Merge
 
 - Context: The user requested that the current personal-repo basis be pushed again and reflected back into organization main. (codex)
