@@ -20,6 +20,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 - No unreleased changes.
 
+## 2026-05-27 (juilie)
+
+- Docs: Added `paper_agent_enhanced_report.pdf` to the repository as the submission-oriented benchmark/reference report used by the juilie manual review notes. (juilie)
+
 ## 2026-05-22 (codex)
 
 - Docs: Added organization-main team task briefing and synchronized team workspace status/instructions for jin23624, juilie, shonshinemin, member-c, and seunghyeon. (codex)

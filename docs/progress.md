@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex team task briefing)
+Updated: 2026-05-27 (juilie PDF repository upload)
+
+## juilie - PDF Repository Upload (2026-05-27)
+
+- Docs: Added `paper_agent_enhanced_report.pdf` to the repository so the benchmark/reference report used by the juilie manual review notes is available from GitHub. (juilie)
+- Verification: Confirmed the PDF is 614K and not ignored by `.gitignore`. (juilie)
+
 
 ## juilie — Direct Push Test (2026-05-20)
 
@@ -9,7 +15,7 @@ Updated: 2026-05-22 (codex team task briefing)
 - Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access on `benchmark/juilie-proposed-review`. (juilie)
 - Docs: Updated `CHANGELOG.md` for the push-test documentation change. (juilie)
 - Verification: Local branch is configured to track `team-origin/benchmark/juilie-proposed-review`; push target is protected by the local pre-push hook. (juilie)
-- Local-only state: `paper_agent_enhanced_report.pdf` remains untracked and was not included. (juilie)
+- Previous local-only state: `paper_agent_enhanced_report.pdf` was initially left untracked, then added to the repository on 2026-05-27. (juilie)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
