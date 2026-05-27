@@ -13,7 +13,10 @@
 - Context: The user asked to continue the next recommended task after the org-ready sync was completed. (codex)
 - Finding: Direct diff inspection showed that the benchmark branches are still based on the older team-origin/main history, so merging them now would reintroduce deletions against the newer personal baseline. (codex)
 - Fix: Added docs/benchmark-branch-review-2026-05-27.md to record the safe path: rebase or cherry-pick benchmark changes onto a fresh branch from the org-ready baseline. (codex)
-- Verification: Branch diffs and latest commits were checked for jin23624, member-c, and juilie before writing the review note. (codex)
+- Action: Created `benchmark/reapply-team-work-2026-05-27` from current `main` and reapplied only selected benchmark artifacts from jin23624, member-c, and juilie. (codex)
+- Exclusion: Did not reapply `juilie_bot_hub/push-test.md` because it is not evidence or benchmark data. (codex)
+- Verification: Branch diffs and latest commits were checked for jin23624, member-c, and juilie before reapplying selected files. `npm run benchmark:evaluate-proposed` passed after reapply. (codex)
+- Result: The stricter DOI-backed gold set produced macro Precision@5=0.1333, NDCG@5=0.3579, Gold DOI Hit Rate@5=0.1944, and retained DOI Accuracy/Paper Validity/Top Journal Precision at 1.0000. (codex)
 
 ## 2026-05-27 - T001-T003 Gold Label Verification (jin23624)
 

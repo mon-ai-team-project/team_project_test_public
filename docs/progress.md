@@ -20,7 +20,10 @@ Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 - Reviewed the organization benchmark branches against the current org-ready personal baseline. (codex)
 - Confirmed that the current jin23624, member-c, and juilie benchmark branches are not safe to merge directly because they are based on the older team-origin/main history. (codex)
 - Documented the safe next step as selective rebase or cherry-pick onto a fresh branch from the org-ready baseline. (codex)
-- Next: keep the current personal baseline as the merge target and reapply benchmark changes only after rebasing. (codex)
+- Reapplied only the benchmark artifacts from the team branches onto `benchmark/reapply-team-work-2026-05-27`: gold CSVs, member-c baseline CSV/README, and juilie README/work-log/PDF. (codex)
+- Excluded `juilie_bot_hub/push-test.md` from the reapply branch because it is a workflow test artifact, not benchmark evidence. (codex)
+- Verification: `npm run benchmark:evaluate-proposed` passed after reapplying team benchmark artifacts. Updated macro metrics are Precision@5=0.1333, NDCG@5=0.3579, Gold DOI Hit Rate@5=0.1944, DOI Accuracy@5=1.0000, Paper Validity@5=1.0000, Top Journal Precision@5=1.0000, Hallucination Rate@5=0.0000, and OA Success@5=0.0000. (codex)
+- Next: review the stricter gold-label impact, then decide whether to expand refinement to T004-T006. (codex)
 
 ## codex - Gemini Work Review And Push Prep (2026-05-26)
 

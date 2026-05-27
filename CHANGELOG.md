@@ -22,6 +22,11 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-27 (codex)
 
+- Benchmark: Reapplied selected team benchmark outputs onto the current personal baseline without merging outdated branch histories. (codex)
+- Benchmark: Re-ran `npm run benchmark:evaluate-proposed` after selective reapply and updated proposed-agent metric outputs. (codex)
+
+## 2026-05-27 (codex)
+
 - Docs: Recorded the personal-repo sync and organization PR merge that restored the org-ready baseline in `docs/progress.md` and `docs/debug-log.md`. (codex)
 - Docs: Added `docs/team-branch-evaluation-2026-05-27.md` with team-branch status, recommendations, and troubleshooting notes. (codex)
 

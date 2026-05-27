@@ -27,6 +27,16 @@ Every baseline branch must update this folder with a README or work-log note. Th
 
 ## Work Summary
 
-- Current `main` status: pending assignment.
-- `benchmark/baseline_rule_based_results.csv` and `benchmark/baseline_single_llm_results.csv` currently contain headers only.
-- Next action for the assigned member: collect T001-T003 Rule-based and Single-LLM baseline rows, verify DOI/journal metadata when available, update this workspace, and add a `CHANGELOG.md` entry ending with `(member-c)`.
+- Current branch status: T001-T003 rule-based baseline rows are collected in `benchmark/baseline_rule_based_results.csv`.
+- `benchmark/baseline_rule_based_results.csv` contains 15 rows: five rows each for T001, T002, and T003.
+- `benchmark/baseline_single_llm_results.csv` still contains only the header; no Single-LLM baseline was generated in this pass.
+- Next action for the assigned member or maintainer: decide whether this deterministic candidate-pool baseline is sufficient for the first comparison, or replace it with an independently retrieved rule-based baseline and add Single-LLM rows.
+
+
+## 2026-05-27 Baseline Collection
+
+- Added 15 rule-based baseline rows for T001-T003. (member-c)
+- Method: reused the existing `benchmark/proposed_agent_results.csv` candidate pool, kept rows with `verification_status=verified`, and ranked candidates by deterministic title keyword overlap for each task, then journal rank, year, and original row order. (member-c)
+- DOI/journal metadata was not invented; it was copied from rows already marked Crossref-verified in the Proposed Agent sample. (member-c)
+- Limitation: this is a candidate-pool lexical baseline, not an independent Web of Science/Crossref retrieval baseline. It should be treated as a first reproducible baseline until a separate retrieval baseline is assigned. (member-c)
+- Single-LLM baseline remains pending because no model/API run was requested or configured for this assignment. (member-c)
