@@ -4,7 +4,7 @@ Updated: 2026-05-27 (juilie PDF repository upload)
 
 ## juilie - PDF Repository Upload (2026-05-27)
 
-- Docs: Added `paper_agent_enhanced_report.pdf` to the repository so the benchmark/reference report used by the juilie manual review notes is available from GitHub. (juilie)
+- Docs: Added `juilie_bot_hub/paper_agent_enhanced_report.pdf` to the repository so the benchmark/reference report used by the juilie manual review notes is available from GitHub. (juilie)
 - Verification: Confirmed the PDF is 614K and not ignored by `.gitignore`. (juilie)
 
 
@@ -15,7 +15,7 @@ Updated: 2026-05-27 (juilie PDF repository upload)
 - Docs: Added `juilie_bot_hub/push-test.md` to verify direct push access on `benchmark/juilie-proposed-review`. (juilie)
 - Docs: Updated `CHANGELOG.md` for the push-test documentation change. (juilie)
 - Verification: Local branch is configured to track `team-origin/benchmark/juilie-proposed-review`; push target is protected by the local pre-push hook. (juilie)
-- Previous local-only state: `paper_agent_enhanced_report.pdf` was initially left untracked, then added to the repository on 2026-05-27. (juilie)
+- Previous local-only state: `juilie_bot_hub/paper_agent_enhanced_report.pdf` was initially left untracked, then added to the repository on 2026-05-27. (juilie)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -218,7 +218,7 @@ Current next implementation target:
     - `.github/pull_request_template.md` now asks contributors to confirm `AGENTS.md`, assignment scope, and benchmark verification.
 42. Proposed Agent manual review for the `juilie_bot_hub` assignment is complete on branch `benchmark/juilie-proposed-review`.
     - Benchmark: Filled all 15 T001-T003 rows in `benchmark/manual_review_proposed.csv` with `manual_relevance`, `manual_decision`, `failure_type`, `review_note`, and `reviewer`. (juilie)
-    - Docs: Reflected `paper_agent_enhanced_report.pdf` section 8 as the Paper-Agent-Bench evaluation basis in `juilie_bot_hub/README.md`. (juilie)
+    - Docs: Reflected `juilie_bot_hub/paper_agent_enhanced_report.pdf` section 8 as the Paper-Agent-Bench evaluation basis in `juilie_bot_hub/README.md`. (juilie)
     - Verification: Local PDF text extraction with `pdfjs-dist` confirmed section 8 covers REPRO-Bench-style Agent-level evaluation, human relevance labels, Precision@5/NDCG@5, DOI accuracy, top-journal precision, hallucination checks, and report completeness. (juilie)
 43. Repository secret exposure audit completed before continuing organization-repository work.
     - Current tracked files, full Git history, and local workspace were checked for GitHub PAT, Cloudflare `cfut_`, the previously shared OpenAlex key, private key, AWS, npm, and Slack token patterns.

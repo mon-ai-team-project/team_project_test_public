@@ -22,7 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-27 (juilie)
 
-- Docs: Added `paper_agent_enhanced_report.pdf` to the repository as the submission-oriented benchmark/reference report used by the juilie manual review notes. (juilie)
+- Docs: Added `juilie_bot_hub/paper_agent_enhanced_report.pdf` to the repository as the submission-oriented benchmark/reference report used by the juilie manual review notes. (juilie)
 
 ## 2026-05-22 (codex)
 
@@ -65,7 +65,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 ## 2026-05-18 (codex)
 
 - Docs: Added `docs/github-main-protection.md` and updated team agent guidance to reserve organization `main` for `seunghyeon_choi` maintainer-reviewed integration. (codex)
-- Benchmark: Completed `benchmark/manual_review_proposed.csv` for all 15 T001-T003 Proposed Agent rows using REPRO-Bench-style human relevance review from `paper_agent_enhanced_report.pdf` section 8. (juilie)
+- Benchmark: Completed `benchmark/manual_review_proposed.csv` for all 15 T001-T003 Proposed Agent rows using REPRO-Bench-style human relevance review from `juilie_bot_hub/paper_agent_enhanced_report.pdf` section 8. (juilie)
 - Docs: Updated `juilie_bot_hub/README.md` with the manual review summary and Paper-Agent-Bench evaluation basis. (juilie)
 - Docs: Added `docs/cloudflare-org-repo-migration.md` with Worker, Pages, and MCP settings for switching Cloudflare Git builds to the organization repository. (codex)
 - Security: Audited tracked files, Git history, and local workspace for GitHub PAT, Cloudflare token, OpenAlex key, private key, AWS, npm, and Slack token patterns; no actual token values were found. (codex)
