@@ -10,3 +10,10 @@ database_id = "4d622431-3574-4e04-a359-dada93e97438"
 [[r2_buckets]]
 binding = "REPORTS"
 bucket_name = "paper-agent-outputs"
+
+[ai]
+binding = "AI"
+
+[[vectorize]]
+binding = "VECTOR_INDEX"
+index_name = "paper-abstract-index"
