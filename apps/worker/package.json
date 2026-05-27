@@ -9,7 +9,9 @@
     "smoke": "node scripts/smoke-test.mjs",
     "typecheck": "tsc --noEmit",
     "dev:staging": "wrangler dev --config wrangler.staging.toml",
-    "deploy:staging": "wrangler deploy --config wrangler.staging.toml"
+    "deploy:staging": "wrangler deploy --config wrangler.staging.toml",
+    "dev:local": "wrangler dev --port 8787",
+    "smoke:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false node scripts/smoke-test.mjs"
   },
   "dependencies": {
     "@paper-agent/shared": "*",
