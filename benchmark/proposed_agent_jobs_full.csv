@@ -1,0 +1,21 @@
+task_id,keyword,journal_category_id,job_id,status,current_step,source_result_count,allowed_result_count,paper_count,started_at,completed_at,error_message
+T001,AI interview employer branding,organization-hr,job-d8fcff1f-24ed-4513-9cad-98d55b9c1f86,completed,completed,8,5,5,2026-05-26T07:33:08.128Z,2026-05-26T07:33:28.560Z,
+T002,artificial intelligence recruitment applicant reaction,organization-hr,job-48f07da0-d186-4f24-adb5-a05c04f87ed4,completed,completed,25,5,5,2026-05-26T07:33:37.063Z,2026-05-26T07:33:50.574Z,
+T003,generative AI advertising effectiveness,marketing,job-33023cde-86d8-4206-bf50-1414bc80750a,completed,completed,25,5,5,2026-05-26T07:33:53.036Z,2026-05-26T07:34:09.253Z,
+T004,algorithmic management employee trust,organization-hr,,failed,benchmark_runner,,,0,2026-05-26T07:34:21.161Z,2026-05-26T07:34:43.952Z,GET job job-1db9ebd3-d733-4c75-b744-907ee063fca7 failed
+T005,AI transparency consumer trust,marketing,,failed,benchmark_runner,,,0,2026-05-26T07:34:45.453Z,2026-05-26T07:34:47.166Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T006,chatbot service failure customer satisfaction,marketing,job-d5d86e67-5722-4806-8fce-230783fa7c7f,completed,completed,25,5,5,2026-05-26T13:29:42.244Z,2026-05-26T13:30:03.379Z,
+T007,platform work algorithmic control,organization-hr,job-350fca9d-a7d9-491d-bfdd-e5804bbf760c,completed,completed,25,5,5,2026-05-26T13:30:12.246Z,2026-05-26T13:30:26.440Z,
+T008,remote work knowledge sharing,common,job-9bc44f3a-283d-4efe-83a0-e192b1da1611,completed,completed,25,5,5,2026-05-26T13:30:28.850Z,2026-05-26T13:30:44.104Z,
+T009,digital transformation dynamic capabilities,international-business,job-a6314d12-418e-49c9-9bc1-4663eabbc0ad,completed,completed,25,5,5,2026-05-26T13:30:57.448Z,2026-05-26T13:31:11.423Z,
+T010,ESG disclosure firm value,accounting,job-0893e495-72f4-49e8-a097-76c8a20fef1c,completed,completed,25,5,5,2026-05-26T13:31:13.900Z,2026-05-26T13:31:29.418Z,
+T011,greenwashing consumer skepticism,marketing,job-5b27e67d-6792-4266-8f47-541a9688cae1,completed,completed,25,5,5,2026-05-26T13:31:45.094Z,2026-05-26T13:32:02.556Z,
+T012,social media influencer authenticity purchase intention,marketing,job-efc5ce66-19a7-4ff4-b062-9f71343830c9,completed,completed,25,5,5,2026-05-26T13:32:14.263Z,2026-05-26T13:32:26.911Z,
+T013,privacy personalization tradeoff marketing,marketing,job-b7b355c2-55dc-497c-8927-35760370fbd5,completed,completed,25,5,5,2026-05-26T13:32:30.619Z,2026-05-26T13:32:46.508Z,
+T014,FinTech adoption trust risk,information-systems,job-176978c4-4af6-4bf9-8cb3-8542f8cc5a77,completed,completed,25,5,5,2026-05-26T13:32:59.701Z,2026-05-26T13:33:16.663Z,
+T015,blockchain supply chain transparency,operations,job-729b8f38-887f-45a2-822e-c02919124a16,completed,completed,25,5,5,2026-05-26T13:33:28.329Z,2026-05-26T13:33:43.044Z,
+T016,AI decision support managerial judgment,information-systems,job-99927022-dc70-46fe-a896-677a7c784371,completed,completed,25,5,5,2026-05-26T13:34:30.928Z,2026-05-26T13:34:46.650Z,
+T017,diversity climate employee voice,organization-hr,job-3c74a150-8a16-4c7a-a8d7-043540ca799f,completed,completed,25,5,5,2026-05-26T13:35:00.430Z,2026-05-26T13:35:16.786Z,
+T018,organizational resilience crisis management,international-business,job-90a7cef5-81d2-4994-a019-db259ba0699a,completed,completed,25,5,5,2026-05-26T13:35:29.104Z,2026-05-26T13:35:42.243Z,
+T019,customer journey omnichannel retailing,marketing,,failed,benchmark_runner,,,0,2026-05-26T13:35:45.499Z,2026-05-26T13:35:49.050Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T020,business analytics competitive advantage,information-systems,,failed,benchmark_runner,,,0,2026-05-26T13:35:50.551Z,2026-05-26T13:35:52.511Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed

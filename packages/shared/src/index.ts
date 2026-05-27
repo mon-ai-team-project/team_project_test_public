@@ -36,6 +36,24 @@ export type SearchJob = {
   allowedResultCount?: number;
 };
 
+export type AgentTraceStatus = "pending" | "running" | "completed" | "failed" | "skipped";
+
+export type AgentTrace = {
+  id: string;
+  jobId: string;
+  stepOrder: number;
+  stepId: string;
+  agentName: string;
+  status: AgentTraceStatus;
+  summary: string;
+  detail?: string;
+  inputCount?: number;
+  outputCount?: number;
+  startedAt: string;
+  completedAt?: string;
+  errorMessage?: string;
+};
+
 export type PaperSummary = {
   id: string;
   rank: number;
@@ -61,6 +79,10 @@ export type PaperSummary = {
   oaRepository?: string;
   unpaywallStatus?: "found" | "not_found" | "skipped" | "failed";
   unpaywallReason?: string;
+  driveFileId?: string;
+  driveWebUrl?: string;
+  driveStatus?: "uploaded" | "skipped" | "failed";
+  driveReason?: string;
   relevanceScore?: number;
   journalFitScore?: number;
   verificationScore?: number;

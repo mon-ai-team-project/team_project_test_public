@@ -8,7 +8,9 @@
     "deploy": "wrangler deploy",
     "e2e": "node scripts/e2e-check.mjs",
     "smoke": "node scripts/smoke-test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:staging": "wrangler dev --config wrangler.staging.toml --port 8789",
+    "deploy:staging": "wrangler deploy --config wrangler.staging.toml"
   },
   "dependencies": {
     "@cloudflare/workers-types": "^4.20250510.0",

@@ -7,7 +7,9 @@
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "smoke": "node scripts/smoke-test.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev:staging": "wrangler dev --config wrangler.staging.toml",
+    "deploy:staging": "wrangler deploy --config wrangler.staging.toml"
   },
   "dependencies": {
     "@paper-agent/shared": "*",

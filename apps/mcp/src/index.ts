@@ -19,6 +19,22 @@ type SearchJobRow = {
   error_message: string | null;
 };
 
+type AgentTraceRow = {
+  id: string;
+  job_id: string;
+  step_order: number;
+  step_id: string;
+  agent_name: string;
+  status: string;
+  summary: string;
+  detail: string | null;
+  input_count: number | null;
+  output_count: number | null;
+  started_at: string;
+  completed_at: string | null;
+  error_message: string | null;
+};
+
 type PaperRow = {
   id: string;
   rank: number;
@@ -34,6 +50,10 @@ type PaperRow = {
   oa_pdf_url: string | null;
   oa_landing_page_url: string | null;
   unpaywall_status: string | null;
+  drive_file_id: string | null;
+  drive_web_url: string | null;
+  drive_status: string | null;
+  drive_reason: string | null;
   abstract_score: number | null;
   relevance_score: number | null;
   journal_fit_score: number | null;
@@ -86,6 +106,10 @@ const REQUIRED_COLUMNS = [
       "oa_repository",
       "unpaywall_status",
       "unpaywall_reason",
+      "drive_file_id",
+      "drive_web_url",
+      "drive_status",
+      "drive_reason",
       "created_at"
     ]
   },
@@ -106,6 +130,10 @@ const REQUIRED_COLUMNS = [
       "relevance_reason",
       "created_at"
     ]
+  },
+  {
+    table: "agent_traces",
+    columns: ["id", "job_id", "step_order", "step_id", "agent_name", "status", "summary", "detail", "input_count", "output_count", "started_at", "completed_at", "error_message", "created_at"]
   }
 ] as const;
 
@@ -269,6 +297,34 @@ async function getMissingColumns(db: D1Database): Promise<DiagnosticsColumnCheck
   return missing;
 }
 
+async function listAgentTraces(db: D1Database, jobId: string) {
+  const rows = await db
+    .prepare(
+      `SELECT id, job_id, step_order, step_id, agent_name, status, summary, detail,
+              input_count, output_count, started_at, completed_at, error_message
+       FROM agent_traces
+       WHERE job_id = ?
+       ORDER BY step_order ASC, started_at ASC`
+    )
+    .bind(jobId)
+    .all<AgentTraceRow>();
+  return rows.results.map((row) => ({
+    id: row.id,
+    jobId: row.job_id,
+    stepOrder: row.step_order,
+    stepId: row.step_id,
+    agentName: row.agent_name,
+    status: row.status,
+    summary: row.summary,
+    detail: row.detail ?? undefined,
+    inputCount: row.input_count ?? 0,
+    outputCount: row.output_count ?? 0,
+    startedAt: row.started_at,
+    completedAt: row.completed_at ?? undefined,
+    errorMessage: row.error_message ?? undefined
+  }));
+}
+
 async function listSearchJobs(db: D1Database, limit: number) {
   const rows = await db
     .prepare(
@@ -312,6 +368,10 @@ async function listPapers(db: D1Database, jobId: string, limit: number) {
         p.oa_pdf_url,
         p.oa_landing_page_url,
         p.unpaywall_status,
+        p.drive_file_id,
+        p.drive_web_url,
+        p.drive_status,
+        p.drive_reason,
         e.abstract_score,
         e.relevance_score,
         e.journal_fit_score,
@@ -362,6 +422,10 @@ function mapPaper(row: PaperRow) {
     oaPdfUrl: row.oa_pdf_url ?? "",
     oaLandingPageUrl: row.oa_landing_page_url ?? "",
     unpaywallStatus: row.unpaywall_status ?? "skipped",
+    driveFileId: row.drive_file_id ?? "",
+    driveWebUrl: row.drive_web_url ?? "",
+    driveStatus: row.drive_status ?? "skipped",
+    driveReason: row.drive_reason ?? "",
     scores: {
       abstract: row.abstract_score ?? 0,
       relevance: row.relevance_score ?? 0,
