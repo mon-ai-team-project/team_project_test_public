@@ -1,6 +1,8 @@
 # Debug Log
 
 ## 2026-05-27 - Organization Worker Build Failure Recheck
+- Follow-up finding: The subsequent Cloudflare log failed at `error occurred while updating repository submodules`; `git ls-files -s` showed `.worktrees/agent-traces` tracked as mode `160000` with no `.gitmodules`, which made Cloudflare treat it as an invalid submodule. (codex)
+- Follow-up fix: Removed the `.worktrees/agent-traces` gitlink from Git tracking; `.gitignore` already ignores `.worktrees/`, so this local worktree path should not be committed again. (codex)
 
 - Context: The user reported that the Cloudflare build still failed after the personal repo fix was deployed manually. (codex)
 - Finding: origin/main root wrangler.toml was clean, but team-origin/main still contained merge-conflict markers. Therefore a Worker Build connected to the organization repository would still fail before deployment. (codex)
