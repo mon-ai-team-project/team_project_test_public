@@ -31,6 +31,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Docs: Updated `GEMINI.md` with strict file management and historical preservation rules. (gemini)
 - Docs: Updated project progress and debug logs with refactoring, Vectorize, and LLM Critic integration details. (gemini)
 
+## 2026-05-27 (codex)
+
+- Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings and salvage guidance for the latest divergent Gemini local branch. (codex)
+
 ## 2026-05-26 (codex)
 
 - Docs: Added `docs/gemini-debug-handoff.md` and strict Worker debug discipline for Gemini so local/production Worker findings are transferred without relying on memory. (codex)

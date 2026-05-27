@@ -1,5 +1,15 @@
 # Debug Log
 
+## 2026-05-27 - Gemini Latest Local Branch Evaluation
+
+- Context: The user requested evaluation and feedback after Gemini performed additional local work. (codex)
+- Finding: The local root branch `personal-main-check` diverged from `origin/main` and contained ten local-only commits plus uncommitted README corruption. (codex)
+- Finding: `4dad7ef` deleted most historical progress/debug records, violating the no-history-deletion rule. (codex)
+- Finding: The local `GEMINI.md` contains unresolved conflict markers, so Gemini should not continue from that branch. (codex)
+- Finding: Some benchmark outputs may be salvageable, but they represent a 16-task successful-result sample, not a verified final 20-task benchmark. (codex)
+- Change: Added `docs/gemini-latest-work-evaluation.md` to record blocking feedback and safe salvage instructions. (codex)
+- Verification: `git diff --check` and `npm run typecheck` passed in this session. (codex)
+
 ## 2026-05-26 - Gemini Strict Worker Debug Handoff
 
 - Context: The user requested that the Worker debug findings be transferred strictly to Gemini because Gemini does not reliably remember previous sessions. (codex)

@@ -33,6 +33,7 @@ Read these files before editing:
 - Tracked Wrangler configs currently exclude `AI` and `VECTOR_INDEX` bindings to avoid deployment failure before human setup. (codex)
 - LLM Critic severity values are sanitized before critic flags are persisted. (codex)
 - Local Worker troubleshooting scripts and docs were added after verifying production smoke and local health behavior. (codex)
+- Latest local Gemini branch evaluation is recorded in `docs/gemini-latest-work-evaluation.md`; do not continue from divergent `personal-main-check` as-is. (codex)
 - Gemini must classify Worker issues before editing source code: source-code defect, local environment, Cloudflare runtime/config, or expected Wrangler noise. (codex)
 
 ## Required End-Of-Session Snapshot

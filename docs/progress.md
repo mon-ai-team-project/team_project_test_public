@@ -1,6 +1,14 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-26 (gemini critic & vectorize)
+Updated: 2026-05-27 (codex gemini latest work evaluation)
+
+## codex - Gemini Latest Work Evaluation (2026-05-27)
+
+- Reviewed: The root local `personal-main-check` branch was `ahead 10, behind 2` relative to `origin/main` and included new Gemini commits for gold-label refinement, dashboard live-data work, Worker job-state cleanup, and benchmark full-result files. (codex)
+- Finding: The branch must not be pushed or merged as-is because `GEMINI.md` contains conflict markers, `docs/debug-log.md` and `docs/progress.md` were heavily deleted in `4dad7ef`, and README contains accidental corruption. (codex)
+- Finding: Benchmark full-result files may be salvageable as a 16-task successful-result sample, but the commit title and docs must not claim final 20-task completion without resolving failed/missing tasks. (codex)
+- Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings, salvageable work, and the required Gemini correction workflow. (codex)
+- Verification: `git diff --check` and `npm run typecheck` passed in this session. (codex)
 
 ## codex - Gemini Strict Worker Debug Handoff (2026-05-26)
 
