@@ -1,5 +1,11 @@
 # Debug Log
 
+## 2026-05-27 - Benchmark Work Queue Update
+
+- Context: After the selective team-output reapply reached personal `main`, the handoff queue still described the older T001-T003 startup state. (codex)
+- Fix: Updated the work queue, benchmark summary date, sample metric values, and next-step wording to point agents toward T004-T006 expansion. (codex)
+- Verification: `git diff --check` and `npm run benchmark:evaluate-proposed` passed before committing this branch. (codex)
+
 ## 2026-05-27 - Personal Repo Sync And Organization PR Merge
 
 - Context: The user requested that the current personal-repo basis be pushed again and reflected back into organization main. (codex)

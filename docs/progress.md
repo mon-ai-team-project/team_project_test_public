@@ -2,6 +2,11 @@
 
 Updated: 2026-05-27 (codex personal repo sync and jin23624 refinement)
 
+## codex - Benchmark Work Queue Update (2026-05-27)
+
+- Updated `docs/agent-work-queue.md` and `benchmark/benchmark_summary.md` so future agents continue from the integrated T001-T003 benchmark state instead of the older pre-integration queue. (codex)
+- Next benchmark expansion target is T004-T006 gold refinement, followed by new Proposed Agent rows, manual review, and baseline rows for the same task range. (codex)
+
 ## codex - Personal Repo Sync And Organization PR Merge (2026-05-27)
 
 - Reviewed the latest organization benchmark branches and then synchronized the personal repo basis through a PR-safe linear branch. (codex)

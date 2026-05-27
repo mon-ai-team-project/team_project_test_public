@@ -1,6 +1,6 @@
 # Paper-Agent-Bench Summary
 
-Updated: 2026-05-17
+Updated: 2026-05-27
 
 ## Status
 
@@ -30,15 +30,15 @@ The seed gold rows intentionally do not fabricate DOI values. Each DOI field is 
 doi_label_status=needs_crossref_verification
 ```
 
-The first Crossref title-query pass has been run. After manual promotion of two high-confidence candidates, the current status is:
+The first Crossref title-query pass has been run. After manual promotion and selected T001-T003 team-output reapply, the current status is:
 
 | Status | Count | Meaning |
 | --- | ---: | --- |
-| `verified` | 8 | Title match exceeded the automatic verification threshold or was manually promoted from strict candidate review. |
-| `ambiguous` | 17 | Crossref returned a possible DOI, but the title match is not strong enough for final gold use. |
-| `no_match` | 35 | No acceptable Crossref title candidate was found. |
+| `verified` | 17 | Title match exceeded the automatic verification threshold or was manually promoted from strict candidate review. |
+| `ambiguous` | 14 | Crossref returned a possible DOI, but the title match is not strong enough for final gold use. |
+| `no_match` | 30 | No acceptable Crossref title candidate was found. |
 
-This confirms that the seed labels are useful as benchmark topics, but not yet strong enough as final DOI gold labels. Before computing final DOI Accuracy, the ambiguous and no-match rows need manual title refinement or replacement with exact known papers.
+This confirms that the refined labels are improving benchmark quality, but the full 20-task gold set is not final. Before using exact-overlap metrics as final evidence, the ambiguous and no-match rows need manual title refinement or replacement with exact known papers.
 
 ## Gold Refinement Queue
 
@@ -50,7 +50,7 @@ The first refinement queue has been generated:
 | `benchmark/gold_crossref_candidates.csv` | 200 | Task-level Crossref candidates, 10 per task, marked `needs_manual_review`. |
 | `benchmark/gold_candidate_review.csv` | 200 | Candidate list sorted by task and review score, with automatic priority labels. |
 
-All 20 tasks still need at least one refinement action because none currently has three verified DOI gold labels. Crossref task-level candidates are intentionally not auto-accepted because many results are broad, non-top-journal, book-chapter, dissertation, or otherwise outside the approved journal universe.
+T001-T003 now have integrated DOI-backed evidence. The next priority is T004-T006, then the remaining tasks that still lack three verified DOI gold labels. Crossref task-level candidates are intentionally not auto-accepted because many results are broad, non-top-journal, book-chapter, dissertation, or otherwise outside the approved journal universe.
 
 The first candidate scoring pass produced:
 
@@ -146,16 +146,16 @@ Macro-average sample metrics:
 
 | Metric | Value | Interpretation |
 | --- | ---: | --- |
-| Precision@5 | 0.0000 | Exact DOI/title overlap against current gold labels. |
-| NDCG@5 | 0.0000 | Rank quality against current gold labels. |
-| Gold DOI Hit Rate@5 | 0.0000 | Exact DOI hits against verified DOI gold rows. |
+| Precision@5 | 0.1333 | Exact DOI/title overlap against current gold labels. |
+| NDCG@5 | 0.3579 | Rank quality against current gold labels. |
+| Gold DOI Hit Rate@5 | 0.1944 | Exact DOI hits against verified DOI gold rows. |
 | DOI Accuracy@5 | 1.0000 | Returned DOI-bearing papers marked Crossref-verified by the Worker. |
 | Paper Validity@5 | 1.0000 | Returned papers with DOI, verified status, title match, and journal match. |
 | Top Journal Precision@5 | 1.0000 | Returned papers in approved international S/A1 journals. |
 | Hallucination Rate@5 | 0.0000 | One minus paper validity. |
 | OA Success@5 | 0.0000 | Returned papers with successful OA metadata or OA URLs. |
 
-Important interpretation: exact gold overlap is currently not meaningful as a final quality score because only one verified DOI gold label exists across T001-T003. Continue gold refinement before using Precision@5 and NDCG@5 as final evidence.
+Important interpretation: exact gold overlap is now partially meaningful for the T001-T003 sample because 10 verified DOI gold rows are available, but the sample is still too small for final performance claims. Continue T004-T006 gold refinement and collect baseline rows before using Precision@5 and NDCG@5 as final evidence.
 
 The full run command should be executed only when ready to spend WoS quota:
 
@@ -170,11 +170,15 @@ benchmark/proposed_agent_jobs.csv
 benchmark/proposed_agent_results.csv
 ```
 
+## Current Integration Note
+
+As of 2026-05-27, selected T001-T003 team outputs have been reapplied onto the current personal main baseline. The stricter gold set reduced exact-overlap metrics but improved benchmark validity by using DOI-backed rows.
+
 ## Next Step
 
-Refine the gold set:
+Refine the gold set beyond T001-T003:
 
-1. Review `ambiguous` rows and keep only papers from the approved journal universe.
+1. Prioritize T004-T006 rows, especially promoted or near-promoted candidates, and keep only papers from the approved journal universe where possible.
 2. Start from `benchmark/gold_candidate_review.csv` rows marked `promote_candidate`.
 3. Use `benchmark/gold_crossref_candidates.csv` as a broader candidate list, but only promote rows that are:
    - scholarly journal articles,

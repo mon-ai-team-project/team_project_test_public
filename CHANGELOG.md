@@ -22,6 +22,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-27 (codex)
 
+- Docs: Updated benchmark work queue and benchmark summary after integrating selected T001-T003 team outputs into personal main. (codex)
+
 - Benchmark: Reapplied selected team benchmark outputs onto the current personal baseline without merging outdated branch histories. (codex)
 - Benchmark: Re-ran `npm run benchmark:evaluate-proposed` after selective reapply and updated proposed-agent metric outputs. (codex)
 

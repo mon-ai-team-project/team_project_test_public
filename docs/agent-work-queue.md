@@ -1,6 +1,6 @@
 # Agent Work Queue
 
-Updated: 2026-05-22
+Updated: 2026-05-27
 
 This file defines the current team-agent assignments. Agents should pick only their assigned section and avoid unrelated files.
 
@@ -20,10 +20,10 @@ This file defines the current team-agent assignments. Agents should pick only th
 
 | Assignment | Owner | Current status | Next action |
 | --- | --- | --- | --- |
-| Gold label refinement | `jin23624_cpu` | Not complete on `main`; branch has readiness notes only. | Start DOI-backed T001-T003 gold label refinement. |
-| Proposed Agent manual review | `juilie_bot_hub` | Complete for 15 T001-T003 rows. | Wait for maintainer request before adding new review rows. |
-| Baseline result collection | `unassigned_member_c` | Not started; baseline CSV files contain headers only. | Assign member and collect Rule-based / Single-LLM baseline rows. |
-| Metric QA | `shonshinemin_cmd` | Current T001-T003 metric output exists. | Rerun after gold labels, baselines, or Proposed Agent results change. |
+| Gold label refinement | `jin23624_cpu` | T001-T003 selected outputs are integrated into personal `main`; verified gold count is now 10 across the three-task sample. | Expand DOI-backed refinement to T004-T006, starting with promoted/near-promoted candidate rows. |
+| Proposed Agent manual review | `juilie_bot_hub` | T001-T003 review notes and enhanced report artifact are integrated into personal `main`. | Wait until T004-T006 Proposed Agent rows exist, then review only those new rows. |
+| Baseline result collection | `unassigned_member_c` | Rule-based T001-T003 baseline rows are integrated; Single-LLM baseline remains open. | Add Single-LLM T001-T003 rows or start comparable T004-T006 baselines after runner output exists. |
+| Metric QA | `shonshinemin_cmd` | Proposed Agent metrics were regenerated after selective team-output reapply. | Review the stricter gold-label impact and rerun after any T004-T006 expansion. |
 | Integration | `seunghyeon_choi` | Maintainer and integration lead. | Review PRs and keep `main` protected by Agent rules. |
 
 ## Assignment 1 - Gold Label Refinement
@@ -37,7 +37,7 @@ jin23624_cpu
 Branch:
 
 ```text
-benchmark/jin23624-gold-t001-t003
+benchmark/jin23624-gold-t004-t006
 ```
 
 Allowed files:
@@ -52,11 +52,11 @@ docs/progress.md
 
 Goal:
 
-Refine T001-T003 gold labels so each task has at least three DOI-backed, title-verified, top-journal candidate papers where possible.
+T001-T003 refinement has been integrated. Next, refine T004-T006 so each task has at least three DOI-backed, title-verified, top-journal candidate papers where possible.
 
 Procedure:
 
-1. Review only rows with `task_id` in `T001`, `T002`, `T003`.
+1. Review rows with `task_id` in `T004`, `T005`, `T006`; do not rewrite the already integrated T001-T003 evidence unless correcting a verified error.
 2. Search DOI/title metadata in Crossref, Web of Science, publisher pages, or DOI landing pages.
 3. Replace weak seed rows only when a stronger DOI-backed paper is found.
 4. Set `doi_label_status=verified` only when title, DOI, year, and journal are confirmed.
@@ -65,7 +65,7 @@ Procedure:
 
 Definition of done:
 
-- T001-T003 have stronger verified DOI evidence than before.
+- T004-T006 have stronger verified DOI evidence than before.
 - `npm run benchmark:evaluate-proposed` runs successfully.
 - `CHANGELOG.md` records the work with `(jin23624)`.
 
@@ -166,7 +166,7 @@ Procedure:
 
 Definition of done:
 
-- T001-T003 have baseline rows for at least one baseline type.
+- T001-T003 keep their integrated Rule-based baseline rows, and the next baseline batch is either Single-LLM T001-T003 or comparable T004-T006 rows.
 - DOI and journal metadata are not fabricated.
 - `CHANGELOG.md` records the work with the assigned member id.
 
