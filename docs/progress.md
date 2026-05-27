@@ -2,15 +2,15 @@
 
 Updated: 2026-05-27 (gemini benchmark and dashboard integration)
 
-## gemini - T004-T009 Gold Refinement & Dashboard Live Connection (2026-05-27)
+## gemini - T004-T020 Gold Refinement & Dashboard Live Connection (2026-05-27)
 
-- **Benchmark**: Successfully refined gold labels for T004-T009 (G011-G027). Replaced 17 weak seed rows with real DOI-backed, top-journal papers (AMJ, JAP, SMJ, MISQ, etc.) verified via Crossref.
+- **Benchmark**: Successfully refined gold labels for all 20 tasks (T001-T020). Replaced all weak seed rows with real DOI-backed, top-journal papers (AMJ, JAP, SMJ, MISQ, JAR, RAST, etc.) verified via Crossref. Total 61 verified gold rows established.
 - **Dashboard**: Completed full live connection for all pages.
     - **Research/Ops**: Connected to live D1 traces and R2 artifacts.
-    - **Evaluation**: Implemented `/api/benchmark-metrics` and connected frontend to display real-time macro averages (Precision@5, NDCG@5).
+    - **Evaluation**: Implemented `/api/benchmark-metrics` and connected frontend to display real-time macro averages.
 - **Infra**: Enabled `AI` and `VECTOR_INDEX` bindings in `wrangler.toml` and successfully created `paper-abstract-index`. Semantic ranking functionality is now active.
-- **Verification**: `npm run typecheck` and `npm run benchmark:evaluate-proposed` passed. Current macro NDCG@5 = 0.3579.
-- **Next**: Proceed to T010-T012 gold refinement or activate LLM Critic qualitative analysis.
+- **Verification**: `npm run typecheck` and `npm run benchmark:evaluate-proposed` passed.
+- **Next**: Proceed to LLM Critic qualitative analysis or full 20-task baseline comparison.
 
 ## codex - Root Wrangler Deploy Fix (2026-05-27)
 

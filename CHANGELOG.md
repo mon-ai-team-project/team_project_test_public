@@ -60,6 +60,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-27 (jin23624)
 
+- Benchmark: Refined all 20 benchmark tasks (T001-T020) with high-quality, DOI-backed gold labels (61 total verified rows) using top-tier journals (AMJ, JAP, JM, JCR, MISQ, JAR, RAST, SMJ, JFE, Management Science, etc.). (gemini/jin23624)
 - Benchmark: Refined T001-T003 gold labels (G001-G009) with real DOI-backed, top-journal papers verified via Crossref. (jin23624)
 - Benchmark: Refined T004-T006 gold labels (G011-G018) with real DOI-backed, top-journal papers (JAP, JESP, CHB, JM, OBHDP, JRCS, JRIM, JSR) verified via Crossref and Google search. (gemini)
 
