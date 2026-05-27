@@ -1,6 +1,126 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-22 (codex team task briefing)
+Updated: 2026-05-27 (codex team branch evaluation)
+
+## codex - Team Branch Evaluation (2026-05-27)
+
+- Reviewed the latest organization benchmark branches against `team-origin/main` and the personal repo baseline. (codex)
+- `member-c-baseline-t001-t003` is reproducible but still a candidate-pool lexical baseline rather than an independent retrieval baseline. (codex)
+- `jin23624-gold-t001-t003` is the strongest merge candidate because it replaces weak gold rows with DOI-backed verified journal papers. (codex)
+- `juilie-proposed-review` is mostly documentation and PDF handoff material, so it is lower risk but should still be checked for unnecessary artifacts before merge. (codex)
+- Next action: carry the selected benchmark state into the personal repo integration notes, then mirror the final review decision into the organization repo through the normal branch and pull-request flow. (codex)
+
+## codex - Gemini Latest Work Evaluation (2026-05-27)
+
+## codex - Gemini Latest Work Evaluation (2026-05-27)
+
+- Reviewed: The root local `personal-main-check` branch was `ahead 10, behind 2` relative to `origin/main` and included new Gemini commits for gold-label refinement, dashboard live-data work, Worker job-state cleanup, and benchmark full-result files. (codex)
+- Finding: The branch must not be pushed or merged as-is because `GEMINI.md` contains conflict markers, `docs/debug-log.md` and `docs/progress.md` were heavily deleted in `4dad7ef`, and README contains accidental corruption. (codex)
+- Finding: Benchmark full-result files may be salvageable as a 16-task successful-result sample, but the commit title and docs must not claim final 20-task completion without resolving failed/missing tasks. (codex)
+- Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings, salvageable work, and the required Gemini correction workflow. (codex)
+- Verification: `git diff --check` and `npm run typecheck` passed in this session. (codex)
+
+## codex - Gemini Strict Worker Debug Handoff (2026-05-26)
+
+- Docs: Added `docs/gemini-debug-handoff.md` with exact Worker debug facts, known bad command, correct local commands, decision rules, and required end-of-session debug record. (codex)
+- Docs: Updated `GEMINI.md`, `docs/gemini-session-state.md`, and `docs/local-worker-troubleshooting.md` so Gemini must read the Worker debug handoff before Worker source/config changes. (codex)
+- Verification: `git diff --check`, `npm run typecheck`, and handoff link inspection passed in this session. (codex)
+
+## codex - Local Worker Troubleshooting (2026-05-26)
+
+- Checked: Production Worker read-only smoke and minimal search smoke passed, including CSV, Markdown, XLSX, and PDF endpoints. (codex)
+- Checked: Local Worker starts with `npm run dev --workspace apps/worker -- --port 8787`; `/api/health` returns `ok: true`. Local diagnostics can show missing provider secrets unless `.dev.vars` is configured. (codex)
+- Fixed: Added explicit `dev:worker:local`, `smoke:worker:local`, Worker workspace `dev:local`, and Worker workspace `smoke:local` scripts to avoid the `wrangler dev 8787` argument-forwarding failure. (codex)
+- Docs: Added `docs/local-worker-troubleshooting.md` with correct commands, expected local diagnostics, optional `.dev.vars`, and Wrangler RPC-noise guidance. (codex)
+- Fixed: Worker smoke script now honors `REQUIRE_READY=false` for local diagnostics without provider secrets. (codex)
+- Verification: production `npm run smoke:worker`, production minimal search smoke, local `npm run smoke:worker:local`, `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Gemini Work Review And Push Prep (2026-05-26)
+
+- Reviewed: Gemini's Worker modularization, optional LLM Critic path, optional Vectorize relevance path, and repository-rule updates were inspected before personal-repo push. (codex)
+- Fixed: Removed `AI` and `VECTOR_INDEX` bindings from tracked Wrangler configs because those Cloudflare resources are human-gated and were not confirmed for this deployment. The source code remains optional and falls back when bindings are absent. (codex)
+- Docs: Added `docs/gemini-review-feedback.md`, `docs/gemini-session-state.md`, and Gemini memory continuity rules so future Gemini sessions can resume from durable repo state. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## gemini - LLM Critic Agent Integration (2026-05-26)
+
+- Added: Integrated LLM-backed Critic Agent using Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for qualitative evaluation of abstracts. (gemini)
+- Added: Created `apps/worker/src/critic.ts` to centralize rule-based and LLM-backed qualitative analysis, extracting it from `scoring.ts`. (gemini)
+- Changed: Updated `index.ts` to orchestrate parallelized LLM evaluations (chunked in batches of 3) and record detailed Critic Agent traces. (gemini)
+- Verification: `npm run typecheck` passed across all workspaces; LLM prompt and batching logic verified through static analysis. (gemini)
+
+## gemini - Vectorize Semantic Relevance Integration (2026-05-26)
+
+- Added: Integrated Cloudflare Vectorize and Workers AI (`@cf/baai/bge-small-en-v1.5`) for semantic relevance scoring. (gemini)
+- Added: Created `apps/worker/src/vectorize.ts` to handle embedding generation, vector upsert, and semantic similarity queries. (gemini)
+- Changed: Updated `scoring.ts` to implement a hybrid ranking formula: `finalRelevance = 0.4 * keywordOverlap + 0.6 * semanticSimilarity`. (gemini)
+- Changed: Connected the real Vectorize logic to the `vectorize_relevance` workflow step in `index.ts`. (gemini)
+- Verification: `npm run typecheck` passed across all workspaces; semantic scoring logic verified through static analysis. (gemini)
+
+## gemini - Worker Source Code Modularization (2026-05-26)
+
+- Changed: Performed comprehensive modularization of `apps/worker/src/index.ts`, extracting core logic into specialized modules: `types.ts`, `utils.ts`, `scoring.ts`, `providers.ts`, `enrichment.ts`, and `persistence.ts`. (gemini)
+- Changed: Updated `index.ts` to act as a slim orchestrator/controller, reducing its size from 100KB to 22KB while maintaining full API compatibility and background processing flows. (gemini)
+- Fixed: Restored missing `persistCriticFlags` call and ensured all D1/R2 persistence helpers are correctly imported and utilized in the search processing loop. (gemini)
+- Verification: `npm run typecheck` (tsc --noEmit) passed across the entire `apps/worker` workspace in this session. (gemini)
+
+## codex - Gemini Handoff And Worker Report Module Split (2026-05-26)
+
+- Changed: Moved Worker CSV, Markdown, XLSX, PDF, R2 output persistence, output filename/key helpers, and report-specific critic summary helpers from `apps/worker/src/index.ts` to `apps/worker/src/reports.ts`. (codex)
+- Docs: Added `docs/gemini-handoff-blueprint.md` with the current architecture, personal-repo-first policy, deferred tasks, next recommended work, and verification baseline for Gemini. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Human AI Work Split Document (2026-05-25)
+
+- Docs: Added `docs/human-ai-work-split.md` to distinguish human-only account, billing, secret, approval, and production-promotion tasks from AI-agent-safe repository, staging, verification, and documentation work. (codex)
+- Docs: Included staging setup and production promotion responsibility splits so future agents can continue without attempting account-level actions. (codex)
+- Verification: `git diff --check` passed and `docs/human-ai-work-split.md` was reviewed in this session. (codex)
+
+## codex - Staging Separation Scripts (2026-05-25)
+
+- Infra: Added root staging scripts for Worker, MCP, and Pages deployment plus staging smoke checks through `npm run deploy:*:staging`, `npm run smoke:*:staging`, and `npm run staging:check`. (codex)
+- Infra: Added workspace staging scripts for Worker/MCP Wrangler staging configs and a Pages staging build/deploy path. (codex)
+- Infra: Added `apps/web/.env.staging.example` and `apps/web/wrangler.staging.example.toml` so the dashboard can target the staging Worker API without production variables. (codex)
+- Changed: Worker smoke search mode now checks CSV, Markdown, XLSX, and PDF endpoints. (codex)
+- Docs: Updated `docs/staging-testbed.md` with current staging resource names, commands, and promotion checks. (codex)
+- Verification: `npm run typecheck`, `npm run build:web:staging`, `node --check apps/worker/scripts/smoke-test.mjs`, `npm run build`, and `git diff --check` passed in this session. Remote staging smoke was not run because Cloudflare staging resources must be created/configured first. (codex)
+
+## codex - Output Artifact Endpoint Fallback (2026-05-25)
+
+- Fixed: Output Artifacts now synthesizes default CSV, Markdown, XLSX, and PDF endpoint rows for the active job when D1 output metadata is missing, planned, or lacks a URL. (codex)
+- Context: Older jobs can still generate `report.pdf` dynamically, but their `job_outputs` rows may not include a PDF artifact, leaving the dashboard PDF download inactive. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - PDF Dashboard Download Actions (2026-05-25)
+
+- Added: Research dashboard now exposes direct PDF report download buttons from both Ranked Papers toolbar and Report Preview. (codex)
+- Context: The Worker PDF endpoint already existed, but the primary dashboard actions emphasized Markdown/CSV and made PDF less discoverable. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Critic Review Summary Integration (2026-05-25)
+
+- Changed: Report generation now summarizes Critic Agent flags in Markdown and PDF outputs with total severity counts, per-paper risk, decision notes, and recommended manual-review actions. (codex)
+- Changed: Research dashboard Paper Detail now displays a Critic Review summary card before score breakdown, using the selected paper's D1-backed critic flags. (codex)
+- Changed: Markdown/PDF endpoints now generate from D1 job and critic data dynamically so existing jobs can show current critic summaries instead of stale R2 report bodies. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Responsive Research Panels (2026-05-25)
+
+- Fixed: Converted Ranked Papers to a labeled stacked-row layout below 720px so mobile users can read Rank, Title, Journal, Status, OA, and Score without horizontal-scroll dependence. (codex)
+- Fixed: Adjusted Report Preview width, wrapping, panel actions, and viewport-relative height so Markdown output scales on mobile screens. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Research Table Detail Panel Separation (2026-05-25)
+
+- Fixed: Changed the Research dashboard layout so Ranked Papers always uses the full content width and Paper Detail / Recent Jobs render below it in a responsive side-section grid. (codex)
+- Reason: The previous breakpoint still allowed Paper Detail to sit beside the table on wider screens, so the Score column could remain visually covered or compressed. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Blueprint Refresh And Ranked Table Layout (2026-05-25)
+
+- Docs: Refreshed `docs/workflow.md` so the project blueprint matches the current implemented state: D1 `agent_traces`, `critic_flags`, `job_outputs`, R2 CSV/Markdown/XLSX/PDF, and conditional Google Drive OA PDF archive. (codex)
+- Fixed: Updated the Research dashboard Ranked Papers table with stable column sizing, title clamping, horizontal scroll padding, and earlier responsive stacking of the side panel so Score remains reachable on interactive screens. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
 
 ## shonshinemin — Benchmark QA Re-evaluation (2026-05-18)
 
@@ -67,6 +187,83 @@ Updated: 2026-05-22 (codex team task briefing)
 - Docs: Updated `AGENTS.md` and `docs/agent-work-queue.md` so future agents read the team briefing and see the current status snapshot. (codex)
 - Docs: Updated `jin23624_cpu/README.md`, `juilie_bot_hub/README.md`, `shonshinemin_cmd/README.md`, `unassigned_member_c/README.md`, and `seunghyeon_choi/README.md` with current status and next actions. (codex)
 - Status: `juilie_bot_hub` manual review is complete; `shonshinemin_cmd` metric QA output exists; `jin23624_cpu` gold refinement and `unassigned_member_c` baselines remain the next team priorities. (codex)
+
+## codex - PDF Report Output (2026-05-25)
+
+- Added: Worker now generates a text-based PDF report from ranked paper metadata without adding a package dependency. (codex)
+- Added: `GET /api/search-jobs/:id/report.pdf` serves the stored R2 PDF when available or generates it dynamically from D1. (codex)
+- Changed: `job_outputs` now records PDF as `stored` or `generated`, so CSV, Markdown, XLSX, and PDF are all implemented report artifacts. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `npm run build` passed in this session. (codex)
+
+## codex - XLSX Output Generation (2026-05-25)
+
+- Added: Worker now generates a minimal XLSX workbook from ranked paper rows without adding a package dependency. (codex)
+- Added: `GET /api/search-jobs/:id/papers.xlsx` serves the stored R2 workbook when available or generates it dynamically from D1. (codex)
+- Changed: `job_outputs` now records XLSX as `stored` or `generated`; PDF remains the only planned report artifact. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `npm run build` passed in this session. (codex)
+
+## codex - Dashboard Artifact Visibility (2026-05-25)
+
+- Changed: Research dashboard now loads `GET /api/search-jobs/:id/critic-flags` and displays selected-paper critic flags in Paper Detail. (codex)
+- Changed: Research dashboard now loads `GET /api/search-jobs/:id/outputs` and shows CSV, Markdown, XLSX, and PDF artifacts with links where available. (codex)
+- Changed: Ops dashboard now shows output artifact rows, live critic flag rows, and Critic Flags / Outputs metric tiles from D1-backed APIs. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+## codex - Full Workflow Skeleton Persistence (2026-05-25)
+
+- Added: D1 `critic_flags` table plus rule-based Critic Agent flag generation for missing DOI, incomplete Crossref verification, low relevance, non-include screening status, and missing access paths. (codex)
+- Added: D1 `job_outputs` table plus `GET /api/search-jobs/:id/outputs` so CSV, Markdown, XLSX, and PDF output states are queryable per job. (codex)
+- Added: `GET /api/search-jobs/:id/critic-flags` so dashboard/API consumers can inspect persisted paper-level critic risk flags. (codex)
+- Changed: Relevance Agent trace now records metadata-fallback completion instead of `skipped`; Vectorize embeddings remain explicitly planned. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, and `npm run build` passed in this session. (codex)
+
+## codex - Enrichment Trace Visibility (2026-05-25)
+
+- Changed: Main Agent Traces panel now displays compact metadata chips for `limit`, `input`, `processed`, `skipped`, Crossref verification counts, Unpaywall OA counts, and Google Drive upload/skip counts. (codex)
+- Changed: `/dashboard/ops` now includes an Enrichment metric tile and expands pipeline, agent board, and console summaries with the same processed/skipped trace metadata. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+## codex - Manual Review Informed Relevance Scoring (2026-05-22)
+
+- Changed: Updated `apps/worker/src/index.ts` so Worker relevance scoring includes subtopic-fit rules derived from `benchmark/manual_review_proposed.csv` failure patterns. (codex)
+- Changed: Added benchmark-focused rules for `AI interview employer branding`, `AI recruitment applicant reaction`, and `generative AI advertising effectiveness` so broad AI/top-journal matches are penalized when the specific subtopic is missing. (codex)
+- Changed: Ranking now uses persisted `paper.relevanceScore` when available instead of falling back only to `abstractScore`. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+## codex - Enrichment Limit (2026-05-24)
+
+- Added: Worker request payload accepts `enrichmentLimit`, defaulting to 10 and capped at 20, to limit Crossref and Unpaywall subrequests separately from `maxResults`. (codex)
+- Changed: Crossref and Unpaywall enrichment now process only the first `enrichmentLimit` rows and mark the remaining rows as skipped with explicit subrequest-limit reasons. (codex)
+- Changed: Main dashboard and Ops launch payloads send `enrichmentLimit` so production runs avoid the previous Worker subrequest overflow. (codex)
+- Verification: `npm run typecheck`, `npm run build:web`, `npm run build`, and `git diff --check` passed in this session. (codex)
+
+## codex - Google Drive OA PDF Archive (2026-05-24)
+
+- Added: Worker Google Drive service-account JWT authentication using `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY`, and `GOOGLE_DRIVE_FOLDER_ID`. (codex)
+- Added: OA PDF upload path for papers with Unpaywall `oaPdfUrl`, with `drive_file_id`, `drive_web_url`, `drive_status`, and `drive_reason` persisted in D1. (codex)
+- Changed: CSV, Markdown report, Paper Detail, diagnostics, MCP paper results, and dashboard implementation labels now surface Google Drive archive status. (codex)
+- Verification: `npm run typecheck`, paper insert placeholder count check, and `npm run build:web` passed in this session. (codex)
+
+## codex - Ops Trace Dashboard Binding (2026-05-24)
+
+- Changed: `/dashboard/ops` now loads the latest search job, reads `GET /api/search-jobs/:id/traces`, and maps D1 traces into the Multi-Agent Status Board, Pipeline Execution, metrics, and Tool Call Console. (codex)
+- Changed: The Ops Launch button now creates a real Worker search job instead of only mutating mock console state. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+## codex - Agent Trace Persistence (2026-05-24)
+- Fixed: Diagnostics now runs `ensureSchema` before column checks, so `agent_traces` bootstrap is reflected in `/api/diagnostics`. New jobs now report `totalSteps: 12`, and completed traces receive `completedAt`. (codex)
+
+- Added: `agent_traces` D1 schema support in Worker schema bootstrap and static schema file. (codex)
+- Added: Worker trace writes for Planner, Journal Selector, Search/Retriever, Verifier, Open Access, Storage, Evaluation, Relevance, Ranking, Critic, Report, and Delivery stages. (codex)
+- Added: `GET /api/search-jobs/:id/traces` and MCP `get_agent_traces` read support so dashboard and external agents can inspect real execution traces. (codex)
+- Added: Dashboard Agent Traces panel for the selected job, replacing one mock-only status gap with persisted D1 data. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
+
+## codex - Dashboard Mock Clarity (2026-05-24)
+
+- Changed: Updated `apps/web/src/dashboard/mockData.ts` so mock-only evaluation metrics, tool logs, workflow details, Google Drive, Vectorize, and scenario data display as `미완성 Mock` or `미완성` instead of realistic placeholder performance values. (codex)
+- Changed: Updated `apps/web/src/dashboard/DashboardPages.tsx` panel descriptions, metric tiles, and status pills so users can distinguish live Worker/D1/R2 features from incomplete UI previews. (codex)
+- Verification: `npm run typecheck` and `npm run build:web` passed in this session. (codex)
 
 ## Mandatory Session Handoff Rules
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Download, Eye, FileText, History, Play, RefreshCw, Search } from "lucide-react";
-import { BUSINESS_SCHOOL_JOURNAL_CATEGORY_OPTIONS, type PaperSummary, type SearchJob } from "@paper-agent/shared";
+import { BUSINESS_SCHOOL_JOURNAL_CATEGORY_OPTIONS, type AgentTrace, type PaperSummary, type SearchJob } from "@paper-agent/shared";
 import { AgentOpsPage, DashboardNav, EvaluationDashboardPage, ResearchExperiencePanels, resolveDashboardRoute } from "./dashboard/DashboardPages";
 import "./styles.css";
 
@@ -13,6 +13,39 @@ type JobResponse = {
 type JobsResponse = {
   jobs: SearchJob[];
 };
+
+type TracesResponse = {
+  job: SearchJob;
+  traces: AgentTrace[];
+};
+
+type CriticFlag = {
+  id: string;
+  jobId: string;
+  paperId: string;
+  paperRank: number;
+  severity: "low" | "medium" | "high";
+  flagType: string;
+  message: string;
+  evidence: string;
+  createdAt: string;
+};
+
+type JobOutput = {
+  id: string;
+  jobId: string;
+  outputType: "csv" | "markdown" | "xlsx" | "pdf" | string;
+  status: "generated" | "stored" | "planned" | "failed" | string;
+  storage: "dynamic" | "r2" | "planned" | string;
+  objectKey: string;
+  urlPath: string;
+  contentType: string;
+  detail: string;
+  createdAt: string;
+};
+
+type CriticFlagsResponse = { job: SearchJob; criticFlags: CriticFlag[] };
+type JobOutputsResponse = { job: SearchJob; outputs: JobOutput[] };
 
 type PipelineStep = {
   id: string;
@@ -40,11 +73,14 @@ type DiagnosticsResponse = {
     crossrefEmail: boolean;
     unpaywallEmail: boolean;
     r2Reports: boolean;
+    googleDrive: boolean;
   };
   readiness: {
     activeProviderReady: boolean;
   };
 };
+
+type TraceDetail = Record<string, string | number | boolean | null>;
 
 const apiBaseUrl = (import.meta.env.VITE_API_BASE_URL ?? "https://paper-agent-project.shch3653.workers.dev").replace(/\/$/, "");
 
@@ -117,6 +153,7 @@ function App() {
 function ResearchDashboard() {
   const [keyword, setKeyword] = useState("AI interview employer branding");
   const [maxResults, setMaxResults] = useState("20");
+  const [enrichmentLimit, setEnrichmentLimit] = useState("10");
   const [yearStart, setYearStart] = useState("2020");
   const [yearEnd, setYearEnd] = useState("");
   const [journalCategoryId, setJournalCategoryId] = useState("");
@@ -134,7 +171,15 @@ function ResearchDashboard() {
   const [reportPreview, setReportPreview] = useState("");
   const [reportPreviewError, setReportPreviewError] = useState("");
   const [reportPreviewLoading, setReportPreviewLoading] = useState(false);
+  const [agentTraces, setAgentTraces] = useState<AgentTrace[]>([]);
+  const [agentTracesError, setAgentTracesError] = useState("");
+  const [agentTracesLoading, setAgentTracesLoading] = useState(false);
+  const [criticFlags, setCriticFlags] = useState<CriticFlag[]>([]);
+  const [criticFlagsError, setCriticFlagsError] = useState("");
+  const [jobOutputs, setJobOutputs] = useState<JobOutput[]>([]);
+  const [jobOutputsError, setJobOutputsError] = useState("");
   const selected = useMemo(() => papers.find((paper) => paper.id === selectedId) ?? papers[0], [papers, selectedId]);
+  const selectedCriticFlags = useMemo(() => criticFlags.filter((flag) => flag.paperRank === selected?.rank), [criticFlags, selected?.rank]);
   const includedCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "include").length, [papers]);
   const reviewCount = useMemo(() => papers.filter((paper) => paper.includeStatus === "review").length, [papers]);
 
@@ -163,6 +208,19 @@ function ResearchDashboard() {
     if (job?.status === "completed") void refreshReportPreview(job.id);
   }, [job?.id, job?.status]);
 
+  useEffect(() => {
+    setAgentTraces([]);
+    setAgentTracesError("");
+    setCriticFlags([]);
+    setCriticFlagsError("");
+    setJobOutputs([]);
+    setJobOutputsError("");
+    if (job?.id) {
+      void refreshAgentTraces(job.id);
+      if (job.status === "completed") void refreshJobArtifacts(job.id);
+    }
+  }, [job?.id, job?.status, job?.currentStep]);
+
   async function refreshJob() {
     if (!job) return;
     setRefreshing(true);
@@ -189,7 +247,7 @@ function ResearchDashboard() {
       const response = await fetch(apiUrl("/api/search-jobs"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(buildSearchPayload(keyword, maxResults, yearStart, yearEnd, journalCategoryId))
+        body: JSON.stringify(buildSearchPayload(keyword, maxResults, enrichmentLimit, yearStart, yearEnd, journalCategoryId))
       });
       if (!response.ok) throw new Error(await readApiError(response, "Failed to create search job"));
       const data = (await response.json()) as JobResponse;
@@ -212,6 +270,49 @@ function ResearchDashboard() {
   function downloadReport() {
     if (!job) return;
     window.location.href = apiUrl(`/api/search-jobs/${job.id}/report.md`);
+  }
+
+  function downloadPdfReport() {
+    if (!job) return;
+    window.location.href = apiUrl(`/api/search-jobs/${job.id}/report.pdf`);
+  }
+
+  async function refreshAgentTraces(jobId = job?.id) {
+    if (!jobId) return;
+    setAgentTracesLoading(true);
+    setAgentTracesError("");
+    try {
+      const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
+      if (!response.ok) throw new Error(await readApiError(response, "Failed to load agent traces"));
+      const data = (await response.json()) as TracesResponse;
+      setAgentTraces(data.traces);
+    } catch (error) {
+      setAgentTracesError(error instanceof Error ? error.message : "Failed to load agent traces");
+    } finally {
+      setAgentTracesLoading(false);
+    }
+  }
+
+  async function refreshJobArtifacts(jobId = job?.id) {
+    if (!jobId) return;
+    setCriticFlagsError("");
+    setJobOutputsError("");
+    try {
+      const [flagsResponse, outputsResponse] = await Promise.all([
+        fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
+        fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
+      ]);
+      if (!flagsResponse.ok) throw new Error(await readApiError(flagsResponse, "Failed to load critic flags"));
+      if (!outputsResponse.ok) throw new Error(await readApiError(outputsResponse, "Failed to load output artifacts"));
+      const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
+      const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
+      setCriticFlags(flagsData.criticFlags);
+      setJobOutputs(outputsData.outputs);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Failed to load job artifacts";
+      setCriticFlagsError(message);
+      setJobOutputsError(message);
+    }
   }
 
   async function refreshReportPreview(jobId = job?.id) {
@@ -303,6 +404,21 @@ function ResearchDashboard() {
                 aria-label="Maximum results"
               />
             </label>
+            <label>
+              <span>Enrich 1-20</span>
+              <input
+                type="number"
+                min={1}
+                max={20}
+                step={1}
+                inputMode="numeric"
+                value={enrichmentLimit}
+                onChange={(event) => setEnrichmentLimit(event.target.value)}
+                onBlur={() => setEnrichmentLimit(String(parseLimitedEnrichmentLimit(enrichmentLimit, parseLimitedMaxResults(maxResults))))}
+                placeholder="10"
+                aria-label="Metadata enrichment limit"
+              />
+            </label>
             <label className="categoryOption">
               <span>Field</span>
               <select value={journalCategoryId} onChange={(event) => setJournalCategoryId(event.target.value)} aria-label="Journal category">
@@ -361,6 +477,8 @@ function ResearchDashboard() {
       <section className="operationsGrid">
         <PipelineProgress job={job} loading={loading} />
         <DiagnosticsPanel diagnostics={diagnostics} errorMessage={diagnosticsError} onRefresh={refreshDiagnostics} />
+        <AgentTracePanel traces={agentTraces} loading={agentTracesLoading} errorMessage={agentTracesError} onRefresh={() => refreshAgentTraces()} />
+        <OutputArtifactsPanel job={job} outputs={jobOutputs} errorMessage={jobOutputsError} onRefresh={() => refreshJobArtifacts()} />
       </section>
 
       {errorMessage ? <p className="errorMessage">{errorMessage}</p> : null}
@@ -377,6 +495,9 @@ function ResearchDashboard() {
                 <button className="iconButton" onClick={downloadReport} disabled={!job} aria-label="Download Markdown report" title="Download Markdown report">
                   <FileText size={18} />
                 </button>
+                <button className="iconButton" onClick={downloadPdfReport} disabled={!job} aria-label="Download PDF report" title="Download PDF report">
+                  <Download size={18} />
+                </button>
                 <button className="iconButton" onClick={downloadCsv} disabled={!job} aria-label="Download CSV" title="Download CSV">
                   <Download size={18} />
                 </button>
@@ -386,7 +507,17 @@ function ResearchDashboard() {
               </div>
             </div>
             <div className="tableScroll">
-              <table>
+              <table className="rankedPapersTable">
+                <colgroup>
+                  <col className="rankCol" />
+                  <col className="titleCol" />
+                  <col className="journalCol" />
+                  <col className="fieldRankCol" />
+                  <col className="yearCol" />
+                  <col className="statusCol" />
+                  <col className="oaCol" />
+                  <col className="scoreCol" />
+                </colgroup>
                 <thead>
                   <tr>
                     <th>Rank</th>
@@ -403,23 +534,23 @@ function ResearchDashboard() {
                   {papers.length ? (
                     papers.map((paper) => (
                       <tr key={paper.id} className={paper.id === selected?.id ? "selected" : ""} onClick={() => setSelectedId(paper.id)}>
-                        <td>
+                        <td data-label="Rank">
                           <span className="rankPill">{paper.rank}</span>
                         </td>
-                        <td className="paperTitleCell">
+                        <td className="paperTitleCell" data-label="Title">
                           <strong>{paper.title}</strong>
                           <small>{paper.authors}</small>
                         </td>
-                        <td>{paper.journalName}</td>
-                        <td>
+                        <td data-label="Journal">{paper.journalName}</td>
+                        <td data-label="Field / Rank">
                           <JournalRankBadge paper={paper} />
                         </td>
-                        <td>{paper.year || "-"}</td>
-                        <td>
+                        <td data-label="Year">{paper.year || "-"}</td>
+                        <td data-label="Status">
                           <StatusBadge value={paper.includeStatus} tone={getIncludeTone(paper.includeStatus)} />
                         </td>
-                        <td>{paper.oaPdfUrl ? "PDF" : paper.oaLandingPageUrl ? "Page" : paper.oaStatus}</td>
-                        <td>
+                        <td data-label="OA">{paper.oaPdfUrl ? "PDF" : paper.oaLandingPageUrl ? "Page" : paper.oaStatus}</td>
+                        <td data-label="Score">
                           <span className="scorePill">{paper.finalScore.toFixed(2)}</span>
                         </td>
                       </tr>
@@ -443,11 +574,12 @@ function ResearchDashboard() {
             errorMessage={reportPreviewError}
             onRefresh={() => refreshReportPreview()}
             onDownload={downloadReport}
+            onPdfDownload={downloadPdfReport}
           />
         </section>
 
         <aside className="sideColumn">
-          <PaperDetailPanel selected={selected} />
+          <PaperDetailPanel selected={selected} criticFlags={selectedCriticFlags} errorMessage={criticFlagsError} />
           <RecentJobsPanel jobs={recentJobs} activeJobId={job?.id} loadingJobId={loadingJobId} errorMessage={recentJobsError} onLoad={loadSearchJob} onRefresh={refreshRecentJobs} />
         </aside>
       </section>
@@ -455,7 +587,8 @@ function ResearchDashboard() {
   );
 }
 
-function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
+function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: PaperSummary; criticFlags: CriticFlag[]; errorMessage: string }) {
+  const criticReview = selected ? buildCriticReviewSummary(selected, criticFlags) : null;
   return (
     <section className="detailPanel">
       <div className="panelTitle">
@@ -472,6 +605,7 @@ function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
             <span className="scorePill">{selected.finalScore.toFixed(2)}</span>
           </div>
           <h3>{selected.title}</h3>
+          {criticReview ? <CriticReviewSummaryCard review={criticReview} /> : null}
           <ScoreBreakdown paper={selected} />
           <dl>
             <dt>Authors</dt>
@@ -500,8 +634,22 @@ function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
                 "No OA URL found"
               )}
             </dd>
+            <dt>Google Drive</dt>
+            <dd>
+              {selected.driveWebUrl ? (
+                <a href={selected.driveWebUrl} target="_blank" rel="noreferrer">
+                  Open Drive file
+                </a>
+              ) : (
+                `${selected.driveStatus ?? "skipped"} · ${selected.driveReason ?? "No Google Drive upload recorded."}`
+              )}
+            </dd>
             <dt>License</dt>
             <dd>{[selected.oaLicense, selected.oaHostType, selected.oaRepository].filter(Boolean).join(" · ") || "Unknown"}</dd>
+            <dt>Critic Flags</dt>
+            <dd>
+              <CriticFlagsList flags={criticFlags} errorMessage={errorMessage} />
+            </dd>
           </dl>
         </>
       ) : (
@@ -511,6 +659,122 @@ function PaperDetailPanel({ selected }: { selected?: PaperSummary }) {
   );
 }
 
+type CriticReviewSummary = {
+  riskLevel: CriticFlag["severity"] | "clear";
+  decision: string;
+  note: string;
+  evidence: string;
+  flagTypes: string;
+  actions: string[];
+};
+
+function CriticReviewSummaryCard({ review }: { review: CriticReviewSummary }) {
+  return (
+    <section className="criticReviewSummary">
+      <div>
+        <span>Critic Review</span>
+        <strong>{review.decision}</strong>
+      </div>
+      <StatusBadge value={review.riskLevel} tone={getCriticReviewTone(review.riskLevel)} />
+      <p>{review.note}</p>
+      <small>Flags: {review.flagTypes}</small>
+      <ul>
+        {review.actions.map((action) => <li key={action}>{action}</li>)}
+      </ul>
+    </section>
+  );
+}
+
+function CriticFlagsList({ flags, errorMessage }: { flags: CriticFlag[]; errorMessage: string }) {
+  if (errorMessage) return <span className="inlineError">{errorMessage}</span>;
+  if (!flags.length) return <span className="mutedText">No critic flags for this paper.</span>;
+
+  return (
+    <div className="artifactList criticFlagList">
+      {flags.map((flag) => (
+        <article key={flag.id} className="artifactItem">
+          <div>
+            <strong>{flag.flagType}</strong>
+            <span>{flag.message}</span>
+            {flag.evidence ? <small>{flag.evidence}</small> : null}
+          </div>
+          <StatusBadge value={flag.severity} tone={getSeverityTone(flag.severity)} />
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function OutputArtifactsPanel({
+  job, outputs, errorMessage, onRefresh
+}: { job: SearchJob | null; outputs: JobOutput[]; errorMessage: string; onRefresh: () => void }) {
+  const displayOutputs = getDisplayOutputs(job, outputs);
+  return (
+    <section className="diagnosticsPanel outputArtifactsPanel">
+      <div className="diagnosticsHeader">
+        <div>
+          <h2>Output Artifacts</h2>
+          <p>{displayOutputs.length ? String(displayOutputs.length) + " download endpoints available" : job ? "No output endpoints loaded" : "Run or load a job"}</p>
+        </div>
+        <button className="iconButton" onClick={onRefresh} disabled={!job} aria-label="Refresh output artifacts" title="Refresh output artifacts">
+          <RefreshCw size={18} />
+        </button>
+      </div>
+      {errorMessage ? <p className="errorMessage compact">{errorMessage}</p> : null}
+      <div className="artifactList">
+        {displayOutputs.length ? displayOutputs.map((output) => (
+          <article className="artifactItem" key={output.id}>
+            <div>
+              <strong>{output.outputType.toUpperCase()}</strong>
+              <span>{output.storage} · {output.detail}</span>
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+            </div>
+            <StatusBadge value={output.status} tone={getOutputTone(output.status)} />
+          </article>
+        )) : <p className="emptyState">Completed jobs record CSV, Markdown, XLSX, and PDF outputs.</p>}
+      </div>
+    </section>
+  );
+}
+
+function getDisplayOutputs(job: SearchJob | null, outputs: JobOutput[]): JobOutput[] {
+  if (!job) return outputs;
+  const defaults: JobOutput[] = [
+    buildDefaultOutput(job, "csv", "papers.csv", "text/csv; charset=utf-8", "CSV is available from the Worker endpoint."),
+    buildDefaultOutput(job, "markdown", "report.md", "text/markdown; charset=utf-8", "Markdown report is available from the Worker endpoint."),
+    buildDefaultOutput(job, "xlsx", "papers.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "XLSX workbook is available from the Worker endpoint."),
+    buildDefaultOutput(job, "pdf", "report.pdf", "application/pdf", "PDF report is available from the Worker endpoint.")
+  ];
+  return defaults.map((fallback) => {
+    const existing = outputs.find((output) => output.outputType === fallback.outputType);
+    if (!existing) return fallback;
+    return {
+      ...fallback,
+      ...existing,
+      status: existing.status === "planned" ? fallback.status : existing.status,
+      storage: existing.storage === "planned" ? fallback.storage : existing.storage,
+      urlPath: existing.urlPath || fallback.urlPath,
+      contentType: existing.contentType || fallback.contentType,
+      detail: existing.detail || fallback.detail
+    };
+  });
+}
+
+function buildDefaultOutput(job: SearchJob, outputType: JobOutput["outputType"], fileName: string, contentType: string, detail: string): JobOutput {
+  return {
+    id: job.id + "-output-fallback-" + outputType,
+    jobId: job.id,
+    outputType,
+    status: job.status === "completed" ? "generated" : "planned",
+    storage: "dynamic",
+    objectKey: "",
+    urlPath: "/api/search-jobs/" + job.id + "/" + fileName,
+    contentType,
+    detail,
+    createdAt: job.completedAt ?? job.createdAt
+  };
+}
+
 function JournalRankBadge({ paper }: { paper: PaperSummary }) {
   return (
     <span className="journalRankBadge">
@@ -518,6 +782,99 @@ function JournalRankBadge({ paper }: { paper: PaperSummary }) {
       <small>{paper.journalRank ?? "No rank"}</small>
     </span>
   );
+}
+
+function AgentTracePanel({
+  traces, loading, errorMessage, onRefresh
+}: { traces: AgentTrace[]; loading: boolean; errorMessage: string; onRefresh: () => void }) {
+  return (
+    <section className="diagnosticsPanel agentTracePanel">
+      <div className="diagnosticsHeader">
+        <div>
+          <h2>Agent Traces</h2>
+          <p>{traces.length ? String(traces.length) + " recorded workflow steps" : "No live traces for the selected job"}</p>
+        </div>
+        <button className="iconButton" onClick={onRefresh} disabled={loading} aria-label="Refresh agent traces" title="Refresh agent traces">
+          <RefreshCw size={18} className={loading ? "spin" : undefined} />
+        </button>
+      </div>
+      {errorMessage ? <p className="errorMessage compact">{errorMessage}</p> : null}
+      <div className="traceList">
+        {traces.length ? traces.map((trace) => (
+          <article className="traceItem" key={trace.id}>
+            <div>
+              <strong>{trace.stepOrder}. {trace.agentName}</strong>
+              <span>{trace.summary}</span>
+              <TraceMeta trace={trace} />
+            </div>
+            <StatusBadge value={trace.status} tone={getTraceTone(trace.status)} />
+          </article>
+        )) : <p className="emptyState">Run or load a job to inspect persisted D1 traces.</p>}
+      </div>
+    </section>
+  );
+}
+function TraceMeta({ trace }: { trace: AgentTrace }) {
+  const detail = parseTraceDetail(trace.detail);
+  const items = buildTraceMetaItems(trace, detail);
+  if (!items.length) return null;
+
+  return (
+    <div className="traceMeta">
+      {items.map((item) => (
+        <span key={item}>{item}</span>
+      ))}
+    </div>
+  );
+}
+
+function parseTraceDetail(detail?: string): TraceDetail {
+  if (!detail) return {};
+  try {
+    const parsed = JSON.parse(detail) as unknown;
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed as TraceDetail : {};
+  } catch {
+    return {};
+  }
+}
+
+function buildTraceMetaItems(trace: AgentTrace, detail: TraceDetail): string[] {
+  const items: string[] = [];
+  const enrichmentLimit = formatTraceValue(detail.enrichmentLimit);
+  const skipped = formatTraceValue(detail.skipped);
+  if (enrichmentLimit) items.push(`limit ${enrichmentLimit}`);
+  if (trace.inputCount !== undefined) items.push(`input ${trace.inputCount}`);
+  if (trace.outputCount !== undefined) items.push(`processed ${trace.outputCount}`);
+  if (skipped) items.push(`skipped ${skipped}`);
+
+  if (trace.stepId === "crossref_enrichment") {
+    const verified = formatTraceValue(detail.verified);
+    const partial = formatTraceValue(detail.partial);
+    if (verified) items.push(`verified ${verified}`);
+    if (partial) items.push(`partial ${partial}`);
+  }
+
+  if (trace.stepId === "unpaywall_check") {
+    const pdfUrls = formatTraceValue(detail.pdfUrls);
+    const landingPages = formatTraceValue(detail.landingPages);
+    if (pdfUrls) items.push(`OA PDF ${pdfUrls}`);
+    if (landingPages) items.push(`landing ${landingPages}`);
+  }
+
+  if (trace.stepId === "drive_r2_storage") {
+    const uploaded = formatTraceValue(detail.driveUploaded);
+    const failed = formatTraceValue(detail.driveFailed);
+    const driveSkipped = formatTraceValue(detail.driveSkipped);
+    if (uploaded) items.push(`Drive uploaded ${uploaded}`);
+    if (failed) items.push(`Drive failed ${failed}`);
+    if (driveSkipped) items.push(`Drive skipped ${driveSkipped}`);
+  }
+
+  return items;
+}
+
+function formatTraceValue(value: TraceDetail[string]): string {
+  return typeof value === "number" || typeof value === "string" ? String(value) : "";
 }
 
 function DiagnosticsPanel({
@@ -538,7 +895,8 @@ function DiagnosticsPanel({
         ["OpenAlex API key", diagnostics.env.openAlexApiKey],
         ["Crossref email", diagnostics.env.crossrefEmail],
         ["Unpaywall email", diagnostics.env.unpaywallEmail],
-        ["R2 reports", diagnostics.env.r2Reports]
+        ["R2 reports", diagnostics.env.r2Reports],
+        ["Google Drive", diagnostics.env.googleDrive]
       ]
     : [];
 
@@ -636,7 +994,8 @@ function ReportPreviewPanel({
   loading,
   errorMessage,
   onRefresh,
-  onDownload
+  onDownload,
+  onPdfDownload
 }: {
   job: SearchJob | null;
   report: string;
@@ -644,6 +1003,7 @@ function ReportPreviewPanel({
   errorMessage: string;
   onRefresh: () => void;
   onDownload: () => void;
+  onPdfDownload: () => void;
 }) {
   const sections = useMemo(() => extractReportSections(report), [report]);
   const canLoad = Boolean(job);
@@ -660,7 +1020,10 @@ function ReportPreviewPanel({
           <button className="iconButton" onClick={onRefresh} disabled={!canLoad || loading} aria-label="Refresh report preview">
             <RefreshCw size={18} className={loading ? "spin" : undefined} />
           </button>
-          <button className="iconButton" onClick={onDownload} disabled={!canLoad} aria-label="Download Markdown report">
+          <button className="iconButton" onClick={onDownload} disabled={!canLoad} aria-label="Download Markdown report" title="Download Markdown report">
+            <FileText size={18} />
+          </button>
+          <button className="iconButton" onClick={onPdfDownload} disabled={!canLoad} aria-label="Download PDF report" title="Download PDF report">
             <Download size={18} />
           </button>
         </div>
@@ -810,10 +1173,12 @@ function formatDateTime(value: string): string {
   return date.toLocaleString();
 }
 
-function buildSearchPayload(keyword: string, maxResults: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
-  const payload: { keyword: string; maxResults: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
+function buildSearchPayload(keyword: string, maxResults: string, enrichmentLimit: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
+  const parsedMaxResults = parseLimitedMaxResults(maxResults);
+  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
     keyword: keyword.trim(),
-    maxResults: parseLimitedMaxResults(maxResults)
+    maxResults: parsedMaxResults,
+    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults)
   };
   const start = parseOptionalYear(yearStart);
   const end = parseOptionalYear(yearEnd);
@@ -826,6 +1191,11 @@ function buildSearchPayload(keyword: string, maxResults: string, yearStart: stri
 function parseLimitedMaxResults(value: string): number {
   const parsed = Number.parseInt(value.trim(), 10);
   return clampNumber(parsed, 1, 50, 20);
+}
+
+function parseLimitedEnrichmentLimit(value: string, maxResults: number): number {
+  const parsed = Number.parseInt(value.trim(), 10);
+  return clampNumber(parsed, 1, Math.min(20, maxResults), Math.min(10, maxResults));
 }
 
 function parseOptionalYear(value: string): number | undefined {
@@ -864,6 +1234,71 @@ function getStatusTone(status?: SearchJob["status"]): BadgeTone {
   return "neutral";
 }
 
+function getTraceTone(status: AgentTrace["status"]): BadgeTone {
+  if (status === "completed") return "ok";
+  if (status === "failed") return "danger";
+  if (status === "skipped") return "warn";
+  return "neutral";
+}
+
+function buildCriticReviewSummary(paper: PaperSummary, flags: CriticFlag[]): CriticReviewSummary {
+  const riskLevel = getCriticRiskLevel(flags);
+  const flagTypes = Array.from(new Set(flags.map((flag) => flag.flagType))).filter(Boolean);
+  const decision = riskLevel === "high"
+    ? "Manual review required"
+    : riskLevel === "medium"
+      ? "Use after targeted verification"
+      : riskLevel === "low"
+        ? "Usable with access caveat"
+        : "No critic issues detected";
+  const primaryIssue = flags[0]?.message ?? "No rule-based critic flags were generated for this paper.";
+  const evidence = flags[0]?.evidence ?? paper.relevanceReason;
+  const actions = flags.length
+    ? flags.slice(0, 3).map((flag) => getCriticAction(flag))
+    : ["Proceed to full-text reading and citation screening."];
+  return {
+    riskLevel,
+    decision,
+    note: decision + ". " + primaryIssue,
+    evidence,
+    flagTypes: flagTypes.length ? flagTypes.join(", ") : "none",
+    actions
+  };
+}
+
+function getCriticRiskLevel(flags: CriticFlag[]): CriticReviewSummary["riskLevel"] {
+  if (flags.some((flag) => flag.severity === "high")) return "high";
+  if (flags.some((flag) => flag.severity === "medium")) return "medium";
+  if (flags.some((flag) => flag.severity === "low")) return "low";
+  return "clear";
+}
+
+function getCriticAction(flag: CriticFlag): string {
+  if (flag.flagType === "missing_doi") return "Confirm DOI or publisher metadata before citation.";
+  if (flag.flagType === "crossref_verification") return "Compare Crossref metadata with the publisher record.";
+  if (flag.flagType === "low_relevance") return "Read abstract/introduction to confirm topic fit.";
+  if (flag.flagType === "screening_status") return "Manually decide include, review, or exclude before synthesis.";
+  if (flag.flagType === "access_path") return "Use DOI, library access, or institutional subscription for full text.";
+  return "Review this flag before using the paper.";
+}
+
+function getCriticReviewTone(riskLevel: CriticReviewSummary["riskLevel"]): BadgeTone {
+  if (riskLevel === "high") return "danger";
+  if (riskLevel === "medium" || riskLevel === "low") return "warn";
+  return "ok";
+}
+
+function getSeverityTone(severity: CriticFlag["severity"]): BadgeTone {
+  if (severity === "high") return "danger";
+  if (severity === "medium") return "warn";
+  return "neutral";
+}
+
+function getOutputTone(status: JobOutput["status"]): BadgeTone {
+  if (status === "stored" || status === "generated") return "ok";
+  if (status === "failed") return "danger";
+  return "warn";
+}
 function getIncludeTone(status: PaperSummary["includeStatus"]): BadgeTone {
   if (status === "include") return "ok";
   if (status === "exclude") return "danger";
