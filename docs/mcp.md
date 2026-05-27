@@ -33,6 +33,15 @@ MCP is for agent-to-tool execution, not for normal user UI traffic.
 
 The enhanced report separates MCP candidates into required, recommended, conditional, deferred, and forbidden groups. Production MCP must remain least-privilege and should extend the existing custom Paper-Agent MCP before attaching broad third-party servers.
 
+Current external MCP installation baseline:
+
+```text
+docs/mcp-installation.md
+docs/mcp-client-config.example.json
+```
+
+The selected servers are intentionally limited to Paper Agent MCP, GitHub, Cloudflare Docs/Builds/Observability/Browser, Playwright, and restricted local filesystem access. Do not install the entire `awesome-mcp-servers` list into this project.
+
 ## MCP Candidate Selection
 
 | Priority | Candidate | Purpose | Rule |

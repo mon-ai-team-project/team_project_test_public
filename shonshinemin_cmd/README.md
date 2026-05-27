@@ -35,4 +35,7 @@ Do not edit evaluation script logic unless explicitly assigned.
 
 ## Work Summary
 
-- Pending.
+- Current `main` status: metric QA output exists for the T001-T003 Proposed Agent sample.
+- `benchmark/proposed_agent_metrics.csv` has 3 task rows.
+- `benchmark/proposed_agent_metrics_summary.json` reports Precision@5=0.0667, NDCG@5=0.1601, Gold DOI Hit Rate@5=0.3333, DOI Accuracy@5=1.0000, Top Journal Precision@5=1.0000, Hallucination Rate@5=0.0000, and OA Success@5=0.0000.
+- Next action: wait until gold labels, baseline rows, or Proposed Agent result rows change, then rerun `npm run benchmark:evaluate-proposed` and update this workspace.

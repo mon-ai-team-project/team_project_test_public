@@ -5,12 +5,16 @@
 ## Assignment
 
 - [ ] I read `AGENTS.md`
+- [ ] I read `docs/agent-writing-rules.md`
+- [ ] I read my agent-specific guide if applicable: `GEMINI.md` or `CLAUDE.md`
 - [ ] I read `docs/agent-work-queue.md`
 - [ ] Branch name matches the assigned task
 - [ ] Changed files stay within the assigned scope
+- [ ] Personal folder / work-log was updated for my assignment
 
 ## Verification
 
+- [ ] `npm run validate:agent-rules`
 - [ ] `npm run typecheck`
 - [ ] Relevant build, dry-run, or manual check completed
 - [ ] Benchmark-only changes: `npm run benchmark:evaluate-proposed`

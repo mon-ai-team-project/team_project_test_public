@@ -49,6 +49,12 @@ Do not rewrite original Proposed Agent result fields.
 - Marked the one direct T003 advertising-effectiveness match as `include`, four adjacent papers as `review`, and ten off-topic or weak-subtopic papers as `reject`.
 - Kept original Proposed Agent result metadata unchanged and added only manual judgment fields.
 
+## Current Main Status - 2026-05-22
+
+- Assignment 2 is complete on organization `main` for the current T001-T003 Proposed Agent sample.
+- Do not add or rewrite manual-review rows unless the maintainer requests a refresh after new Proposed Agent results are generated.
+- Stale branch-only push-test/work-log notes do not need to be merged unless the maintainer explicitly asks for them.
+
 ## 2026-05-20 Branch Push Notes
 
 - Confirmed this workspace tracks `team-origin/benchmark/juilie-proposed-review`.

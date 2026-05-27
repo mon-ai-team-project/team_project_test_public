@@ -41,6 +41,12 @@ CHANGELOG.md
 
 Do not commit directly to `main` for team-member benchmark edits.
 
+`main` is reserved for maintainer-reviewed integration by `seunghyeon_choi`. Configure GitHub branch protection or rulesets according to:
+
+```text
+docs/github-main-protection.md
+```
+
 Use one branch per task:
 
 ```bash

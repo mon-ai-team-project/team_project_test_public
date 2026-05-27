@@ -1,0 +1,76 @@
+{
+  "mcpServers": {
+    "paper-agent": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://paper-agent-mcp.shch3653.workers.dev/mcp"
+      ]
+    },
+    "cloudflare-docs": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://docs.mcp.cloudflare.com/mcp"
+      ]
+    },
+    "cloudflare-builds": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://builds.mcp.cloudflare.com/mcp"
+      ]
+    },
+    "cloudflare-observability": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://observability.mcp.cloudflare.com/mcp"
+      ]
+    },
+    "cloudflare-browser": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mcp-remote",
+        "https://browser.mcp.cloudflare.com/mcp"
+      ]
+    },
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest"
+      ]
+    },
+    "filesystem-paper-agent-readonly": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/home/user/monaiteamproject/docs",
+        "/home/user/monaiteamproject/benchmark",
+        "/home/user/monaiteamproject/apps/mcp"
+      ]
+    },
+    "github-readonly": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "GITHUB_PERSONAL_ACCESS_TOKEN",
+        "-e",
+        "GITHUB_TOOLSETS=repos,issues,pull_requests,actions",
+        "-e",
+        "GITHUB_READ_ONLY=1",
+        "ghcr.io/github/github-mcp-server"
+      ]
+    }
+  }
+}

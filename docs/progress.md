@@ -1,6 +1,6 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-20 (juilie direct-push test)
+Updated: 2026-05-22 (codex team task briefing)
 
 ## juilie — Direct Push Test (2026-05-20)
 
@@ -20,6 +20,62 @@ Updated: 2026-05-20 (juilie direct-push test)
 - Added: `shonshinemin_cmd/metric-change-report.md` — full delta analysis and QA recommendations. (shonshinemin)
 - Added: `shonshinemin_cmd/qa-notes.md` — QA workflow, scope, and re-run instructions. (shonshinemin)
 - See: `docs/debug-log.md` §2026-05-18 Metric QA Re-evaluation for raw numbers and reviewer notes.
+
+## codex - MCP Installation Baseline (2026-05-20)
+
+- Docs: Added `docs/mcp-installation.md` with the selected MCP server set from `awesome-mcp-servers`, explicit deferred servers, environment variables, least-privilege rules, and verification steps. (codex)
+- Docs: Added `docs/mcp-client-config.example.json` with JSON `mcpServers` entries for Paper Agent MCP, Cloudflare Docs/Builds/Observability/Browser MCP, Playwright MCP, restricted filesystem MCP, and read-only GitHub MCP. (codex)
+- Docs: Updated `docs/mcp.md` to point future agents to the shared MCP installation baseline and to avoid installing the entire MCP server catalog. (codex)
+- Verification: Ran `npm run smoke:mcp`; deployed Paper Agent MCP returned expected read-only tools and diagnostics `ok: true`. (codex)
+- Infra: Registered selected MCP servers in `/home/user/.codex/config.toml` for the next Codex session: Paper Agent MCP, Cloudflare Docs/Builds/Observability/Browser MCP, Playwright MCP, and restricted filesystem MCP. GitHub MCP was not added locally because Docker is unavailable and the current GitHub MCP connector is already active. (codex)
+
+## codex - seunghyeon_choi Workspace Role Clarification (2026-05-20)
+
+- Docs: Clarified `seunghyeon_choi/README.md` as the current active project worker folder and maintainer/integration workspace. (codex)
+- Docs: Recorded that other team agents should not edit `seunghyeon_choi/` unless explicitly assigned by the maintainer. (codex)
+
+## codex - Staging Test Bed File (2026-05-20)
+
+- Docs: Added `docs/staging-testbed.md` as the personal-repo-based staging test bed procedure for Worker, Pages, MCP, D1, R2, smoke tests, promotion checks, and team-file integration. (codex)
+- Docs: Defined that staging must use separate D1 and R2 resources and that team branch project-level history files must be consolidated manually by the maintainer. (codex)
+
+## codex - Worker Smoke Test (2026-05-20)
+
+- Added: `apps/worker/scripts/smoke-test.mjs` for Worker API smoke checks against production or staging URLs. (codex)
+- Added: Root script `npm run smoke:worker`, which defaults to no-quota checks for `/api/health`, `/api/diagnostics`, and `/api/search-jobs?limit=3`. (codex)
+- Verification: Ran `npm run smoke:worker` against `https://paper-agent-project.shch3653.workers.dev`; health and diagnostics returned `ok: true`, active provider readiness was true, D1 had no missing columns, R2 was bound, and 3 recent jobs were listed. (codex)
+- Verification: Ran `npm run typecheck`; all workspaces passed. (codex)
+
+## codex - Staging Wrangler Examples (2026-05-20)
+
+- Infra: Added `apps/worker/wrangler.staging.example.toml` and `apps/mcp/wrangler.staging.example.toml` as copyable staging templates. (codex)
+- Infra: Added local ignore rules for `apps/worker/wrangler.staging.toml` and `apps/mcp/wrangler.staging.toml` because copied staging configs will contain environment-specific D1 IDs. (codex)
+- Docs: Updated `docs/staging-testbed.md` to use the tracked example configs and copy them only after staging D1 exists. (codex)
+- Verification: Ran `npm run typecheck`; all workspaces passed after adding staging Wrangler example configs. (codex)
+
+## codex - Shared Agent Writing Rules (2026-05-22)
+
+- Docs: Added `docs/agent-writing-rules.md` as the shared writing, attribution, handoff, verification, and scope rule source for Codex, Gemini, Claude, and future agents. (codex)
+- Docs: Replaced `GEMINI.md` with an updated Gemini operating guide that mirrors Codex rules and requires `(gemini)` attribution. (codex)
+- Docs: Added `CLAUDE.md` with the same operating rules and required `(claude)` attribution. (codex)
+- Docs: Updated `AGENTS.md` to require all agents to read `docs/agent-writing-rules.md`, `GEMINI.md`, and `CLAUDE.md` before editing. (codex)
+- Verification: Documentation-only change; no build or test command was run. (codex)
+
+## codex - Automatic Team Rule Enforcement (2026-05-22)
+
+- Added: `scripts/validate-agent-rules.mjs` to enforce team benchmark branch scope, required `CHANGELOG.md` updates, matching attribution, and assigned personal-folder updates. (codex)
+- Fixed: Updated `scripts/validate-agent-rules.mjs` to validate attribution only from newly added `CHANGELOG.md` lines, addressing Codex PR review feedback. (codex)
+- Added: `.github/workflows/agent-rules.yml` so pull requests into `main` run the validator automatically. (codex)
+- Infra: Added `.github/CODEOWNERS` to support maintainer-reviewed integration when GitHub branch protection requires CODEOWNER review. (codex)
+- Docs: Updated `AGENTS.md`, `docs/agent-writing-rules.md`, `docs/agent-work-queue.md`, and `.github/pull_request_template.md` with automatic enforcement and personal-folder/work-log requirements. (codex)
+- Added: `unassigned_member_c/README.md` as the baseline-collection workspace so Assignment 3 also has an enforceable personal folder. (codex)
+
+## codex - Organization Main Team Task Briefing (2026-05-22)
+
+- Docs: Added `docs/team-task-briefing.md` as the current team-facing assignment brief from organization `main`. (codex)
+- Docs: Updated `AGENTS.md` and `docs/agent-work-queue.md` so future agents read the team briefing and see the current status snapshot. (codex)
+- Docs: Updated `jin23624_cpu/README.md`, `juilie_bot_hub/README.md`, `shonshinemin_cmd/README.md`, `unassigned_member_c/README.md`, and `seunghyeon_choi/README.md` with current status and next actions. (codex)
+- Status: `juilie_bot_hub` manual review is complete; `shonshinemin_cmd` metric QA output exists; `jin23624_cpu` gold refinement and `unassigned_member_c` baselines remain the next team priorities. (codex)
 
 ## Mandatory Session Handoff Rules
 
@@ -76,9 +132,9 @@ Current next implementation target:
 11. Confirm the Markdown report includes executive summary metrics, Report Agent synthesis sections, top-ranked table, paper details, OA landing page, and license details.
 12. Confirm the dashboard Recent Jobs panel lists saved jobs and can reload prior job results.
 13. Confirm new jobs use persisted component-score final ranking: relevance 35%, journal fit 20%, Crossref verification 15%, OA 10%, citation 10%, recency 10%.
-14. Use `docs/mcp.md` as the current source of truth for MCP attachment and the implemented read-only MCP Worker.
+14. Use `docs/mcp.md`, `docs/mcp-installation.md`, and `docs/mcp-client-config.example.json` as the current source of truth for MCP attachment, selected external MCP servers, and client setup.
 15. Deployed MCP is verified at `https://paper-agent-mcp.shch3653.workers.dev/health`.
-16. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`.
+16. MCP protocol connectivity and read-only tool calls are verified with `npm run smoke:mcp`; Worker health/diagnostics/recent-job readiness is verified with `npm run smoke:worker`.
 17. Use `paper_agent_enhanced_report.md` as the current submission-oriented master plan.
 18. Use `docs/workflow.md` as the current source of truth for the integrated multi-agent target workflow.
 19. After Cloudflare Pages deploys the final dashboard route UI/UX refresh, verify these production routes across desktop and mobile widths:
@@ -91,7 +147,7 @@ Current next implementation target:
 23. `CHANGELOG.md` is now organized by modification date. Continue moving completed entries from `Unreleased` into the current `YYYY-MM-DD` section before each commit.
 24. Journal category selection from `경영대학 학술지 목록.docx` is deployed and user-confirmed as working. Use this as the baseline for the next UI/reporting step.
 25. Result `Field / Rank` visibility is implemented locally. After Cloudflare deploy, verify dashboard rows/details plus CSV and Markdown report downloads show values such as `2. 조직인사 / 국제 S급`.
-26. Next recommended implementation for product UX: add a search settings summary bar that records keyword, selected field, priority order, year range, and max count for each active job.
+26. Before the next product UX change, use `docs/staging-testbed.md` to create or verify a staging Worker, Pages project, D1 database, R2 bucket, and MCP service for personal-repo-based development validation.
 27. Benchmark fixture expansion is initialized.
     - `benchmark/tasks.jsonl` contains 20 tasks.
     - `benchmark/keywords.csv` contains 20 runnable benchmark queries.
@@ -149,7 +205,7 @@ Current next implementation target:
 41. Team-agent auto-start guidance is now defined for organization repository collaboration.
     - `AGENTS.md` is the root operating guide for any agent entering the repository.
     - `docs/agent-work-queue.md` defines current benchmark assignments and allowed file scopes.
-    - `seunghyeon_choi` is the current maintainer and integration lead.
+    - `seunghyeon_choi` is the current active project worker, maintainer, and integration lead; `seunghyeon_choi/` is that worker workspace.
     - Baseline result collection is now marked as `unassigned_member_c` until a separate team member is assigned.
     - `jin23624_cpu/`, `juilie_bot_hub/`, `seunghyeon_choi/`, `shonshinemin_cmd/`, and `integrated/` each contain a role-specific README.
     - Benchmark collaboration templates are initialized: `benchmark/manual_review_proposed.csv`, `benchmark/baseline_rule_based_results.csv`, and `benchmark/baseline_single_llm_results.csv`.
@@ -168,6 +224,18 @@ Current next implementation target:
     - Use `docs/cloudflare-org-repo-migration.md` to reconnect Worker Builds and Pages builds from `Vulter3653/paper-agent-project` to `mon-ai-team-project/team_project_test_public`.
     - No D1, R2, Worker name, Pages project name, or runtime secret change is required.
     - Actual Cloudflare dashboard Git connection changes still require Cloudflare account access.
+45. Personal and organization repository versions were synchronized.
+    - `origin/main` and `team-origin/main` both point to `c3c4b23` after the merged `juilie` review PR was fast-forwarded into the personal repository.
+46. Organization `main` protection policy is documented.
+    - `docs/github-main-protection.md` defines the required GitHub ruleset/branch protection settings.
+    - `main` should be restricted to maintainer-reviewed integration by `seunghyeon_choi`.
+    - Actual branch protection still needs GitHub UI or GitHub API repository administration access because the available GitHub MCP tools do not expose branch protection mutation.
+
+47. External MCP installation baseline is documented.
+    - Selected from `awesome-mcp-servers`: Paper Agent MCP, GitHub MCP, Cloudflare Docs/Builds/Observability/Browser MCP, Playwright MCP, and restricted filesystem MCP.
+    - Deferred: Google Drive/Sheets MCP, generic database MCP, generic web search MCP, and aggregator/meta MCP until credentials and permission boundaries are finalized.
+    - Shared config example: `docs/mcp-client-config.example.json`.
+    - Local Codex config `/home/user/.codex/config.toml` now includes Paper Agent, Cloudflare Docs/Builds/Observability/Browser, Playwright, and restricted filesystem MCP entries. Restart Codex to load them.
 
 ## Current Status
 

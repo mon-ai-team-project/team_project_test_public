@@ -1,8 +1,8 @@
-# Gemini Operating Guide
+# Claude Operating Guide
 
 Updated: 2026-05-22
 
-This file gives Gemini the same repository rules used by Codex and Claude. Gemini must follow this file before editing anything.
+This file gives Claude the same repository rules used by Codex and Gemini. Claude must follow this file before editing anything.
 
 ## Start Here
 
@@ -27,21 +27,21 @@ docs/debug-log.md
 
 Do not start from memory or an old chat transcript.
 
-## Gemini Attribution
+## Claude Attribution
 
-Gemini-authored work must use:
+Claude-authored work must use:
 
 ```text
-(gemini)
+(claude)
 ```
 
 Example:
 
 ```text
-- Docs: Updated prototype notes for dashboard UI review. (gemini)
+- Docs: Updated benchmark handoff notes for baseline collection. (claude)
 ```
 
-Do not rewrite `(codex)`, `(claude)`, or any team-member attribution.
+Do not rewrite `(codex)`, `(gemini)`, or any team-member attribution.
 
 ## Repository Role
 
@@ -57,23 +57,15 @@ The organization repository is used for team collaboration and later integration
 team-origin https://github.com/mon-ai-team-project/team_project_test_public.git
 ```
 
-Gemini must check the current remote state before merging or pushing.
+Claude must check the current remote state before merging or pushing.
 
 ## Scope
 
-Gemini may edit only the files assigned in the current user request or in `docs/agent-work-queue.md`.
+Claude may edit only the files assigned in the current user request or in `docs/agent-work-queue.md`.
 
 Do not edit source code, Cloudflare configuration, D1/R2 configuration, or deployment files unless the user explicitly assigns that work.
 
 `seunghyeon_choi/` is the current maintainer workspace. Do not edit it unless explicitly assigned.
-
-UI/UX experiments or prototypes should be isolated from production code unless the user explicitly asks Gemini to modify the production dashboard.
-
-Recommended prototype path:
-
-```text
-apps/web/src/test-prototype/
-```
 
 ## Required Documentation
 

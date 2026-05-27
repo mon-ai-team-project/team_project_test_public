@@ -20,8 +20,10 @@
     "benchmark:score-gold": "node benchmark/scripts/score-gold-candidates.mjs",
     "benchmark:verify-gold": "node benchmark/scripts/verify-gold-crossref.mjs",
     "e2e:reports": "npm run e2e --workspace apps/mcp",
+    "smoke:worker": "npm run smoke --workspace apps/worker",
     "smoke:mcp": "npm run smoke --workspace apps/mcp",
-    "typecheck": "npm run typecheck --workspaces"
+    "typecheck": "npm run typecheck --workspaces",
+    "validate:agent-rules": "node scripts/validate-agent-rules.mjs"
   },
   "devDependencies": {
     "typescript": "^5.8.3"
