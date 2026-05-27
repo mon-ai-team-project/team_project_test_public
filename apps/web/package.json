@@ -7,7 +7,9 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "deploy": "npm run build && wrangler pages deploy dist --project-name paper-agent-dashboard",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:staging": "tsc -b && vite build --mode staging",
+    "deploy:staging": "npm run build:staging && wrangler pages deploy dist --project-name paper-agent-dashboard-staging"
   },
   "dependencies": {
     "@paper-agent/shared": "*",

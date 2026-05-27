@@ -23,7 +23,16 @@
     "smoke:worker": "npm run smoke --workspace apps/worker",
     "smoke:mcp": "npm run smoke --workspace apps/mcp",
     "typecheck": "npm run typecheck --workspaces",
-    "validate:agent-rules": "node scripts/validate-agent-rules.mjs"
+    "validate:agent-rules": "node scripts/validate-agent-rules.mjs",
+    "build:web:staging": "npm run build:staging --workspace apps/web",
+    "deploy:web:staging": "npm run deploy:staging --workspace apps/web",
+    "deploy:worker:staging": "npm run deploy:staging --workspace apps/worker",
+    "deploy:mcp:staging": "npm run deploy:staging --workspace apps/mcp",
+    "smoke:worker:staging": "WORKER_URL=${STAGING_WORKER_URL:-https://paper-agent-project-staging.shch3653.workers.dev} npm run smoke:worker",
+    "smoke:mcp:staging": "MCP_URL=${STAGING_MCP_URL:-https://paper-agent-mcp-staging.shch3653.workers.dev/mcp} npm run smoke:mcp",
+    "staging:check": "npm run typecheck && npm run build:web:staging && npm run smoke:worker:staging && npm run smoke:mcp:staging",
+    "dev:worker:local": "npm run dev --workspace apps/worker -- --port 8787",
+    "smoke:worker:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false npm run smoke:worker"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

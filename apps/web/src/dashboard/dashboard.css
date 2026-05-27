@@ -820,3 +820,27 @@
     flex-direction: column;
   }
 }
+
+.uxTinyStatus,
+.uxTinyError {
+  margin: 10px 0 0;
+  font-size: 0.76rem;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.uxTinyStatus {
+  color: var(--muted);
+}
+
+.uxTinyError {
+  color: #b42318;
+}
+
+.uxArtifactList { display: grid; gap: 9px; }
+.uxArtifactItem { align-items: flex-start; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; display: flex; gap: 12px; justify-content: space-between; padding: 12px; }
+.uxArtifactItem div { display: grid; gap: 5px; min-width: 0; }
+.uxArtifactItem strong { color: #0f172a; font-size: 13px; }
+.uxArtifactItem span, .uxArtifactItem small { color: #64748b; font-size: 12px; line-height: 1.4; overflow-wrap: anywhere; }
+.uxArtifactItem a { color: #2563eb; font-size: 12px; font-weight: 800; text-decoration: none; }
+.uxEmptyNote { color: #64748b; font-size: 13px; padding: 12px; text-align: center; }

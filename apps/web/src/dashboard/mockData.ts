@@ -80,7 +80,7 @@ export type FeatureImplementationItem = {
 export const implementationLegend: Array<{ status: FeatureImplementationStatus; label: string; detail: string }> = [
   { status: "live", label: "구현됨", detail: "실제 Worker/D1/R2/API 또는 배포된 기능과 연결됨" },
   { status: "partial", label: "부분 구현", detail: "일부 실제 기능이 있으나 화면의 일부는 정적 데이터 또는 추가 연결 필요" },
-  { status: "mock", label: "Mock", detail: "최종 UI 기준의 정적 데이터이며 실제 API 연결 전" },
+  { status: "mock", label: "미완성 Mock", detail: "실제 결과가 아니며 API/DB 연결 전의 자리표시자" },
   { status: "planned", label: "미구현", detail: "설계상 필요하지만 아직 코드/인프라 연결 전" }
 ];
 
@@ -89,44 +89,44 @@ export const researchImplementationStatus: FeatureImplementationItem[] = [
   { feature: "Ranked Papers", status: "live", evidence: "Worker 결과 papers 배열, D1 papers/evaluations 기반", next: "Gold overlap 지표 추가" },
   { feature: "Paper Detail", status: "live", evidence: "Crossref, Unpaywall, score breakdown 표시", next: "Critic note 저장 후 연결" },
   { feature: "Report Preview", status: "live", evidence: "GET /api/search-jobs/:id/report.md", next: "PDF/XLSX output 추가" },
-  { feature: "12-step Workflow Panel", status: "mock", evidence: "최종 UI 기준 정적 단계 데이터", next: "agent_traces table 연결" },
+  { feature: "12-step Workflow Panel", status: "mock", evidence: "미완성 Mock: agent_traces API 연결 전 자리표시자", next: "agent_traces table 연결" },
   { feature: "Top Journal Pool Panel", status: "partial", evidence: "저널 allowlist는 실제 shared data, 화면 풀 표시는 축약 mock", next: "shared category 전체 표시" },
-  { feature: "Literature Review Preview Cards", status: "mock", evidence: "정적 preview 문구", next: "Report Agent section API 연결" }
+  { feature: "Literature Review Preview Cards", status: "mock", evidence: "미완성 Mock: 실제 Report Agent section 연결 전", next: "Report Agent section API 연결" }
 ];
 
 export const opsImplementationStatus: FeatureImplementationItem[] = [
   { feature: "MCP Worker", status: "live", evidence: "paper-agent-mcp /mcp read-only tools 배포 완료", next: "agent trace 조회 tool 추가" },
   { feature: "D1 / R2 Runtime", status: "live", evidence: "search_jobs, papers, evaluations, R2 reports 저장", next: "화면 상태를 diagnostics/API로 연결" },
-  { feature: "Agent Status Board", status: "mock", evidence: "정적 agentStatuses 데이터", next: "agent_traces table과 연결" },
-  { feature: "Tool Call Console", status: "mock", evidence: "정적 toolCallLogs 및 클릭 이벤트", next: "실제 Worker step/tool log 저장" },
+  { feature: "Agent Status Board", status: "live", evidence: "GET /api/search-jobs/:id/traces 기반 D1 trace 표시", next: "Critic 세부 flag 저장 후 확장" },
+  { feature: "Tool Call Console", status: "partial", evidence: "agent_traces summary를 console log로 표시", next: "개별 외부 API request/response log 저장" },
   { feature: "Vectorize Status", status: "planned", evidence: "UI 위치만 확보", next: "Vectorize index와 embedding relevance 구현" },
-  { feature: "Google Drive PDF Archive", status: "planned", evidence: "UI 위치만 확보", next: "OA PDF만 Drive 저장 및 drive_file_id 저장" },
-  { feature: "Critic Review", status: "mock", evidence: "정적 critic review cards", next: "Critic Agent flags/risk_level 저장" }
+  { feature: "Google Drive PDF Archive", status: "partial", evidence: "OA PDF URL이 있는 결과를 Google Drive service account로 업로드", next: "Drive 공유 정책과 실패 재시도 UI 추가" },
+  { feature: "Critic Review", status: "mock", evidence: "미완성 Mock: Critic Agent 결과 저장 전", next: "Critic Agent flags/risk_level 저장" }
 ];
 
 export const evaluationImplementationStatus: FeatureImplementationItem[] = [
   { feature: "Benchmark Fixtures", status: "live", evidence: "20 tasks, 60 gold rows, verification/refinement scripts", next: "verified gold 40개 이상 확보" },
   { feature: "Proposed Agent Runner", status: "live", evidence: "benchmark:run-proposed smoke run 완료", next: "20 task full run" },
-  { feature: "Baseline Evaluation UI", status: "mock", evidence: "정적 scenario 수치", next: "benchmark_summary 결과 JSON/API 연결" },
+  { feature: "Baseline Evaluation UI", status: "mock", evidence: "미완성 Mock: 실제 baseline/proposed benchmark 결과 연결 전", next: "benchmark_summary 결과 JSON/API 연결" },
   { feature: "Rule-based Baseline", status: "planned", evidence: "평가 설계만 존재", next: "baseline_results.csv 생성" },
   { feature: "Single LLM Baseline", status: "planned", evidence: "평가 설계만 존재", next: "LLM 추천 결과와 hallucination 검증" },
   { feature: "Precision@5 / DOI Accuracy", status: "partial", evidence: "지표 정의와 gold 검증 workflow 존재", next: "proposed_agent_results.csv와 gold overlap 계산" },
-  { feature: "Dashboard Metric Binding", status: "planned", evidence: "현재 mockData.ts 수치 사용", next: "실제 benchmark results loader/API 추가" }
+  { feature: "Dashboard Metric Binding", status: "planned", evidence: "미완성 Mock: mockData.ts 수치 제거, 실제 loader/API 필요", next: "실제 benchmark results loader/API 추가" }
 ];
 
 export const literatureWorkflowStages: WorkflowStage[] = [
-  { id: "planner", order: 1, title: "Planner", owner: "Planner Agent", status: "done", progress: 100, detail: "연구 질문을 키워드와 하위 질문으로 분해" },
-  { id: "journal_selector", order: 2, title: "Journal Pool", owner: "Journal Selector", status: "done", progress: 100, detail: "경영대학 학술지 목록의 S/A1 우선순위 적용" },
-  { id: "retriever", order: 3, title: "Search", owner: "Retriever Agent", status: "done", progress: 100, detail: "WoS 또는 OpenAlex 후보 논문 검색" },
-  { id: "verifier", order: 4, title: "Crossref", owner: "Verifier Agent", status: "done", progress: 96, detail: "DOI, 제목, 저자, 연도, 저널명 교차 검증" },
-  { id: "download", order: 5, title: "OA PDF", owner: "Download Agent", status: "running", progress: 72, detail: "Unpaywall OA PDF와 landing page 확인" },
-  { id: "storage", order: 6, title: "Drive / R2", owner: "Storage Worker", status: "running", progress: 68, detail: "Google Drive와 Cloudflare R2 output 상태 확인" },
-  { id: "evaluation", order: 7, title: "Journal Eval", owner: "Evaluation Agent", status: "done", progress: 88, detail: "Q1, Top Journal, FT50, SCImago 기준 평가" },
-  { id: "embedding", order: 8, title: "Vectorize", owner: "Relevance Agent", status: "idle", progress: 42, detail: "초록 embedding similarity와 관련성 점수 산출" },
-  { id: "ranking", order: 9, title: "Ranking", owner: "Ranking Agent", status: "idle", progress: 40, detail: "관련성, 저널 품질, 인용 수, 최신성 결합" },
-  { id: "critic", order: 10, title: "Critic", owner: "Critic Agent", status: "review", progress: 34, detail: "오류, 과대평가, 환각 가능성 재검토" },
-  { id: "report", order: 11, title: "Report", owner: "Report Agent", status: "idle", progress: 20, detail: "PDF 보고서, Markdown preview, Excel output 생성" },
-  { id: "delivery", order: 12, title: "Delivery", owner: "Dashboard", status: "idle", progress: 10, detail: "D1 job 상태와 다운로드 링크를 사용자에게 표시" }
+  { id: "planner", order: 1, title: "Planner", owner: "Planner Agent", status: "done", progress: 100, detail: "미완성 Mock: 실제 Planner trace 연결 전" },
+  { id: "journal_selector", order: 2, title: "Journal Pool", owner: "Journal Selector", status: "done", progress: 100, detail: "부분 구현: allowlist는 실제, agent trace는 미연결" },
+  { id: "retriever", order: 3, title: "Search", owner: "Retriever Agent", status: "done", progress: 100, detail: "부분 구현: Worker 검색은 실제, 단계 trace는 미연결" },
+  { id: "verifier", order: 4, title: "Crossref", owner: "Verifier Agent", status: "done", progress: 96, detail: "부분 구현: Crossref 검증은 실제, agent별 trace는 미연결" },
+  { id: "download", order: 5, title: "OA PDF", owner: "Download Agent", status: "running", progress: 72, detail: "부분 구현: Unpaywall은 실제, Drive 저장은 미완성" },
+  { id: "storage", order: 6, title: "Drive / R2", owner: "Storage Worker", status: "running", progress: 68, detail: "부분 구현: R2는 실제, Google Drive는 미완성" },
+  { id: "evaluation", order: 7, title: "Journal Eval", owner: "Evaluation Agent", status: "done", progress: 88, detail: "부분 구현: allowlist rank는 실제, 외부 Q1/FT50 API는 미연결" },
+  { id: "embedding", order: 8, title: "Vectorize", owner: "Relevance Agent", status: "idle", progress: 42, detail: "미완성 Mock: Vectorize/embedding 연결 전" },
+  { id: "ranking", order: 9, title: "Ranking", owner: "Ranking Agent", status: "idle", progress: 40, detail: "부분 구현: 기본 랭킹은 실제, agent trace는 미연결" },
+  { id: "critic", order: 10, title: "Critic", owner: "Critic Agent", status: "review", progress: 34, detail: "미완성 Mock: Critic Agent 저장 전" },
+  { id: "report", order: 11, title: "Report", owner: "Report Agent", status: "idle", progress: 20, detail: "부분 구현: Markdown은 실제, PDF/XLSX는 미완성" },
+  { id: "delivery", order: 12, title: "Delivery", owner: "Dashboard", status: "idle", progress: 10, detail: "부분 구현: D1/CSV/Markdown은 실제, 전체 delivery trace는 미연결" }
 ];
 
 export const topJournalPool: JournalPoolGroup[] = [
@@ -178,21 +178,21 @@ export const agentStatuses: AgentStatus[] = [
 ];
 
 export const toolCallLogs: ToolLog[] = [
-  { level: "muted", message: 'create_search_job keyword="AI interview employer branding"' },
-  { level: "ok", message: "D1.insert search_jobs status=running" },
-  { level: "ok", message: "JournalSelector loaded approved business-school journal pool" },
-  { level: "ok", message: "Crossref.verify DOI matched 96% of candidates" },
-  { level: "warn", message: "Unpaywall found OA landing page without PDF for 3 records" },
-  { level: "ok", message: "R2.put report.pdf papers.xlsx literature-review.md" }
+  { level: "muted", message: "[미완성 Mock] create_search_job preview only" },
+  { level: "muted", message: "[미완성 Mock] D1 insert log placeholder" },
+  { level: "muted", message: "[미완성 Mock] JournalSelector trace placeholder" },
+  { level: "muted", message: "[미완성 Mock] Crossref tool log placeholder" },
+  { level: "muted", message: "[미완성 Mock] Unpaywall tool log placeholder" },
+  { level: "muted", message: "[미완성 Mock] PDF/XLSX export not implemented" }
 ];
 
 export const systemStatuses: SystemStatus[] = [
   { name: "Cloudflare D1", status: "Connected", detail: "search_jobs / papers / evaluations", tone: "green" },
   { name: "Cloudflare R2", status: "Ready", detail: "paper-agent-outputs bucket", tone: "green" },
-  { name: "Google Drive", status: "Queued", detail: "OA PDF archive target", tone: "amber" },
-  { name: "Vectorize", status: "Planned", detail: "abstract embedding index", tone: "blue" },
+  { name: "Google Drive", status: "부분 구현", detail: "OA PDF service-account upload path connected", tone: "amber" },
+  { name: "Vectorize", status: "미완성", detail: "abstract embedding index 연결 전", tone: "blue" },
   { name: "Remote MCP", status: "Online", detail: "paper-agent-mcp /mcp", tone: "purple" },
-  { name: "Pages UI", status: "Deployed", detail: "dashboard route shell", tone: "green" }
+  { name: "Pages UI", status: "부분 구현", detail: "route shell 배포, 일부 패널은 미완성 Mock", tone: "amber" }
 ];
 
 export const criticReviews: CriticReviewItem[] = [
@@ -214,61 +214,61 @@ export const evaluationScenarios: EvaluationScenario[] = [
   {
     key: "strict",
     label: "Strict Top Journal",
-    metrics: { precisionAt5: "0.84", doiAccuracy: "96%", topJournalPrecision: "88%", hallucinationRate: "3%", reportCompleteness: "92%", avgLatency: "4.8m" },
+    metrics: { precisionAt5: "미완성", doiAccuracy: "미완성", topJournalPrecision: "미완성", hallucinationRate: "미완성", reportCompleteness: "미완성", avgLatency: "미완성" },
     rows: [
-      { metric: "Precision@5", ruleBased: "0.52", singleLlm: "0.68", proposed: "0.84", finding: "상위 추천 논문의 실제 관련성이 가장 높음" },
-      { metric: "Paper Validity Rate", ruleBased: "82%", singleLlm: "74%", proposed: "97%", finding: "DOI / Crossref 검증으로 허위 논문 감소" },
-      { metric: "DOI Accuracy", ruleBased: "80%", singleLlm: "71%", proposed: "96%", finding: "Verifier Agent가 DOI와 서지정보를 교차 확인" },
-      { metric: "Top Journal Precision", ruleBased: "58%", singleLlm: "66%", proposed: "88%", finding: "Top Journal Pool과 Q1 기준을 함께 사용" },
-      { metric: "Hallucination Rate", ruleBased: "8%", singleLlm: "21%", proposed: "3%", finding: "Critic Agent와 Crossref 검증으로 오류 감소" },
-      { metric: "Report Completeness", ruleBased: "61%", singleLlm: "78%", proposed: "92%", finding: "Summary, Commonality, Difference, Gap, Critic Note 포함" }
+      { metric: "Precision@5", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Paper Validity Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "DOI Accuracy", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Top Journal Precision", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Hallucination Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Report Completeness", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." }
     ],
     bars: [
-      { label: "Relevance", value: 84 },
-      { label: "Validity", value: 97 },
-      { label: "DOI Accuracy", value: 96 },
-      { label: "Top Journal Precision", value: 88 },
-      { label: "Report Completeness", value: 92 }
+      { label: "Relevance", value: 0 },
+      { label: "Validity", value: 0 },
+      { label: "DOI Accuracy", value: 0 },
+      { label: "Top Journal Precision", value: 0 },
+      { label: "Report Completeness", value: 0 }
     ]
   },
   {
     key: "broad",
     label: "Broad Q1 Search",
-    metrics: { precisionAt5: "0.79", doiAccuracy: "94%", topJournalPrecision: "81%", hallucinationRate: "4%", reportCompleteness: "89%", avgLatency: "3.9m" },
+    metrics: { precisionAt5: "미완성", doiAccuracy: "미완성", topJournalPrecision: "미완성", hallucinationRate: "미완성", reportCompleteness: "미완성", avgLatency: "미완성" },
     rows: [
-      { metric: "Precision@5", ruleBased: "0.48", singleLlm: "0.65", proposed: "0.79", finding: "검색 범위가 넓어져 관련도는 소폭 하락" },
-      { metric: "Paper Validity Rate", ruleBased: "80%", singleLlm: "76%", proposed: "95%", finding: "검증 단계로 논문 실재성 유지" },
-      { metric: "DOI Accuracy", ruleBased: "78%", singleLlm: "73%", proposed: "94%", finding: "Crossref matching이 핵심 안전장치로 작동" },
-      { metric: "Top Journal Precision", ruleBased: "50%", singleLlm: "59%", proposed: "81%", finding: "Q1 중심 검색에서 pool precision은 다소 낮아짐" },
-      { metric: "Hallucination Rate", ruleBased: "9%", singleLlm: "18%", proposed: "4%", finding: "Critic 검증으로 오류를 낮게 유지" },
-      { metric: "Report Completeness", ruleBased: "58%", singleLlm: "76%", proposed: "89%", finding: "비교 분석과 gap 도출이 유지됨" }
+      { metric: "Precision@5", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Paper Validity Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "DOI Accuracy", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Top Journal Precision", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Hallucination Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Report Completeness", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." }
     ],
     bars: [
-      { label: "Relevance", value: 79 },
-      { label: "Validity", value: 95 },
-      { label: "DOI Accuracy", value: 94 },
-      { label: "Top Journal Precision", value: 81 },
-      { label: "Report Completeness", value: 89 }
+      { label: "Relevance", value: 0 },
+      { label: "Validity", value: 0 },
+      { label: "DOI Accuracy", value: 0 },
+      { label: "Top Journal Precision", value: 0 },
+      { label: "Report Completeness", value: 0 }
     ]
   },
   {
     key: "fast",
     label: "Fast Demo Mode",
-    metrics: { precisionAt5: "0.73", doiAccuracy: "91%", topJournalPrecision: "77%", hallucinationRate: "6%", reportCompleteness: "83%", avgLatency: "1.6m" },
+    metrics: { precisionAt5: "미완성", doiAccuracy: "미완성", topJournalPrecision: "미완성", hallucinationRate: "미완성", reportCompleteness: "미완성", avgLatency: "미완성" },
     rows: [
-      { metric: "Precision@5", ruleBased: "0.44", singleLlm: "0.61", proposed: "0.73", finding: "시연 속도를 위해 일부 검증을 축약" },
-      { metric: "Paper Validity Rate", ruleBased: "76%", singleLlm: "70%", proposed: "91%", finding: "빠른 모드에서도 DOI 검증은 유지" },
-      { metric: "DOI Accuracy", ruleBased: "74%", singleLlm: "68%", proposed: "91%", finding: "metadata enrichment를 제한적으로 수행" },
-      { metric: "Top Journal Precision", ruleBased: "49%", singleLlm: "55%", proposed: "77%", finding: "Top journal 판단은 캐시 기반으로 수행" },
-      { metric: "Hallucination Rate", ruleBased: "11%", singleLlm: "23%", proposed: "6%", finding: "검증 축약으로 오류율은 소폭 증가" },
-      { metric: "Report Completeness", ruleBased: "52%", singleLlm: "72%", proposed: "83%", finding: "보고서 품질은 full mode보다 낮음" }
+      { metric: "Precision@5", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Paper Validity Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "DOI Accuracy", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Top Journal Precision", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Hallucination Rate", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
+      { metric: "Report Completeness", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." }
     ],
     bars: [
-      { label: "Relevance", value: 73 },
-      { label: "Validity", value: 91 },
-      { label: "DOI Accuracy", value: 91 },
-      { label: "Top Journal Precision", value: 77 },
-      { label: "Report Completeness", value: 83 }
+      { label: "Relevance", value: 0 },
+      { label: "Validity", value: 0 },
+      { label: "DOI Accuracy", value: 0 },
+      { label: "Top Journal Precision", value: 0 },
+      { label: "Report Completeness", value: 0 }
     ]
   }
 ];
