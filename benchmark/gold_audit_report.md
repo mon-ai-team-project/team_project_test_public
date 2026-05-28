@@ -1,6 +1,6 @@
 # Gold Label Audit Report
 
-Generated: 2026-05-28T05:42:32.165Z
+Generated: reproducible-current-inputs
 
 This report checks internal consistency of `benchmark/gold_relevant_papers.csv` against `benchmark/tasks.jsonl`. It does not replace external DOI, publisher, Crossref, or Web of Science verification.
 
@@ -15,7 +15,7 @@ This report checks internal consistency of `benchmark/gold_relevant_papers.csv` 
 | top_journal_expected=yes rows | 59 |
 | Duplicate DOI groups | 1 |
 | Errors | 0 |
-| Warnings | 3 |
+| Warnings | 2 |
 
 ## Task Coverage
 
@@ -48,14 +48,12 @@ This report checks internal consistency of `benchmark/gold_relevant_papers.csv` 
 | --- | ---: |
 | warning:duplicate_doi_same_title | 1 |
 | warning:not_top_journal_expected | 1 |
-| warning:weak_verification_notes | 1 |
 
 ## Issues
 
 | Severity | Code | Location | Message |
 | --- | --- | --- | --- |
 | warning | not_top_journal_expected | T001/G003 | top_journal_expected is 'no'. |
-| warning | weak_verification_notes | T007/G020 | notes do not clearly mention verification evidence. |
 | warning | duplicate_doi_same_title | 10.1016/j.chb.2022.107179 | DOI 10.1016/j.chb.2022.107179 appears in multiple gold rows: T001/G002, T002/G005. |
 
 ## Maintainer Notes

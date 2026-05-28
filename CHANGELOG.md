@@ -22,6 +22,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-28 (codex)
 
+- Fixed: Made the gold-label audit report reproducible across repeated runs and quoted the T007/G020 notes field so comma-containing evidence text parses correctly. (codex)
 - Benchmark: Added gold-label audit automation and generated benchmark/gold_audit_report.md plus JSON output; fixed five CSV rows with unquoted comma titles that broke column parsing. (codex)
 - Docs: Recorded local environment verification status, including clean personal-repo state, successful Node/npm benchmark checks, and the apply_patch bwrap limitation. (codex)
 

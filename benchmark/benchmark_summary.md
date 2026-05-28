@@ -43,9 +43,9 @@ Latest audit result:
 | Verified rows | 60 |
 | DOI-backed rows | 60 |
 | Errors | 0 |
-| Warnings | 3 |
+| Warnings | 2 |
 
-Remaining warnings are review items, not current blockers: one non-approved top-journal flag, one weak verification-note flag, and one duplicate DOI warning where the same paper is intentionally relevant to T001 and T002.
+Remaining warnings are review items, not current blockers: one non-approved top-journal flag for T001/G003 and one duplicate DOI warning where the same paper is intentionally relevant to T001 and T002. The audit output is reproducible and no longer changes only because of a run timestamp.
 
 ## Gold Refinement Queue
 
@@ -185,7 +185,7 @@ As of 2026-05-27, selected T001-T003 team outputs have been reapplied onto the c
 
 Use the audited gold set as the benchmark control layer:
 
-1. Review the 3 non-blocking warnings in `benchmark/gold_audit_report.md`.
+1. Review or explicitly accept the 2 non-blocking warnings in `benchmark/gold_audit_report.md`.
 2. Re-run `npm run benchmark:evaluate-proposed` after any warning cleanup.
 3. Decide whether to collect fresh Single-LLM baselines from current personal `main` or selectively reapply member-c rows from the stale organization branch.
 4. Run the full 20 tasks through the deployed Worker only when ready to spend WoS quota, then update:

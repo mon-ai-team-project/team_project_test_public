@@ -8,7 +8,8 @@
 - Tooling note: `apply_patch` failed in this environment with `bwrap: Unexpected capabilities but not setuid`; the benchmark script and docs were written through the repository filesystem tool, while root `package.json` and `CHANGELOG.md` were edited with `sed`. (codex)
 - Finding: The first audit generated `benchmark/gold_audit_report.md` and found 5 errors plus 28 warnings. The errors were not DOI-content problems; they came from CSV parsing caused by unquoted comma-containing titles in G022, G024, G035, G050, and G053. (codex)
 - Fix: Quoted the five affected titles in both `benchmark/gold_relevant_papers.csv` and `benchmark/gold_relevant_papers.verified.csv`. (codex)
-- Verification: `npm run benchmark:audit-gold` now passes with 60 rows, 20/20 tasks covered, 60 verified rows, 0 errors, and 3 warnings. Remaining warnings are T001/G003 not top-journal-expected, T007/G020 weak verification notes, and an intentional duplicate DOI warning for T001/G002 plus T002/G005. (codex)
+- Verification: `npm run benchmark:audit-gold` now passes with 60 rows, 20/20 tasks covered, 60 verified rows, 0 errors, and 2 non-blocking warnings. Remaining warnings are T001/G003 not top-journal-expected and an intentional duplicate DOI warning for T001/G002 plus T002/G005. (codex)
+- Follow-up fix: Quoted the T007/G020 notes field because its comma-containing text caused the audit parser to truncate the verification evidence note. Also changed the audit report marker from a volatile timestamp to `reproducible-current-inputs`, so repeated audit runs do not create dirty diffs only from execution time. (codex)
 
 ## 2026-05-28 - Local Environment Verification
 

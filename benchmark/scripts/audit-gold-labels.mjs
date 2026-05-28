@@ -124,7 +124,7 @@ function auditGoldRows({ goldRows, tasks, goldPath, tasksPath }) {
   const warnings = issues.filter((issue) => issue.severity === "warning");
 
   return {
-    generatedAt: new Date().toISOString(),
+    generatedAt: "reproducible-current-inputs",
     inputs: { goldPath, tasksPath },
     summary: {
       goldRows: goldRows.length,

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-28T05:42:32.165Z",
+  "generatedAt": "reproducible-current-inputs",
   "inputs": {
     "goldPath": "benchmark/gold_relevant_papers.csv",
     "tasksPath": "benchmark/tasks.jsonl"
@@ -13,7 +13,7 @@
     "doiBackedRows": 60,
     "duplicateDoiGroups": 1,
     "errors": 0,
-    "warnings": 3
+    "warnings": 2
   },
   "taskSummary": [
     {
@@ -159,7 +159,6 @@
   ],
   "issueCounts": {
     "warning:not_top_journal_expected": 1,
-    "warning:weak_verification_notes": 1,
     "warning:duplicate_doi_same_title": 1
   },
   "issues": [
@@ -168,12 +167,6 @@
       "code": "not_top_journal_expected",
       "location": "T001/G003",
       "message": "top_journal_expected is 'no'."
-    },
-    {
-      "severity": "warning",
-      "code": "weak_verification_notes",
-      "location": "T007/G020",
-      "message": "notes do not clearly mention verification evidence."
     },
     {
       "severity": "warning",
