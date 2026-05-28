@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-28 - Dashboard Ranking Phase Latency
+
+- Context: The user reported that dashboard Run appeared to spend excessive time in `ranking`. (codex)
+- Finding: `rankPapers()` is a local sort/scoring pass, but the Worker kept job status as `ranking` while running Vectorize relevance and Critic review. With AI bindings enabled, embedding and LLM critique calls can dominate runtime while the dashboard still appears to be in ranking. (codex)
+- Fix: Added request flags `useSemanticRanking` and `useLlmCritic`, defaulted both to `false` for dashboard runs, recorded skipped traces for fast runs, and separated `reviewing` from `ranking` in the shared job status type. (codex)
+- Verification: `npm run typecheck`, `npm run build --workspace apps/worker`, and `npm run build:web` passed. (codex)
+
 ## 2026-05-28 - Baseline Comparison Script Implementation
 
 - Context: Gemini CLI repeatedly failed with `ioctl(2) failed, EBADF`, so Codex continued the local benchmark comparison task. (codex)

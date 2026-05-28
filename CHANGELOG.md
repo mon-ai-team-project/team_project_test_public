@@ -21,6 +21,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
 
 ## 2026-05-28 (codex)
+- Fixed: Reduced dashboard Run latency around the ranking phase by making Vectorize semantic scoring and LLM Critic opt-in, and by separating `scoring`, `ranking`, and `reviewing` job statuses. (codex)
 - Benchmark: Added `npm run benchmark:compare-baselines`, `benchmark/scripts/compare-baselines.mjs`, and generated Rule-based vs Single-LLM vs Proposed Agent comparison outputs. (codex)
 - Fixed: Removed an accidental Gemini instruction block that had been pasted into the top of `README.md`. (codex)
 - Docs: Refreshed team work status and assigned next benchmark tasks to jin23624, juilie, member-c, and shonshinemin in docs/team-task-briefing.md and docs/agent-work-queue.md. (codex)

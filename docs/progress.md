@@ -1,6 +1,13 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-28 (codex baseline comparison implementation)
+Updated: 2026-05-28 (codex dashboard ranking latency fix)
+
+## codex - Dashboard Run Ranking Latency Fix (2026-05-28)
+
+- **Worker**: Reduced the apparent long `ranking` phase by defaulting dashboard-created jobs to metadata scoring and rule-based Critic review unless `useSemanticRanking` or `useLlmCritic` is explicitly requested. (codex)
+- **Worker**: Changed progress reporting so Vectorize fallback uses `scoring/vectorize_relevance`, journal evaluation uses `scoring/journal_evaluation`, actual sorting uses `ranking/ranking`, and Critic review uses `reviewing/critic_review`. (codex)
+- **Dashboard**: Updated Run payloads in the main dashboard and Ops route to request fast dashboard runs with `useSemanticRanking: false` and `useLlmCritic: false`. (codex)
+- **Verification**: `npm run typecheck`, `npm run build --workspace apps/worker`, and `npm run build:web` passed. (codex)
 
 ## codex - Baseline Comparison Metrics (2026-05-28)
 

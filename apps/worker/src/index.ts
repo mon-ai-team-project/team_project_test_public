@@ -110,6 +110,8 @@ type CreateSearchJobRequest = {
   maxResults?: number;
   enrichmentLimit?: number;
   journalCategoryId?: string;
+  useSemanticRanking?: boolean;
+  useLlmCritic?: boolean;
 };
 
 type DiagnosticsColumnCheck = {
@@ -208,6 +210,8 @@ export default {
         const keyword = normalizeKeyword(body.keyword);
         const maxResults = normalizeMaxResults(body.maxResults);
         const enrichmentLimit = normalizeEnrichmentLimit(body.enrichmentLimit, maxResults);
+        const useSemanticRanking = normalizeBooleanOption(body.useSemanticRanking, false);
+        const useLlmCritic = normalizeBooleanOption(body.useLlmCritic, false);
         const searchProvider = normalizeSearchProvider(env.SEARCH_PROVIDER);
         const job = createSearchJob(keyword, "searching", searchProvider);
         await saveSearchJob(env.DB, job);
@@ -227,6 +231,8 @@ export default {
             googleDriveFolderId: env.GOOGLE_DRIVE_FOLDER_ID,
             maxResults,
             enrichmentLimit,
+            useSemanticRanking,
+            useLlmCritic,
             yearStart: body.yearStart,
             yearEnd: body.yearEnd,
             journalCategoryId: normalizeJournalCategoryId(body.journalCategoryId)
@@ -373,6 +379,10 @@ function normalizeEnrichmentLimit(enrichmentLimit: number | undefined, maxResult
   return Math.max(1, Math.min(maxResults, 20, Math.trunc(enrichmentLimit)));
 }
 
+function normalizeBooleanOption(value: boolean | undefined, fallback: boolean): boolean {
+  return typeof value === "boolean" ? value : fallback;
+}
+
 function normalizeJournalCategoryId(categoryId: string | undefined): string | undefined {
   const normalized = categoryId?.trim();
   return getBusinessSchoolJournalCategory(normalized) ? normalized : undefined;
@@ -476,6 +486,8 @@ async function processSearchJob(
     googleDriveFolderId?: string;
     maxResults: number;
     enrichmentLimit: number;
+    useSemanticRanking: boolean;
+    useLlmCritic: boolean;
     yearStart?: number;
     yearEnd?: number;
     journalCategoryId?: string;
@@ -489,7 +501,7 @@ async function processSearchJob(
       stepId: "planner",
       agentName: "Planner Agent",
       summary: "Normalized research question and runtime constraints.",
-      detail: JSON.stringify({ keyword, maxResults: options.maxResults, enrichmentLimit: options.enrichmentLimit, yearStart: options.yearStart ?? null, yearEnd: options.yearEnd ?? null, journalCategoryId: options.journalCategoryId ?? null }),
+      detail: JSON.stringify({ keyword, maxResults: options.maxResults, enrichmentLimit: options.enrichmentLimit, useSemanticRanking: options.useSemanticRanking, useLlmCritic: options.useLlmCritic, yearStart: options.yearStart ?? null, yearEnd: options.yearEnd ?? null, journalCategoryId: options.journalCategoryId ?? null }),
       outputCount: 1
     });
 
@@ -535,9 +547,9 @@ async function processSearchJob(
     });
 
     // 7. Vectorize Relevance (Planned)
-    job = await updateSearchJobProgress(db, job, "ranking", "vectorize_relevance");
+    job = await updateSearchJobProgress(db, job, "scoring", "vectorize_relevance");
     let semanticScores: Record<string, number> | undefined = undefined;
-    if (options.ai && options.vectorIndex) {
+    if (options.useSemanticRanking && options.ai && options.vectorIndex) {
       try {
         await upsertPaperVectors(options.vectorIndex, options.ai, driveEnriched);
         semanticScores = await getSemanticRelevance(options.vectorIndex, options.ai, keyword, driveEnriched.map(p => p.id));
@@ -555,11 +567,20 @@ async function processSearchJob(
         await recordAgentTrace(db, job, { stepOrder: 8, stepId: "vectorize_relevance", agentName: "Relevance Agent", status: "failed", summary: "Vectorize semantic relevance failed; falling back to metadata.", errorMessage: getErrorMessage(error) });
       }
     } else {
-      await recordAgentTrace(db, job, { stepOrder: 8, stepId: "vectorize_relevance", agentName: "Relevance Agent", summary: "Computed fallback relevance from keyword, title, abstract, journal, and metadata scores; Vectorize embeddings remain planned.", detail: JSON.stringify({ mode: "metadata_fallback", vectorizeConnected: false }), inputCount: driveEnriched.length, outputCount: driveEnriched.length });
+      await recordAgentTrace(db, job, {
+        stepOrder: 8,
+        stepId: "vectorize_relevance",
+        agentName: "Relevance Agent",
+        status: "skipped",
+        summary: options.useSemanticRanking ? "Vectorize semantic relevance skipped because AI or Vectorize binding is unavailable; metadata scoring was used." : "Vectorize semantic relevance skipped for fast dashboard runs; metadata scoring was used.",
+        detail: JSON.stringify({ mode: "metadata_fallback", vectorizeConnected: Boolean(options.ai && options.vectorIndex), useSemanticRanking: options.useSemanticRanking }),
+        inputCount: driveEnriched.length,
+        outputCount: driveEnriched.length
+      });
     }
 
     // 8. Journal Evaluation & Ranking
-    job = await updateSearchJobProgress(db, job, "ranking", "journal_evaluation");
+    job = await updateSearchJobProgress(db, job, "scoring", "journal_evaluation");
     const rankedPapers = rankPapers(driveEnriched, semanticScores);
     await recordAgentTrace(db, job, { stepOrder: 7, stepId: "journal_evaluation", agentName: "Evaluation Agent", summary: "Calculated journal fit, verification, OA, citation, recency, and relevance scores.", inputCount: driveEnriched.length, outputCount: rankedPapers.length });
     
@@ -567,9 +588,9 @@ async function processSearchJob(
     await recordAgentTrace(db, job, { stepOrder: 9, stepId: "ranking", agentName: "Ranking Agent", summary: "Ranked " + rankedPapers.length + " papers by final score.", inputCount: driveEnriched.length, outputCount: rankedPapers.length });
 
     // 9. Critic Review
-    job = await updateSearchJobProgress(db, job, "ranking", "critic_review");
+    job = await updateSearchJobProgress(db, job, "reviewing", "critic_review");
     let criticFlags = buildCriticFlags(rankedPapers);
-    if (options.ai) {
+    if (options.useLlmCritic && options.ai) {
       try {
         criticFlags = await runLlmCritic(options.ai, keyword, rankedPapers, criticFlags);
         await recordAgentTrace(db, job, {
@@ -586,7 +607,15 @@ async function processSearchJob(
         await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags; LLM analysis failed.", detail: JSON.stringify({ error: getErrorMessage(error) }), inputCount: rankedPapers.length, outputCount: criticFlags.length });
       }
     } else {
-      await recordAgentTrace(db, job, { stepOrder: 10, stepId: "critic_review", agentName: "Critic Agent", summary: "Generated " + criticFlags.length + " rule-based critic flags; LLM analysis skipped (AI not bound).", detail: JSON.stringify({}), inputCount: rankedPapers.length, outputCount: criticFlags.length });
+      await recordAgentTrace(db, job, {
+        stepOrder: 10,
+        stepId: "critic_review",
+        agentName: "Critic Agent",
+        summary: "Generated " + criticFlags.length + " rule-based critic flags; LLM analysis skipped for fast dashboard runs.",
+        detail: JSON.stringify({ useLlmCritic: options.useLlmCritic, aiBound: Boolean(options.ai) }),
+        inputCount: rankedPapers.length,
+        outputCount: criticFlags.length
+      });
     }
 
     // 10. Report Generation

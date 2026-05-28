@@ -1175,10 +1175,12 @@ function formatDateTime(value: string): string {
 
 function buildSearchPayload(keyword: string, maxResults: string, enrichmentLimit: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
   const parsedMaxResults = parseLimitedMaxResults(maxResults);
-  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
+  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; useSemanticRanking: boolean; useLlmCritic: boolean; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
     keyword: keyword.trim(),
     maxResults: parsedMaxResults,
-    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults)
+    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults),
+    useSemanticRanking: false,
+    useLlmCritic: false
   };
   const start = parseOptionalYear(yearStart);
   const end = parseOptionalYear(yearEnd);
