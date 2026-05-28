@@ -54,3 +54,8 @@ Add a short summary below before opening a PR.
 - **T016-T018**: Refined with Lebovitz et al. (2022), Nishii (2013), Williams et al. (2017), etc. (gemini)
 - **T019-T020**: Refined with Neslin (2022), Wamba et al. (2017), Chen et al. (2012), etc. (gemini)
 - **Verification**: `npm run benchmark:evaluate-proposed` passed. Observed NDCG@5 stabilized around 0.3579 for the three-task sample. Full 20-task results are ready for integration. (gemini)
+## 2026-05-28 Next Assignment
+
+- New assignment: review accepted gold-audit exceptions in benchmark/gold_audit_allowlist.json. (codex)
+- Focus: T001/G003 replacement search and duplicate DOI cross-task exception review. (codex)
+- Required verification: npm run benchmark:audit-gold and npm run benchmark:evaluate-proposed. (codex)

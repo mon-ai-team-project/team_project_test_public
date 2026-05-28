@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-27 (gemini benchmark and dashboard integration)
+Updated: 2026-05-28 (gemini baseline comparison prep)
+
+## gemini - Baseline Comparison Preparation (2026-05-28)
+
+- **Benchmark**: Completed input data review for baseline comparison. Confirmed `benchmark/baseline_rule_based_results.csv`, `benchmark/baseline_single_llm_results.csv`, and `benchmark/proposed_agent_results.csv` all contain 15 rows for T001-T003. (gemini)
+- **Benchmark**: Identified that baseline CSVs lack some metadata columns (verification_status, unpaywall_status) present in proposed-agent results; comparison script must handle these for fair metric evaluation. (gemini)
+- **Docs**: Updated `CHANGELOG.md` and `docs/debug-log.md` with preparation findings. (gemini)
 
 ## gemini - T004-T020 Gold Refinement & Dashboard Live Connection (2026-05-27)
 
@@ -13,7 +19,9 @@ Updated: 2026-05-27 (gemini benchmark and dashboard integration)
 - Fixed five benchmark CSV rows whose comma-containing titles were not quoted, which previously caused DOI/year/status columns to parse incorrectly. (codex)
 - Reviewed stale `team-origin/benchmark/member-c-baseline-t001-t003` outputs and recorded the result in `docs/member-c-baseline-review-2026-05-28.md`; no CSV rows should be reused directly because the branch uses older task topics and schema. (codex)
 - Collected 15 fresh Single-LLM baseline rows for T001-T003 in `benchmark/baseline_single_llm_results.csv` using the current task definitions and repository DOI-backed gold/proposed metadata as the verification source. (codex)
-- Next incomplete benchmark task: add or update baseline comparison metrics so Rule-based, Single-LLM, and Proposed Agent outputs can be compared in one reproducible summary. (codex)
+- Updated team task assignments for the next benchmark phase: jin23624 reviews accepted gold exceptions, juilie reviews Single-LLM baseline rows, member-c performs baseline input QA, and shonshinemin will QA baseline comparison metrics after the maintainer script is added. (codex)
+- Refreshed `docs/gemini-session-state.md` so Gemini can continue from the current personal-repo benchmark state without relying on chat memory. (codex)
+- Next incomplete benchmark task for maintainer: add or update baseline comparison metrics so Rule-based, Single-LLM, and Proposed Agent outputs can be compared in one reproducible summary. (codex)
 - Local environment verification after commit `dee1f1f`: local HEAD and `origin/main` match, working tree was clean, `node --check benchmark/scripts/audit-gold-labels.mjs`, `npm run benchmark:audit-gold`, `npm run benchmark:evaluate-proposed`, and `git diff --check` passed. `apply_patch` remains unreliable because of the local `bwrap` sandbox issue, so future file edits should use the repository filesystem tool or verified shell edits when needed. (codex)
 
 

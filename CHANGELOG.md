@@ -18,9 +18,10 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
-- No unreleased changes.
+- Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
 
 ## 2026-05-28 (codex)
+- Docs: Refreshed team work status and assigned next benchmark tasks to jin23624, juilie, member-c, and shonshinemin in docs/team-task-briefing.md and docs/agent-work-queue.md. (codex)
 
 - Benchmark: Added 15 fresh repository-grounded Single-LLM baseline rows for current T001-T003 tasks in benchmark/baseline_single_llm_results.csv. (codex)
 

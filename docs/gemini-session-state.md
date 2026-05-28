@@ -1,36 +1,64 @@
 # Gemini Session State
 
-Updated: 2026-05-27 (gemini session conclusion)
+Updated: 2026-05-28 (gemini baseline comparison prep)
 
 ## Current Source Of Truth
-- `AGENTS.md`, `GEMINI.md`
-- `docs/gemini-benchmark-completion-handoff.md` (Final milestone record)
-- `docs/gemini-vectorize-handoff.md` (Infra detail)
-- `docs/progress.md` (Success summary)
+- `AGENTS.md`
+- `GEMINI.md`
+- `docs/agent-writing-rules.md`
+- `docs/progress.md`
+- `docs/agent-work-queue.md`
+- `docs/team-task-briefing.md`
+- `docs/debug-log.md`
+- `CHANGELOG.md`
+- `docs/member-c-baseline-review-2026-05-28.md`
+
+## Current Personal Repo State
+
+- Personal `origin/main` is the active working baseline.
+- Working branch: `benchmark/gemini-baseline-comparison-prep`.
+- Baseline input data (T001-T003) for Rule-based, Single-LLM, and Proposed Agent verified for consistency.
 
 ## Latest Reviewed State
 
-- **2026-05-28 Codex handoff check**: Personal `origin/main` is at `953c7e7`; organization `team-origin/main` is behind. `team-origin/benchmark/member-c-baseline-t001-t003` contains new baseline rows but must be selectively reviewed because the branch is stale. Gold-label audit automation/report generation remains the next unfinished task. (codex)
+- Gold audit is complete (60 rows).
+- Fresh Single-LLM baseline rows (15 rows) exist for T001-T003.
+- Input CSVs reviewed; baseline CSVs found to be missing some metadata fields relative to proposed-agent schema.
 
+## What Gemini Must Do Next
 
-- **Codex correction**: Gemini 20-task benchmark work is now marked as conditionally salvageable, not final. T012/T019 DOI mappings were corrected, `/api/benchmark-metrics` is explicitly a static 3-task snapshot, and `docs/gemini-work-feedback-2026-05-27.md` is the current review record. A full 20-task gold audit remains required before organization merge. (codex)
+Next maintainer task: Implement the baseline comparison script.
 
-- **Benchmark Milestone**: T001-T020 gold labels refined with top-tier DOI-backed journals (S/A1). Total 61 verified rows.
-- **Infrastructure**: Vectorize/AI bindings active in `wrangler.toml`. `paper-abstract-index` created.
-- **Dashboard**: Full End-to-End connection complete, including live benchmark metrics API.
-- **Stability**: `typecheck`, `build`, and `evaluate-proposed` verified.
+Required focus:
 
-## Required Snapshot
-- **Active Task**: Benchmark expansion paused after 20/20 completion.
-- **Changed Files**:
-    - benchmark/gold_relevant_papers.csv
-    - benchmark/gold_relevant_papers.verified.csv
-    - apps/worker/src/index.ts (API additions)
-    - apps/web/src/dashboard/DashboardPages.tsx (Live connection)
-    - wrangler.toml, apps/worker/wrangler.toml (Infra)
-    - jin23624_cpu/README.md, CHANGELOG.md, docs/progress.md, docs/debug-log.md
-- **Git Branch**: `benchmark/gemini-t004-t006-gold-refinement` (Pushed to `origin/main`).
-- **Next Action**: Codex evaluation of the 20-task benchmark and LLM Critic activation.
+1. Create `benchmark/scripts/compare-baselines.mjs`.
+2. Add `npm run benchmark:compare-baselines` to `package.json`.
+3. Ensure the script handles schema differences between baseline CSVs and proposed-agent CSVs.
+4. Generate `benchmark/baseline_comparison_metrics.csv` and `benchmark/baseline_comparison_summary.json`.
+5. Update `CHANGELOG.md`, `docs/progress.md`, `docs/debug-log.md`, and this file before ending the session.
 
-## Memory Rule
-This session establishes the 20-task benchmark foundation. Do not revert to seed data.
+## Gemini Constraints
+
+- Do not modify Worker, Cloudflare, deployment, or dashboard files.
+- Keep all edits within assigned benchmark/docs files.
+- Ensure (gemini) attribution is used.
+
+## Required Verification Baseline
+
+```bash
+npm run benchmark:audit-gold
+npm run benchmark:evaluate-proposed
+git diff --check
+```
+
+If the maintainer adds a comparison script, then also run:
+
+```bash
+npm run benchmark:compare-baselines
+```
+
+## Handoff Memory Rule
+
+Repository files are the memory layer.
+Gemini must read this file before editing and update it again before ending.
+Do not rely on chat history for task status.

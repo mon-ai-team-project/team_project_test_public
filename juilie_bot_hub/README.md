@@ -62,3 +62,8 @@ Do not rewrite original Proposed Agent result fields.
 - Added `work-log-2026-05-20.md` to record the `main/juilie_bot_hub` folder check and continued personal-folder workflow.
 - Kept `main` untouched and did not open a pull request.
 - Left local-only `juilie_bot_hub/paper_agent_enhanced_report.pdf` untracked and out of commits.
+## 2026-05-28 Next Assignment
+
+- New assignment: manually review benchmark/baseline_single_llm_results.csv. (codex)
+- Output file: benchmark/manual_review_single_llm.csv with relevance, decision, failure_type, and review_note fields. (codex)
+- Required verification: npm run benchmark:audit-gold and npm run benchmark:evaluate-proposed. (codex)

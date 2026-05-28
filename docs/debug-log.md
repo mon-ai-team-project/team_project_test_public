@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-28 - Baseline Comparison Input Review
+
+- Context: Prepared for baseline comparison between Rule-based, Single-LLM, and Proposed Agent models for T001-T003. (gemini)
+- Finding: `benchmark/baseline_rule_based_results.csv` (15 rows) and `benchmark/baseline_single_llm_results.csv` (15 rows) are consistent with current task definitions. (gemini)
+- Finding: Baseline CSV schemas do not include `verification_status`, `verification_reason`, or `unpaywall_status` columns. This will result in 0 scores for `paper_validity_rate_at_k` and `oa_success_rate_at_k` if using the existing `evaluate-proposed-agent.mjs` logic directly. (gemini)
+- Action: Documented the need for a unified comparison script that handles missing metadata columns or assumes appropriate defaults for baselines. (gemini)
+
 ## 2026-05-27 - Root Wrangler Deploy Failure Check
 
 ## 2026-05-28 - Gold Label Audit Automation
@@ -18,6 +25,13 @@
 - Finding: `team-origin/benchmark/member-c-baseline-t001-t003` is stale and has broad diffs outside the member-c assignment scope, so it must not be merged directly. (codex)
 - Finding: The branch baseline CSVs use an older schema and stale task topics: T001 dynamic capabilities, T002 governance/agency theory, and T003 service quality/customer satisfaction, while current tasks are AI interview employer branding, AI recruitment applicant reaction, and generative AI advertising effectiveness. (codex)
 - Decision: Do not reuse member-c CSV rows directly. Keep the current personal-repo rule-based rows and request or perform fresh Single-LLM baseline rows against the current task definitions. Detailed review saved to `docs/member-c-baseline-review-2026-05-28.md`. (codex)
+
+## 2026-05-28 - Team Assignment Refresh
+
+- Context: The user asked to check team work status and assign new tasks. (codex)
+- Action: Rewrote `docs/team-task-briefing.md` and `docs/agent-work-queue.md` from the current personal-repo benchmark state instead of the older organization-main snapshot. (codex)
+- Assignments: jin23624 now owns gold-audit exception review; juilie owns Single-LLM manual review; member-c owns baseline input QA; shonshinemin owns baseline comparison metric QA after the maintainer script is added. (codex)
+- Guardrail: The briefing explicitly says not to reuse stale `team-origin/benchmark/member-c-baseline-t001-t003` rows and keeps Cloudflare/source-code edits out of team-agent scope. (codex)
 
 ## 2026-05-28 - Fresh Single-LLM Baseline Collection
 

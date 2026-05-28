@@ -46,3 +46,8 @@ Every baseline branch must update this folder with a README or work-log note. Th
 - Scope: five rows each for T001 AI interview employer branding, T002 AI recruitment applicant reaction, and T003 generative AI advertising effectiveness. (codex)
 - Guardrail: did not reuse stale team-origin member-c CSV rows because that branch used older task topics and an older schema. (codex)
 - Limitation: this is a repository-grounded Single-LLM baseline, not an external live LLM/API run; treat it as a conservative reproducible baseline until a separate model-run protocol is assigned. (codex)
+## 2026-05-28 Next Assignment
+
+- New assignment: QA baseline input CSVs before comparison metrics are finalized. (codex)
+- Confirm rule-based and Single-LLM files each contain 15 current-topic rows and no stale member-c branch topics. (codex)
+- Required verification: npm run benchmark:audit-gold and npm run benchmark:evaluate-proposed. (codex)
