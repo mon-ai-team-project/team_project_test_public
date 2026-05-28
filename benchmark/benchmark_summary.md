@@ -188,7 +188,7 @@ Use the audited gold set as the benchmark control layer:
 
 1. Keep the 2 accepted warnings in `benchmark/gold_audit_allowlist.json` under review, especially if a stronger T001/G003 approved-journal replacement is found.
 2. Re-run `npm run benchmark:evaluate-proposed` after any gold-label or allowlist cleanup.
-3. Decide whether to collect fresh Single-LLM baselines from current personal `main` or selectively reapply member-c rows from the stale organization branch.
+3. Collect fresh Single-LLM baselines from current personal `main`; do not selectively reapply the stale member-c rows because `docs/member-c-baseline-review-2026-05-28.md` found older task topics and schema mismatch.
 4. Run the full 20 tasks through the deployed Worker only when ready to spend WoS quota, then update:
 
 ```text

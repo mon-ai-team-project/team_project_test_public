@@ -22,7 +22,7 @@ This file defines the current team-agent assignments. Agents should pick only th
 | --- | --- | --- | --- |
 | Gold label refinement | `jin23624_cpu` | T001-T003 selected outputs are integrated into personal `main`; verified gold count is now 10 across the three-task sample. | Expand DOI-backed refinement to T004-T006, starting with promoted/near-promoted candidate rows. |
 | Proposed Agent manual review | `juilie_bot_hub` | T001-T003 review notes and enhanced report artifact are integrated into personal `main`. | Wait until T004-T006 Proposed Agent rows exist, then review only those new rows. |
-| Baseline result collection | `unassigned_member_c` | Rule-based T001-T003 baseline rows are integrated; Single-LLM baseline remains open. | Add Single-LLM T001-T003 rows or start comparable T004-T006 baselines after runner output exists. |
+| Baseline result collection | `unassigned_member_c` | Rule-based T001-T003 baseline rows are integrated. Stale member-c branch was reviewed and rejected for direct reuse because it used older task topics/schema. | Add fresh Single-LLM T001-T003 rows from current task definitions and current CSV schema. |
 | Metric QA | `shonshinemin_cmd` | Proposed Agent metrics were regenerated after selective team-output reapply. | Review the stricter gold-label impact and rerun after any T004-T006 expansion. |
 | Integration | `seunghyeon_choi` | Maintainer and integration lead. | Review PRs and keep `main` protected by Agent rules. |
 
@@ -166,7 +166,8 @@ Procedure:
 
 Definition of done:
 
-- T001-T003 keep their integrated Rule-based baseline rows, and the next baseline batch is either Single-LLM T001-T003 or comparable T004-T006 rows.
+- T001-T003 keep their integrated Rule-based baseline rows.
+- Single-LLM T001-T003 rows are recollected from the current task definitions, not copied from the stale member-c branch reviewed in `docs/member-c-baseline-review-2026-05-28.md`.
 - DOI and journal metadata are not fabricated.
 - `CHANGELOG.md` records the work with the assigned member id.
 

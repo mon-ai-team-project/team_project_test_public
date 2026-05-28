@@ -22,6 +22,8 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## 2026-05-28 (codex)
 
+- Benchmark: Reviewed stale member-c baseline branch and documented why its CSV rows must not be reused directly; next baseline task is fresh Single-LLM T001-T003 collection. (codex)
+
 - Benchmark: Added benchmark/gold_audit_allowlist.json and separated accepted gold-audit warnings from active issues so controlled exceptions remain visible without blocking benchmark cleanup. (codex)
 
 - Fixed: Made the gold-label audit report reproducible across repeated runs and quoted the T007/G020 notes field so comma-containing evidence text parses correctly. (codex)

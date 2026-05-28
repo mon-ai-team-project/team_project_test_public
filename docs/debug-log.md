@@ -12,6 +12,13 @@
 - Follow-up fix: Quoted the T007/G020 notes field because its comma-containing text caused the audit parser to truncate the verification evidence note. Also changed the audit report marker from a volatile timestamp to `reproducible-current-inputs`, so repeated audit runs do not create dirty diffs only from execution time. (codex)
 - Follow-up control: Added `benchmark/gold_audit_allowlist.json` and updated the audit script to separate active issues from accepted warnings. This keeps controlled exceptions visible without blocking the benchmark control layer. (codex)
 
+## 2026-05-28 - member-c Branch Review
+
+- Context: The user selected `member-c` as the next work item after gold audit stabilization. (codex)
+- Finding: `team-origin/benchmark/member-c-baseline-t001-t003` is stale and has broad diffs outside the member-c assignment scope, so it must not be merged directly. (codex)
+- Finding: The branch baseline CSVs use an older schema and stale task topics: T001 dynamic capabilities, T002 governance/agency theory, and T003 service quality/customer satisfaction, while current tasks are AI interview employer branding, AI recruitment applicant reaction, and generative AI advertising effectiveness. (codex)
+- Decision: Do not reuse member-c CSV rows directly. Keep the current personal-repo rule-based rows and request or perform fresh Single-LLM baseline rows against the current task definitions. Detailed review saved to `docs/member-c-baseline-review-2026-05-28.md`. (codex)
+
 ## 2026-05-28 - Local Environment Verification
 
 - Context: The user asked whether the local environment had been checked and then requested that the result be recorded. (codex)
