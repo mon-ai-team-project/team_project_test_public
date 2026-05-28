@@ -2,6 +2,13 @@
 
 Updated: 2026-05-28 (codex dashboard Korean copy localization)
 
+## codex - Repository History Audit (2026-05-28)
+
+- Audited: Checked 150 tracked files across Markdown, TypeScript/TSX, JavaScript/MJS, JSON, CSV, SQL, TOML, HTML, benchmark, and team workspace files. (codex)
+- Added: Created `docs/history-audit-2026-05-28.md` with file counts, integrity checks, core history file status, team workspace status, and remaining changelog cleanup findings. (codex)
+- Confirmed: `docs/progress.md` contains restored records before `gemini - LLM Critic Agent Integration (2026-05-26)`, including 2026-05-18 through 2026-05-25 entries. (codex)
+- Verification: Markdown empty-section scan, JSON parse, CSV shape check, `git diff --check`, `npm run typecheck`, and `npm run build:web` passed. (codex)
+
 ## codex - Gemini Local Progress Recovery Review (2026-05-28)
 
 - Checked: Reviewed Gemini local changes in `GEMINI.md`, `docs/agent-writing-rules.md`, `docs/debug-log.md`, and `docs/progress.md`. (codex)

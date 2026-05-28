@@ -18,11 +18,13 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 
 ## Unreleased
 
+_No unreleased changes._
+
+## 2026-05-28 (codex)
+- Docs: Added docs/history-audit-2026-05-28.md with a full tracked-file history audit, verified core ledgers, and documented remaining changelog cleanup risks. (codex)
 - Docs: Reviewed Gemini local historical recovery, removed an accidental trailing marker from `docs/progress.md`, and verified core history files have no empty sections. (codex)
 - Docs: Recovered 1,041 lines of lost historical data in `docs/progress.md` from Git history (commit `336e1ea`) and established strict "Zero Deletion" and "Historical Integrity" protocols in `GEMINI.md` and `docs/agent-writing-rules.md`. (gemini)
 - Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
-
-## 2026-05-28 (codex)
 - Docs: Restored the missing historical bodies in docs/debug-log.md for the Root Wrangler Deploy Failure Check and Benchmark Work Queue Update records. (codex)
 - Docs: Restored the missing Gemini T004-T020 benchmark progress record in docs/progress.md and recorded the benchmark completion handoff, Vectorize setup, and review-correction context. (codex)
 - Docs: Added a course-requirement blueprint in docs/workflow.md that maps the final project announcement to current implementation, benchmark, reproducibility, and deliverable packaging tasks. (codex)

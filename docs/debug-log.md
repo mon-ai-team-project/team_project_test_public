@@ -1,5 +1,13 @@
 # Debug Log
 
+## 2026-05-28 - Repository History Audit
+
+- Context: The user requested a full-file audit after confirming `CHANGELOG.md` records began on 2026-05-11 and asking whether other files had missing history. (codex)
+- Finding: 150 tracked files were audited. Core history files had no empty sections, JSON files parsed, CSV files had basic shape, and source/web verification passed. (codex)
+- Finding: `CHANGELOG.md` still has four separate `2026-05-27 (codex)` headings; this is organization debt, not missing data. (codex)
+- Fix: Added `docs/history-audit-2026-05-28.md` and moved committed `Unreleased` entries into the 2026-05-28 changelog section without deleting them. (codex)
+- Verification: `git diff --check`, `npm run typecheck`, and `npm run build:web` passed during the audit. (codex)
+
 ## 2026-05-28 - Gemini Local Progress Recovery Review
 
 - Context: The user asked to inspect Gemini local work and continue from the in-progress recovery of `docs/progress.md` history before the LLM Critic Agent record. (codex)
