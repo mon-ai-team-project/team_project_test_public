@@ -2,6 +2,12 @@
 
 Updated: 2026-05-28 (codex dashboard ranking latency fix)
 
+## codex - Workflow Blueprint Refresh (2026-05-28)
+
+- **Docs**: Updated `docs/workflow.md` from the older 2026-05-25 snapshot to the current deployed prototype and benchmark automation state. (codex)
+- **Blueprint**: Added personal `origin/main` operating baseline, automated benchmark review policy, dashboard fast-path ranking behavior, read-only MCP status, T001-T003 comparison metrics, and current immediate priorities. (codex)
+- **Roadmap**: Reclassified benchmark expansion and baseline comparison as implemented for the current T001-T003 control layer, with full 20-task Proposed Agent runtime collection still pending WoS quota. (codex)
+
 ## codex - Personal Repo Main Branch Rule (2026-05-28)
 
 - **Rule**: Personal repository work uses `origin/main` as the default branch and source of truth. Feature branches are temporary only; accepted personal-repo work should be merged or pushed back to `origin/main` unless the user explicitly requests branch-only work. (codex)
