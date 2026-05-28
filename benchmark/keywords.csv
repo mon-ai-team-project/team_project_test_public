@@ -1,21 +1,21 @@
-keyword,year_start,year_end,max_results
-AI interview employer branding,2020,2026,20
-artificial intelligence recruitment applicant reaction,2020,2026,20
-generative AI advertising effectiveness,2020,2026,20
-algorithmic management employee trust,2020,2026,20
-AI transparency consumer trust,2020,2026,20
-chatbot service failure customer satisfaction,2020,2026,20
-platform work algorithmic control,2020,2026,20
-remote work knowledge sharing,2020,2026,20
-digital transformation dynamic capabilities,2020,2026,20
-ESG disclosure firm value,2020,2026,20
-greenwashing consumer skepticism,2020,2026,20
-social media influencer authenticity purchase intention,2020,2026,20
-privacy personalization tradeoff marketing,2020,2026,20
-FinTech adoption trust risk,2020,2026,20
-blockchain supply chain transparency,2020,2026,20
-AI decision support managerial judgment,2020,2026,20
-diversity climate employee voice,2020,2026,20
-organizational resilience crisis management,2020,2026,20
-customer journey omnichannel retailing,2020,2026,20
-business analytics competitive advantage,2020,2026,20
+category,keyword
+AI Agents,Multi-Agent Systems
+AI Agents,Reasoning and Acting (ReAct)
+Information Retrieval,Retrieval-Augmented Generation (RAG)
+Large Language Models,Hallucination Mitigation in LLMs
+Natural Language Processing,Contrastive Learning for Text
+Computer Vision,Vision-Language Models (VLM)
+AI Ethics,Bias and Fairness in AI
+Software Engineering,AI-powered Code Generation
+Healthcare AI,Privacy-Preserving Machine Learning
+Robotics,Reinforcement Learning for Robot Control
+Data Science,Automated Feature Engineering
+Network Security,Intrusion Detection using Deep Learning
+Finance AI,Agent-based Modeling in Financial Markets
+Human-Computer Interaction,Explainable AI (XAI) interfaces
+Climate Science,Machine Learning for Weather Prediction
+Knowledge Graph,Neural Symbolic AI
+Bioinformatics,Protein Structure Prediction with AI
+Edge Computing,Model Compression for Mobile Devices
+Blockchain,Smart Contract Vulnerability Detection
+Recommendation Systems,Session-based Recommendation Agents
