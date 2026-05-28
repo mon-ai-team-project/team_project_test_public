@@ -12,6 +12,7 @@ Updated: 2026-05-27 (gemini benchmark and dashboard integration)
 - Completed the 20-task gold-label audit automation by adding `benchmark/scripts/audit-gold-labels.mjs`, `npm run benchmark:audit-gold`, and generated reports at `benchmark/gold_audit_report.md` and `benchmark/gold_audit_report.json`. The current audit covers 60 rows across 20 tasks with 0 errors and 3 warnings. (codex)
 - Fixed five benchmark CSV rows whose comma-containing titles were not quoted, which previously caused DOI/year/status columns to parse incorrectly. (codex)
 - Next incomplete benchmark task: review the 3 remaining non-blocking audit warnings, then decide whether to selectively incorporate the stale member-c Single-LLM baseline work or request a fresh branch from current personal main. (codex)
+- Local environment verification after commit `dee1f1f`: local HEAD and `origin/main` match, working tree was clean, `node --check benchmark/scripts/audit-gold-labels.mjs`, `npm run benchmark:audit-gold`, `npm run benchmark:evaluate-proposed`, and `git diff --check` passed. `apply_patch` remains unreliable because of the local `bwrap` sandbox issue, so future file edits should use the repository filesystem tool or verified shell edits when needed. (codex)
 
 
 

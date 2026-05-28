@@ -10,6 +10,13 @@
 - Fix: Quoted the five affected titles in both `benchmark/gold_relevant_papers.csv` and `benchmark/gold_relevant_papers.verified.csv`. (codex)
 - Verification: `npm run benchmark:audit-gold` now passes with 60 rows, 20/20 tasks covered, 60 verified rows, 0 errors, and 3 warnings. Remaining warnings are T001/G003 not top-journal-expected, T007/G020 weak verification notes, and an intentional duplicate DOI warning for T001/G002 plus T002/G005. (codex)
 
+## 2026-05-28 - Local Environment Verification
+
+- Context: The user asked whether the local environment had been checked and then requested that the result be recorded. (codex)
+- Verified state: After pushing commit `dee1f1f`, local HEAD and personal `origin/main` matched, the working tree was clean, and organization `team-origin/main` remained intentionally behind pending reviewed synchronization. (codex)
+- Verified commands: `node --check benchmark/scripts/audit-gold-labels.mjs`, `npm run benchmark:audit-gold`, `npm run benchmark:evaluate-proposed`, and `git diff --check` passed. (codex)
+- Known local limitation: `apply_patch` fails in this environment with `bwrap: Unexpected capabilities but not setuid`; this is a local sandbox helper issue, not a repository code failure. Continue using the repository filesystem tool or verified shell edits for file changes if `apply_patch` fails. (codex)
+
 ## 2026-05-28 - Handoff State Verification
 
 - Context: The user asked whether the full work situation is recorded. (codex)
