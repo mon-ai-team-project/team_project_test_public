@@ -21,6 +21,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
 
 ## 2026-05-28 (codex)
+- Changed: Localized dashboard user-facing explanatory copy to Korean while preserving core technical terms, API names, provider names, and benchmark metric labels. (codex)
 - Changed: Connected Ops diagnostics to `/api/diagnostics`, added Evaluation auto-review row-level table, and stabilized Research report section parsing. (codex)
 - Changed: Connected the Evaluation dashboard to the latest benchmark comparison and automated baseline review snapshot returned by `/api/benchmark-metrics`. (codex)
 - Docs: Updated `docs/workflow.md` as the current system blueprint with personal-main policy, automated benchmark review, dashboard fast path, implemented outputs, and remaining partial stages. (codex)

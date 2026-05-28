@@ -1,6 +1,12 @@
 # Project Progress And Session Handoff
 
-Updated: 2026-05-28 (codex dashboard ranking latency fix)
+Updated: 2026-05-28 (codex dashboard Korean copy localization)
+
+## codex - Dashboard Korean Copy Localization (2026-05-28)
+
+- **Dashboard UI**: Localized the main dashboard, Research, Ops, and Evaluation user-facing explanatory copy to Korean while preserving core technical terms such as Paper Agent, Worker, D1, R2, WoS, Crossref, Unpaywall, Google Drive, Benchmark, Rule-based, Single-LLM, Proposed Multi-Agent, DOI, Top Journal, and metric labels. (codex)
+- **Scope**: Updated visible panel titles, empty states, status summaries, table headers, scenario labels, artifact copy, and error fallbacks in apps/web/src/main.tsx, apps/web/src/dashboard/DashboardPages.tsx, and apps/web/src/dashboard/mockData.ts. (codex)
+- **Verification**: npm run typecheck, npm run build:web, and git diff --check passed. (codex)
 
 ## codex - Dashboard Connection Refresh 1-3 (2026-05-28)
 

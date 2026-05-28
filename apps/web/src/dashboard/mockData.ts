@@ -184,37 +184,37 @@ export const toolCallLogs: ToolLog[] = [
   { level: "muted", message: "[미완성 Mock] JournalSelector trace placeholder" },
   { level: "muted", message: "[미완성 Mock] Crossref tool log placeholder" },
   { level: "muted", message: "[미완성 Mock] Unpaywall tool log placeholder" },
-  { level: "ok", message: "ReportAgent.outputs csv/md/xlsx/pdf endpoints available" }
+  { level: "ok", message: "ReportAgent.outputs csv/md/xlsx/pdf endpoint 사용 가능" }
 ];
 
 export const systemStatuses: SystemStatus[] = [
-  { name: "Cloudflare D1", status: "Connected", detail: "search_jobs / papers / evaluations", tone: "green" },
-  { name: "Cloudflare R2", status: "Ready", detail: "paper-agent-outputs bucket", tone: "green" },
-  { name: "Google Drive", status: "부분 구현", detail: "OA PDF service-account upload path connected", tone: "amber" },
+  { name: "Cloudflare D1", status: "연결됨", detail: "search_jobs / papers / evaluations", tone: "green" },
+  { name: "Cloudflare R2", status: "준비됨", detail: "paper-agent-outputs bucket", tone: "green" },
+  { name: "Google Drive", status: "부분 구현", detail: "OA PDF service-account upload path 연결됨", tone: "amber" },
   { name: "Vectorize", status: "미완성", detail: "abstract embedding index 연결 전", tone: "blue" },
-  { name: "Remote MCP", status: "Online", detail: "paper-agent-mcp /mcp", tone: "purple" },
-  { name: "Pages UI", status: "부분 구현", detail: "Research/Ops/Evaluation route connected; 일부 planned 패널 유지", tone: "amber" }
+  { name: "Remote MCP", status: "온라인", detail: "paper-agent-mcp /mcp", tone: "purple" },
+  { name: "Pages UI", status: "부분 구현", detail: "Research/Ops/Evaluation route 연결됨; 일부 planned 패널 유지", tone: "amber" }
 ];
 
 export const criticReviews: CriticReviewItem[] = [
-  { title: "Adjacent journal ambiguity", severity: "medium", note: "Top Journal Pool에는 없지만 Q1 인접 분야로 분류되어 rule-based critic 확인이 필요합니다." },
-  { title: "OA PDF unavailable", severity: "low", note: "PDF URL이 없으면 landing page와 metadata 기반 요약으로 대체합니다." },
-  { title: "Metadata mismatch", severity: "high", note: "제목, 저자, 연도 불일치가 있으면 Crossref 재검증 후 제외 후보로 이동합니다." }
+  { title: "인접 저널 모호성", severity: "medium", note: "Top Journal Pool에는 없지만 Q1 인접 분야로 분류되어 rule-based critic 확인이 필요합니다." },
+  { title: "OA PDF 미확보", severity: "low", note: "PDF URL이 없으면 landing page와 metadata 기반 요약으로 대체합니다." },
+  { title: "Metadata 불일치", severity: "high", note: "제목, 저자, 연도 불일치가 있으면 Crossref 재검증 후 제외 후보로 이동합니다." }
 ];
 
 export const literaturePreview: LiteraturePreviewItem[] = [
-  { title: "Summary", body: "AI 면접 공개와 자동화된 선발 경험이 지원자의 신뢰, 공정성 인식, 고용주 브랜드 평가에 미치는 영향을 정리합니다." },
-  { title: "Commonality", body: "대부분의 연구는 알고리즘 투명성, 절차적 공정성, 기술 수용성을 핵심 매개 요인으로 다룹니다." },
-  { title: "Difference", body: "마케팅 저널은 브랜드 반응을, HRM/조직 저널은 지원자 경험과 선발 공정성을 더 강하게 설명합니다." },
+  { title: "요약", body: "AI 면접 공개와 자동화된 선발 경험이 지원자의 신뢰, 공정성 인식, 고용주 브랜드 평가에 미치는 영향을 정리합니다." },
+  { title: "공통점", body: "대부분의 연구는 알고리즘 투명성, 절차적 공정성, 기술 수용성을 핵심 매개 요인으로 다룹니다." },
+  { title: "차이점", body: "마케팅 저널은 브랜드 반응을, HRM/조직 저널은 지원자 경험과 선발 공정성을 더 강하게 설명합니다." },
   { title: "Research Gap", body: "AI 사용 공개 수준과 employer branding 간의 인과적 연결을 top journal 근거로 검증한 연구는 제한적입니다." },
   { title: "Critic Note", body: "인접 분야 Q1 논문은 보조 근거로 유지하고, 핵심 가설 개발은 S급 및 A1급 저널 우선으로 제한합니다." },
-  { title: "Use in Paper", body: "서론 문제제기, 이론적 배경, 가설 개발, 변수 조작화 근거로 연결할 수 있습니다." }
+  { title: "논문 활용", body: "서론 문제제기, 이론적 배경, 가설 개발, 변수 조작화 근거로 연결할 수 있습니다." }
 ];
 
 export const evaluationScenarios: EvaluationScenario[] = [
   {
     key: "strict",
-    label: "Strict Top Journal",
+    label: "엄격 Top Journal",
     metrics: { precisionAt5: "33.3%", doiAccuracy: "100%", topJournalPrecision: "100%", hallucinationRate: "0%", reportCompleteness: "85%", avgLatency: "145s" },
     rows: [
       { metric: "Precision@5", ruleBased: "15%", singleLlm: "22%", proposed: "33.3%", finding: "Proposed Agent가 S급 저널 매칭에서 우수한 성과를 보입니다." },
@@ -234,7 +234,7 @@ export const evaluationScenarios: EvaluationScenario[] = [
   },
   {
     key: "broad",
-    label: "Broad Q1 Search",
+    label: "확장 Q1 검색",
     metrics: { precisionAt5: "미완성", doiAccuracy: "미완성", topJournalPrecision: "미완성", hallucinationRate: "미완성", reportCompleteness: "미완성", avgLatency: "미완성" },
     rows: [
       { metric: "Precision@5", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
@@ -254,7 +254,7 @@ export const evaluationScenarios: EvaluationScenario[] = [
   },
   {
     key: "fast",
-    label: "Fast Demo Mode",
+    label: "빠른 Demo Mode",
     metrics: { precisionAt5: "미완성", doiAccuracy: "미완성", topJournalPrecision: "미완성", hallucinationRate: "미완성", reportCompleteness: "미완성", avgLatency: "미완성" },
     rows: [
       { metric: "Precision@5", ruleBased: "미완성", singleLlm: "미완성", proposed: "미완성", finding: "baseline CSV와 proposed full-run 결과 연결 전입니다." },
@@ -277,8 +277,8 @@ export const evaluationScenarios: EvaluationScenario[] = [
 export const evaluationRubrics: LiteraturePreviewItem[] = [
   { title: "Relevance", body: "사용자 연구 주제와 논문 초록, 이론, 방법론이 얼마나 직접 연결되는가?" },
   { title: "Validity", body: "논문이 실제 존재하며 DOI, 저널명, 저자, 연도가 정확히 검증되었는가?" },
-  { title: "Journal Quality", body: "Q1, Top Journal Pool, FT50, ABS 등 품질 기준에 부합하는가?" },
-  { title: "Usefulness", body: "서론, 이론적 배경, 가설 개발, 변수 조작화에 활용 가능한가?" },
-  { title: "Gap Clarity", body: "기존 연구와 사용자 연구의 차별점 및 research gap이 명확한가?" },
-  { title: "Evidence Traceability", body: "추천 이유와 점수 산출 근거가 검증 가능한 데이터에 기반하는가?" }
+  { title: "저널 품질", body: "Q1, Top Journal Pool, FT50, ABS 등 품질 기준에 부합하는가?" },
+  { title: "활용 가능성", body: "서론, 이론적 배경, 가설 개발, 변수 조작화에 활용 가능한가?" },
+  { title: "Gap 명확성", body: "기존 연구와 사용자 연구의 차별점 및 research gap이 명확한가?" },
+  { title: "근거 추적 가능성", body: "추천 이유와 점수 산출 근거가 검증 가능한 데이터에 기반하는가?" }
 ];

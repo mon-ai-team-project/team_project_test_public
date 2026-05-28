@@ -138,9 +138,9 @@ export function resolveDashboardRoute(pathname = window.location.pathname): Dash
 
 export function DashboardNav({ activeRoute }: { activeRoute: DashboardRoute }) {
   const routes: Array<{ id: DashboardRoute; label: string; href: string }> = [
-    { id: "research", label: "1. Research Studio", href: "/dashboard/research" },
-    { id: "ops", label: "2. Agent Ops", href: "/dashboard/ops" },
-    { id: "evaluation", label: "3. Evaluation", href: "/dashboard/evaluation" }
+    { id: "research", label: "1. 연구 스튜디오", href: "/dashboard/research" },
+    { id: "ops", label: "2. Agent 운영", href: "/dashboard/ops" },
+    { id: "evaluation", label: "3. 평가", href: "/dashboard/evaluation" }
   ];
 
   return (
@@ -150,10 +150,10 @@ export function DashboardNav({ activeRoute }: { activeRoute: DashboardRoute }) {
           <span className="uxBrandMark">PA</span>
           <span>
             <strong>Paper Agent</strong>
-            <small>MON AI Team dashboard</small>
+            <small>MON AI Team 대시보드</small>
           </span>
         </a>
-        <nav className="uxNav" aria-label="Dashboard routes">
+        <nav className="uxNav" aria-label="대시보드 경로">
           {routes.map((route) => (
             <a key={route.id} className={route.id === activeRoute ? "active" : undefined} href={route.href}>
               {route.label}
@@ -178,12 +178,12 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
     if (!report) return literaturePreview;
 
     const sections = [
-      { title: "Summary", patterns: [/^##\s+Executive Summary/i, /^##\s+Summary/i], fallback: literaturePreview[0].body },
-      { title: "Commonality", patterns: [/^###\s+Common Themes/i, /^##\s+Commonality/i, /^###\s+Commonality/i], fallback: literaturePreview[1].body },
-      { title: "Difference", patterns: [/^###\s+Methodological Differences/i, /^##\s+Difference/i, /^###\s+Difference/i], fallback: literaturePreview[2].body },
+      { title: "요약", patterns: [/^##\s+Executive Summary/i, /^##\s+Summary/i], fallback: literaturePreview[0].body },
+      { title: "공통점", patterns: [/^###\s+Common Themes/i, /^##\s+Commonality/i, /^###\s+Commonality/i], fallback: literaturePreview[1].body },
+      { title: "차이점", patterns: [/^###\s+Methodological Differences/i, /^##\s+Difference/i, /^###\s+Difference/i], fallback: literaturePreview[2].body },
       { title: "Research Gap", patterns: [/^###\s+Identified Research Gaps/i, /^##\s+Research Gap/i, /^###\s+Research Gap/i], fallback: literaturePreview[3].body },
       { title: "Critic Note", patterns: [/^###\s+Screening Notes/i, /^##\s+Critic/i, /^###\s+Critic/i], fallback: literaturePreview[4].body },
-      { title: "Use in Paper", patterns: [/^###\s+Suggested Reading Order/i, /^##\s+Use in Paper/i, /^###\s+Use in Paper/i], fallback: literaturePreview[5].body }
+      { title: "논문 활용", patterns: [/^###\s+Suggested Reading Order/i, /^##\s+Use in Paper/i, /^###\s+Use in Paper/i], fallback: literaturePreview[5].body }
     ];
 
     return sections.map((section) => {
@@ -247,34 +247,34 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
       <section className="uxHero">
         <div className="uxHeroGrid">
           <div>
-            <span className="uxEyebrow">Interactive Research Studio</span>
+            <span className="uxEyebrow">인터랙티브 연구 스튜디오</span>
             <h1>Top Journal 기반 문헌검색, 검증, 보고서 생성을 한 화면에서 관리합니다.</h1>
             <p>검색 실행 후 12단계 workflow, DOI/Crossref 검증, OA PDF/R2 상태, ranked papers, paper detail, literature review preview를 함께 확인합니다.</p>
             <div className="uxHeroFlow">
-              <MiniFlow title="Research Input" body="키워드, 연구 질문, 분야, 기간 입력" />
-              <MiniFlow title="Top Journal Filter" body="국제 S급 우선, 국제 A1급 후순위 검색" />
-              <MiniFlow title="Paper Verification" body="DOI, Crossref, OA, 저장 상태 검증" />
-              <MiniFlow title="Review Output" body="Summary, Difference, Gap, Critic Note 생성" />
+              <MiniFlow title="연구 입력" body="키워드, 연구 질문, 분야, 기간 입력" />
+              <MiniFlow title="Top Journal 필터" body="국제 S급 우선, 국제 A1급 후순위 검색" />
+              <MiniFlow title="논문 검증" body="DOI, Crossref, OA, 저장 상태 검증" />
+              <MiniFlow title="Review 산출물" body="요약, 차이점, Gap, Critic Note 생성" />
             </div>
           </div>
           <aside className="uxSearchSummary">
-            <h2>Workflow Snapshot</h2>
+            <h2>Workflow 현황</h2>
             <p>{activeJob ? `Job ${activeJob.id} 실행 상태입니다.` : "최근 실행된 검색 작업이 없습니다. 아래에서 검색을 시작하세요."}</p>
             <div className="uxProgressTrack">
               <span style={{ width: `${progress}%` }} />
             </div>
             <div className="uxSnapshotGrid">
-              <MetricTile label="Status" value={activeJob?.status || "Idle"} detail={activeJob?.currentStep || "ready"} tone="green" />
-              <MetricTile label="Steps" value={`${completedTraceCount}/12`} detail="completed" tone="blue" />
-              <MetricTile label="Top Pool" value="부분 구현" detail="allowlist exists" tone="purple" />
-              <MetricTile label="Review" value={activeJob?.status === "completed" ? "Ready" : "Pending"} detail="critic analysis" tone={activeJob?.status === "completed" ? "green" : "amber"} />
+              <MetricTile label="상태" value={activeJob?.status || "대기"} detail={activeJob?.currentStep || "준비됨"} tone="green" />
+              <MetricTile label="단계" value={`${completedTraceCount}/12`} detail="완료/건너뜀" tone="blue" />
+              <MetricTile label="Top Pool" value="부분 구현" detail="allowlist 적용" tone="purple" />
+              <MetricTile label="Review" value={activeJob?.status === "completed" ? "준비됨" : "대기 중"} detail="critic 분석" tone={activeJob?.status === "completed" ? "green" : "amber"} />
             </div>
           </aside>
         </div>
       </section>
 
       <ImplementationStatusPanel
-        title="Research Route Implementation Status"
+        title="Research Route 구현 상태"
         description="실제 API 기능과 미완성 Mock 패널을 분리 표시합니다. Mock 표시는 실제 결과가 아닙니다."
         items={researchImplementationStatus}
       />
@@ -282,10 +282,10 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
       <section className="uxPanel uxWorkflowPanel">
         <div className="uxPanelHead">
           <div>
-            <h2>12-step Literature Review Workflow</h2>
+            <h2>12단계 Literature Review Workflow</h2>
             <p>{traces.length ? "실제 D1 agent_traces 기반의 실시간 실행 단계입니다." : "미완성 Mock: 실제 agent_traces 연결 전의 단계 구조 preview입니다."}</p>
           </div>
-          <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "Live D1 traces" : "미완성 Mock"}</span>
+          <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "D1 trace 연결됨" : "미완성 Mock"}</span>
         </div>
         <div className="uxProgressTrack">
           <span style={{ width: `${progress}%` }} />
@@ -324,7 +324,7 @@ export function ResearchExperiencePanels({ isRunning }: { isRunning: boolean }) 
         <section className="uxPanel">
           <div className="uxPanelHead">
             <div>
-              <h2>Literature Review Preview</h2>
+              <h2>Literature Review 미리보기</h2>
               <p>{report ? "실제 Report Agent가 생성한 섹션별 핵심 요약입니다." : "미완성 Mock: 실제 Report Agent API 연결 전의 섹션 preview입니다."}</p>
             </div>
             <FileText size={18} />
@@ -380,12 +380,12 @@ export function AgentOpsPage() {
     setTraceError("");
     try {
       const response = await fetch(apiUrl("/api/search-jobs?limit=1"));
-      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to load recent job"));
+      if (!response.ok) throw new Error(await readDashboardError(response, "최근 job을 불러오지 못했습니다"));
       const data = (await response.json()) as JobsResponse;
       const latest = data.jobs[0];
       if (latest) await loadJobTraces(latest.id);
     } catch (error) {
-      setTraceError(error instanceof Error ? error.message : "Failed to load recent job");
+      setTraceError(error instanceof Error ? error.message : "최근 job을 불러오지 못했습니다");
     }
   }
 
@@ -393,7 +393,7 @@ export function AgentOpsPage() {
     setTraceError("");
     try {
       const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
-      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to load agent traces"));
+      if (!response.ok) throw new Error(await readDashboardError(response, "agent trace를 불러오지 못했습니다"));
       const data = (await response.json()) as TraceResponse;
       setActiveJob(data.job);
       setTraces(data.traces);
@@ -401,7 +401,7 @@ export function AgentOpsPage() {
       await loadJobArtifacts(data.job.id);
       if (data.job.status === "completed" || data.job.status === "failed") setRunning(false);
     } catch (error) {
-      setTraceError(error instanceof Error ? error.message : "Failed to load agent traces");
+      setTraceError(error instanceof Error ? error.message : "agent trace를 불러오지 못했습니다");
       setRunning(false);
     }
   }
@@ -413,14 +413,14 @@ export function AgentOpsPage() {
         fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
         fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
       ]);
-      if (!flagsResponse.ok) throw new Error(await readDashboardError(flagsResponse, "Failed to load critic flags"));
-      if (!outputsResponse.ok) throw new Error(await readDashboardError(outputsResponse, "Failed to load output artifacts"));
+      if (!flagsResponse.ok) throw new Error(await readDashboardError(flagsResponse, "critic flag를 불러오지 못했습니다"));
+      if (!outputsResponse.ok) throw new Error(await readDashboardError(outputsResponse, "output artifact를 불러오지 못했습니다"));
       const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
       const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
       setCriticFlags(flagsData.criticFlags);
       setOutputs(outputsData.outputs);
     } catch (error) {
-      setArtifactError(error instanceof Error ? error.message : "Failed to load job artifacts");
+      setArtifactError(error instanceof Error ? error.message : "job artifact를 불러오지 못했습니다");
       setCriticFlags([]);
       setOutputs([]);
     }
@@ -430,11 +430,11 @@ export function AgentOpsPage() {
     setDiagnosticsError("");
     try {
       const response = await fetch(apiUrl("/api/diagnostics"));
-      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to load diagnostics"));
+      if (!response.ok) throw new Error(await readDashboardError(response, "diagnostics를 불러오지 못했습니다"));
       const data = (await response.json()) as DiagnosticsResponse;
       setDiagnostics(data);
     } catch (error) {
-      setDiagnosticsError(error instanceof Error ? error.message : "Failed to load diagnostics");
+      setDiagnosticsError(error instanceof Error ? error.message : "diagnostics를 불러오지 못했습니다");
       setDiagnostics(null);
     }
   }
@@ -450,12 +450,12 @@ export function AgentOpsPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ keyword, maxResults: 20, enrichmentLimit: 10, useSemanticRanking: false, useLlmCritic: false })
       });
-      if (!response.ok) throw new Error(await readDashboardError(response, "Failed to launch agent job"));
+      if (!response.ok) throw new Error(await readDashboardError(response, "agent job 실행에 실패했습니다"));
       const data = (await response.json()) as { job: SearchJob };
       setActiveJob(data.job);
       await loadJobTraces(data.job.id);
     } catch (error) {
-      setTraceError(error instanceof Error ? error.message : "Failed to launch agent job");
+      setTraceError(error instanceof Error ? error.message : "agent job 실행에 실패했습니다");
       setRunning(false);
     }
   }
@@ -470,33 +470,33 @@ export function AgentOpsPage() {
       <section className="uxHero">
         <div className="uxHeroGrid">
           <div>
-            <span className="uxEyebrow cyan">Interactive Agent Ops</span>
+            <span className="uxEyebrow cyan">인터랙티브 Agent 운영</span>
             <h1>Multi-Agent 실행 상태와 tool call 흐름을 운영 관점에서 추적합니다.</h1>
             <p>실제 Worker job과 D1 agent_traces를 기반으로 최신 실행 상태를 표시합니다.</p>
           </div>
           <aside className="uxSearchSummary">
-            <h2>Launch Agent Job</h2>
+            <h2>Agent Job 실행</h2>
             <label className="uxField">
-              <span>Keyword</span>
+              <span>검색어</span>
               <input value={keyword} onChange={(event) => setKeyword(event.target.value)} />
             </label>
             <div className="uxFieldGrid">
               <label className="uxField">
                 <span>Provider</span>
                 <select defaultValue="wos" disabled>
-                  <option value="wos">Worker configured provider</option>
+                  <option value="wos">Worker 설정 provider</option>
                 </select>
               </label>
               <label className="uxField">
                 <span>Pipeline</span>
                 <select defaultValue="full" disabled>
-                  <option value="full">Full 12-step trace</option>
+                  <option value="full">전체 12단계 trace</option>
                 </select>
               </label>
             </div>
             <button className="uxButton green" type="button" onClick={launchJob} disabled={running || !keyword.trim()}>
               {running ? <RefreshCw size={18} className="spin" /> : <Play size={18} />}
-              Launch Agent Job
+              Agent Job 실행
             </button>
             {activeJob ? <p className="uxTinyStatus">job_id: {activeJob.id}</p> : null}
             {traceError ? <p className="uxTinyError">{traceError}</p> : null}
@@ -505,19 +505,19 @@ export function AgentOpsPage() {
       </section>
 
       <section className="uxMetrics">
-        <MetricTile label="Job" value={activeJob?.status ?? "No job"} detail={activeJob?.currentStep ?? "load or launch"} tone={activeJob?.status === "failed" ? "amber" : "green"} />
-        <MetricTile label="Trace Steps" value={String(traces.length)} detail={`${completedTraceCount} completed/skipped`} tone="blue" />
+        <MetricTile label="Job" value={activeJob?.status ?? "Job 없음"} detail={activeJob?.currentStep ?? "불러오기 또는 실행"} tone={activeJob?.status === "failed" ? "amber" : "green"} />
+        <MetricTile label="Trace 단계" value={String(traces.length)} detail={`${completedTraceCount} 완료/건너뜀`} tone="blue" />
         <MetricTile label="Agents" value={String(liveAgentCards.length)} detail="from D1 traces" tone="purple" />
-        <MetricTile label="Warnings" value={String(traces.filter((trace) => trace.status === "skipped" || trace.status === "failed").length)} detail="skipped or failed" tone="amber" />
+        <MetricTile label="경고" value={String(traces.filter((trace) => trace.status === "skipped" || trace.status === "failed").length)} detail="건너뜀 또는 실패" tone="amber" />
         <MetricTile label="Enrichment" value={enrichmentOverview.limit} detail={`Crossref ${enrichmentOverview.crossrefProcessed}/skip ${enrichmentOverview.crossrefSkipped} · Unpaywall ${enrichmentOverview.unpaywallProcessed}/skip ${enrichmentOverview.unpaywallSkipped}`} tone="blue" />
-        <MetricTile label="Storage" value={diagnostics?.env.r2Reports ? "R2 Ready" : "Pending"} detail={diagnostics?.env.googleDrive ? "Drive ready" : "Drive partial"} tone={diagnostics?.env.r2Reports ? "green" : "amber"} />
+        <MetricTile label="Storage" value={diagnostics?.env.r2Reports ? "R2 준비됨" : "대기 중"} detail={diagnostics?.env.googleDrive ? "Drive 준비됨" : "Drive 부분 연결"} tone={diagnostics?.env.r2Reports ? "green" : "amber"} />
         <MetricTile label="Critic Flags" value={String(criticFlags.length)} detail={`high ${criticSummary.high} · medium ${criticSummary.medium} · low ${criticSummary.low}`} tone={criticSummary.high ? "amber" : "green"} />
-        <MetricTile label="Outputs" value={String(outputs.length)} detail={outputs.length ? outputs.map((output) => output.outputType + ":" + output.status).join(" · ") : "no metadata"} tone="purple" />
-        <MetricTile label="Runtime" value={diagnostics?.readiness.activeProviderReady ? "Ready" : "Check"} detail={diagnostics ? `${diagnostics.searchProvider} provider` : "diagnostics loading"} tone={diagnostics?.readiness.activeProviderReady ? "green" : "amber"} />
+        <MetricTile label="산출물" value={String(outputs.length)} detail={outputs.length ? outputs.map((output) => output.outputType + ":" + output.status).join(" · ") : "metadata 없음"} tone="purple" />
+        <MetricTile label="Runtime" value={diagnostics?.readiness.activeProviderReady ? "준비됨" : "확인 필요"} detail={diagnostics ? `${diagnostics.searchProvider} provider` : "diagnostics 로드 중"} tone={diagnostics?.readiness.activeProviderReady ? "green" : "amber"} />
       </section>
 
       <ImplementationStatusPanel
-        title="Ops Route Implementation Status"
+        title="Ops Route 구현 상태"
         description="운영 화면의 Agent board, pipeline, console은 최신 D1 agent_traces를 우선 사용하고 trace가 없을 때만 mock placeholder를 표시합니다."
         items={opsImplementationStatus}
       />
@@ -527,10 +527,10 @@ export function AgentOpsPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Multi-Agent Status Board</h2>
+                <h2>Multi-Agent 상태 보드</h2>
                 <p>Agent card를 클릭하면 해당 agent의 trace summary가 console에 추가됩니다.</p>
               </div>
-              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "Live D1 traces" : "No live trace"}</span>
+              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? "D1 trace 연결됨" : "Live trace 없음"}</span>
             </div>
             <div className="uxAgentGrid">
               {liveAgentCards.map((agent) => (
@@ -546,10 +546,10 @@ export function AgentOpsPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Pipeline Execution</h2>
+                <h2>Pipeline 실행</h2>
                 <p>12단계 문헌검토 workflow의 운영 상태입니다.</p>
               </div>
-              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? `${progress}%` : "No live trace"}</span>
+              <span className={`uxPill ${traces.length ? "green" : "amber"}`}>{traces.length ? `${progress}%` : "Live trace 없음"}</span>
             </div>
             <div className="uxProgressTrack">
               <span style={{ width: `${progress}%` }} />
@@ -573,7 +573,7 @@ export function AgentOpsPage() {
                 <h2>Tool Call Console</h2>
                 <p>{traces.length ? "D1 agent_traces에서 생성한 실행 로그입니다." : "Live trace가 없으면 placeholder log를 표시합니다."}</p>
               </div>
-              <button className="uxSoftButton" type="button" onClick={() => setLogs([])}>Clear</button>
+              <button className="uxSoftButton" type="button" onClick={() => setLogs([])}>지우기</button>
             </div>
             <div className="uxTerminal">
               {logs.map((log, index) => (
@@ -591,7 +591,7 @@ export function AgentOpsPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Storage and Runtime</h2>
+                <h2>Storage 및 Runtime</h2>
                 <p>실제 /api/diagnostics 기준 D1, provider, Crossref, Unpaywall, R2, Drive 상태입니다.</p>
               </div>
               <button className="uxSoftButton" type="button" onClick={loadDiagnostics}><RefreshCw size={14} /></button>
@@ -632,11 +632,11 @@ function OutputArtifactsPanel({ outputs, errorMessage }: { outputs: JobOutput[];
             <div>
               <strong>{output.outputType.toUpperCase()}</strong>
               <span>{output.storage} · {output.detail}</span>
-              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">산출물 열기</a> : <small>Endpoint 예정</small>}
             </div>
             <span className={`uxPill ${output.status === "stored" || output.status === "generated" ? "green" : output.status === "failed" ? "amber" : "gray"}`}>{output.status}</span>
           </article>
-        )) : <p className="uxEmptyNote">No output metadata loaded.</p>}
+        )) : <p className="uxEmptyNote">불러온 output metadata가 없습니다.</p>}
       </div>
     </section>
   );
@@ -663,7 +663,7 @@ function LiveCriticFlagsPanel({ flags, errorMessage }: { flags: CriticFlag[]; er
             </div>
             <span className={`uxPill ${flag.severity === "high" ? "amber" : flag.severity === "medium" ? "blue" : "gray"}`}>{flag.severity}</span>
           </article>
-        )) : <p className="uxEmptyNote">No critic flags loaded for this job.</p>}
+        )) : <p className="uxEmptyNote">이 job에 연결된 critic flag가 없습니다.</p>}
       </div>
     </section>
   );
@@ -710,7 +710,7 @@ function summarizeEnrichmentTraces(traces: AgentTrace[]): EnrichmentOverview {
   const limit = formatTraceValue(crossrefDetail.enrichmentLimit) || formatTraceValue(unpaywallDetail.enrichmentLimit) || "not set";
 
   return {
-    limit: limit === "not set" ? "No limit" : `limit ${limit}`,
+    limit: limit === "not set" ? "제한 없음" : `limit ${limit}`,
     crossrefProcessed: crossref?.outputCount !== undefined ? String(crossref.outputCount) : "0",
     crossrefSkipped: formatTraceValue(crossrefDetail.skipped) || "0",
     unpaywallProcessed: unpaywall?.outputCount !== undefined ? String(unpaywall.outputCount) : "0",
@@ -826,14 +826,14 @@ function summarizeMarkdownText(value: string): string {
 function getDiagnosticsItems(diagnostics: DiagnosticsResponse | null) {
   if (!diagnostics) return systemStatuses;
   return [
-    { name: "Cloudflare D1", status: diagnostics.db.bound ? "Connected" : "Missing", detail: diagnostics.db.missingColumns.length ? diagnostics.db.missingColumns.map((item) => item.table + "." + item.column).join(", ") : "schema ready", tone: diagnostics.db.bound && diagnostics.db.missingColumns.length === 0 ? "green" as const : "amber" as const },
-    { name: "Active Provider", status: diagnostics.searchProvider, detail: diagnostics.readiness.activeProviderReady ? "ready" : "not ready", tone: diagnostics.readiness.activeProviderReady ? "green" as const : "amber" as const },
-    { name: "WoS API", status: diagnostics.env.wosApiKey ? "Ready" : "Missing", detail: diagnostics.env.wosApiKeySource ?? "WOS_API_KEY", tone: diagnostics.env.wosApiKey ? "green" as const : "amber" as const },
-    { name: "Crossref", status: diagnostics.env.crossrefEmail ? "Ready" : "Missing", detail: "CROSSREF_EMAIL", tone: diagnostics.env.crossrefEmail ? "green" as const : "amber" as const },
-    { name: "Unpaywall", status: diagnostics.env.unpaywallEmail ? "Ready" : "Missing", detail: "UNPAYWALL_EMAIL", tone: diagnostics.env.unpaywallEmail ? "green" as const : "amber" as const },
-    { name: "Cloudflare R2", status: diagnostics.env.r2Reports ? "Ready" : "Missing", detail: "REPORTS binding", tone: diagnostics.env.r2Reports ? "green" as const : "amber" as const },
-    { name: "Google Drive", status: diagnostics.env.googleDrive ? "Ready" : "Partial", detail: "service-account archive path", tone: diagnostics.env.googleDrive ? "green" as const : "amber" as const },
-    { name: "OpenAlex Fallback", status: diagnostics.env.openAlexEmail ? "Ready" : "Partial", detail: diagnostics.env.openAlexApiKey ? "email + api key" : "email only or missing", tone: diagnostics.env.openAlexEmail ? "blue" as const : "amber" as const }
+    { name: "Cloudflare D1", status: diagnostics.db.bound ? "연결됨" : "누락", detail: diagnostics.db.missingColumns.length ? diagnostics.db.missingColumns.map((item) => item.table + "." + item.column).join(", ") : "schema 준비됨", tone: diagnostics.db.bound && diagnostics.db.missingColumns.length === 0 ? "green" as const : "amber" as const },
+    { name: "Active Provider", status: diagnostics.searchProvider, detail: diagnostics.readiness.activeProviderReady ? "준비됨" : "준비 필요", tone: diagnostics.readiness.activeProviderReady ? "green" as const : "amber" as const },
+    { name: "WoS API", status: diagnostics.env.wosApiKey ? "준비됨" : "누락", detail: diagnostics.env.wosApiKeySource ?? "WOS_API_KEY", tone: diagnostics.env.wosApiKey ? "green" as const : "amber" as const },
+    { name: "Crossref", status: diagnostics.env.crossrefEmail ? "준비됨" : "누락", detail: "CROSSREF_EMAIL", tone: diagnostics.env.crossrefEmail ? "green" as const : "amber" as const },
+    { name: "Unpaywall", status: diagnostics.env.unpaywallEmail ? "준비됨" : "누락", detail: "UNPAYWALL_EMAIL", tone: diagnostics.env.unpaywallEmail ? "green" as const : "amber" as const },
+    { name: "Cloudflare R2", status: diagnostics.env.r2Reports ? "준비됨" : "누락", detail: "REPORTS binding", tone: diagnostics.env.r2Reports ? "green" as const : "amber" as const },
+    { name: "Google Drive", status: diagnostics.env.googleDrive ? "준비됨" : "부분 연결", detail: "service-account 저장 경로", tone: diagnostics.env.googleDrive ? "green" as const : "amber" as const },
+    { name: "OpenAlex Fallback", status: diagnostics.env.openAlexEmail ? "준비됨" : "부분 연결", detail: diagnostics.env.openAlexApiKey ? "email + api key" : "email만 있거나 누락", tone: diagnostics.env.openAlexEmail ? "blue" as const : "amber" as const }
   ];
 }
 
@@ -926,7 +926,7 @@ export function EvaluationDashboardPage() {
   }, [scenarioKey, benchmarkMetrics]);
 
   const overall = Math.round(scenario.bars.reduce((sum, item) => sum + item.value, 0) / scenario.bars.length);
-  const benchmarkSourceLabel = benchmarkMetrics?.source === "static_snapshot" ? "Static benchmark snapshot" : "Live benchmark metrics";
+  const benchmarkSourceLabel = benchmarkMetrics?.source === "static_snapshot" ? "정적 benchmark snapshot" : "Live benchmark metric";
   const benchmarkDescription = benchmarkMetrics?.source === "static_snapshot"
     ? "커밋된 T001-T003 benchmark snapshot입니다. Rule-based, Single-LLM, Proposed Agent 비교와 자동 baseline review를 포함합니다."
     : "실제 benchmark endpoint에서 반환된 metric 데이터입니다.";
@@ -941,7 +941,7 @@ export function EvaluationDashboardPage() {
     setLoading(true);
     try {
       const response = await fetch(apiUrl("/api/benchmark-metrics"));
-      if (!response.ok) throw new Error("Failed to load benchmark metrics");
+      if (!response.ok) throw new Error("benchmark metric을 불러오지 못했습니다");
       const data = (await response.json()) as BenchmarkMetrics;
       setBenchmarkMetrics(data);
       setMessage({
@@ -962,7 +962,7 @@ export function EvaluationDashboardPage() {
   return (
     <main className="uxShell">
       <section className="uxHero compact">
-        <span className="uxEyebrow">Interactive Evaluation Dashboard</span>
+        <span className="uxEyebrow">인터랙티브 평가 대시보드</span>
         <h1>Rule-based, Single-LLM, Proposed Multi-Agent의 성능과 자동 review 결과를 비교합니다.</h1>
         <p>Worker benchmark endpoint에서 최신 정적 스냅샷을 불러와 baseline comparison과 자동 review summary를 표시합니다.</p>
       </section>
@@ -970,7 +970,7 @@ export function EvaluationDashboardPage() {
       <section className="uxPanel uxScenarioPanel">
         <div className="uxPanelHead">
           <div>
-            <h2>Evaluation Scenario</h2>
+            <h2>평가 시나리오</h2>
             <p>현재 연결된 benchmark snapshot은 T001-T003 기준입니다. broad/fast는 아직 planned 시나리오로 유지합니다.</p>
           </div>
           <div className="uxActions">
@@ -988,15 +988,15 @@ export function EvaluationDashboardPage() {
 
       <section className="uxMetrics">
         <MetricTile label="Precision@5" value={scenario.metrics.precisionAt5} detail="Proposed Agent" tone="green" />
-        <MetricTile label="DOI Accuracy" value={scenario.metrics.doiAccuracy} detail="Crossref verified" tone="green" />
-        <MetricTile label="Top Journal Precision" value={scenario.metrics.topJournalPrecision} detail="Q1 / pool matched" tone="blue" />
-        <MetricTile label="Hallucination Rate" value={scenario.metrics.hallucinationRate} detail="critic filtered" tone="amber" />
-        <MetricTile label="Report Completeness" value={scenario.metrics.reportCompleteness} detail="rubric score" tone="purple" />
-        <MetricTile label="Avg Latency" value={scenario.metrics.avgLatency} detail="full workflow" tone="blue" />
+        <MetricTile label="DOI Accuracy" value={scenario.metrics.doiAccuracy} detail="Crossref 검증됨" tone="green" />
+        <MetricTile label="Top Journal Precision" value={scenario.metrics.topJournalPrecision} detail="Q1 / pool 매칭" tone="blue" />
+        <MetricTile label="Hallucination Rate" value={scenario.metrics.hallucinationRate} detail="critic 필터링" tone="amber" />
+        <MetricTile label="Report Completeness" value={scenario.metrics.reportCompleteness} detail="rubric 점수" tone="purple" />
+        <MetricTile label="Avg Latency" value={scenario.metrics.avgLatency} detail="전체 workflow" tone="blue" />
       </section>
 
       <ImplementationStatusPanel
-        title="Evaluation Route Implementation Status"
+        title="Evaluation Route 구현 상태"
         description={benchmarkMetrics ? benchmarkDescription : "평가 화면의 scenario 수치는 미완성 Mock입니다. 실제 데이터 연결 전입니다."}
         items={evaluationImplementationStatus}
       />
@@ -1006,7 +1006,7 @@ export function EvaluationDashboardPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Baseline Evaluation Dashboard</h2>
+                <h2>Baseline 평가 대시보드</h2>
                 <p>{benchmarkMetrics ? `${benchmarkMetrics.tasks}개 태스크 기준 benchmark metric입니다.` : "미완성 Mock: baseline CSV와 proposed full-run 결과 연결 전입니다."}</p>
               </div>
               <span className={`uxPill ${benchmarkMetrics ? "blue" : "amber"}`}>{benchmarkMetrics ? benchmarkSourceLabel : "미완성 Mock"}</span>
@@ -1015,11 +1015,11 @@ export function EvaluationDashboardPage() {
               <table className="uxTable">
                 <thead>
                   <tr>
-                    <th>Metric</th>
+                    <th>지표</th>
                     <th>Rule-based</th>
                     <th>Single LLM</th>
                     <th>Proposed Multi-Agent</th>
-                    <th>Finding</th>
+                    <th>해석</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1046,17 +1046,17 @@ export function EvaluationDashboardPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Automated Baseline Review</h2>
+                <h2>자동 Baseline Review</h2>
                 <p>{benchmarkMetrics?.autoReview ? benchmarkMetrics.autoReview.policy : "자동 review summary를 기다리는 중입니다."}</p>
               </div>
-              <span className={`uxPill ${autoReviewRows.length ? "green" : "amber"}`}>{autoReviewRows.length ? `${benchmarkMetrics?.autoReview?.rowCount ?? 0} rows` : "No data"}</span>
+              <span className={`uxPill ${autoReviewRows.length ? "green" : "amber"}`}>{autoReviewRows.length ? `${benchmarkMetrics?.autoReview?.rowCount ?? 0} rows` : "데이터 없음"}</span>
             </div>
             <div className="uxPreviewGrid">
               {autoReviewRows.map((item) => (
                 <button key={item.method} className="uxMiniCard" type="button" onClick={() => setMessage({ title: item.label, body: `include ${item.data?.includeCount ?? 0}, review_by_rule ${item.data?.reviewByRuleCount ?? 0}, reject ${item.data?.rejectCount ?? 0}. Failure types: ${Object.entries(item.data?.failureTypes ?? {}).map(([key, value]) => key + " " + value).join(", ")}` })}>
                   <h3>{item.label}</h3>
                   <p>include {item.data?.includeCount ?? 0} · review_by_rule {item.data?.reviewByRuleCount ?? 0} · reject {item.data?.rejectCount ?? 0}</p>
-                  <small>avg relevance {item.data?.averageAutoRelevance.toFixed(4)} · matched gold {(item.data?.matchedGoldIds ?? []).join(", ") || "none"}</small>
+                  <small>평균 relevance {item.data?.averageAutoRelevance.toFixed(4)} · matched gold {(item.data?.matchedGoldIds ?? []).join(", ") || "없음"}</small>
                 </button>
               ))}
             </div>
@@ -1073,25 +1073,25 @@ export function EvaluationDashboardPage() {
               <table className="uxTable">
                 <thead>
                   <tr>
-                    <th>Method</th>
+                    <th>방식</th>
                     <th>Task</th>
-                    <th>Rank</th>
-                    <th>Decision</th>
+                    <th>순위</th>
+                    <th>판정</th>
                     <th>Rel.</th>
-                    <th>Failure</th>
-                    <th>Matched Gold</th>
-                    <th>Title</th>
+                    <th>실패 유형</th>
+                    <th>매칭 Gold</th>
+                    <th>제목</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(benchmarkMetrics?.autoReview?.rows ?? []).map((row) => (
-                    <tr key={`${row.method}-${row.taskId}-${row.rank}`} onClick={() => setMessage({ title: row.title, body: `${methodLabel(row.method)} ${row.taskId} rank ${row.rank}: ${row.decision}, relevance ${row.relevance}, failure ${row.failureType || "none"}, DOI ${row.doi}` })}>
+                    <tr key={`${row.method}-${row.taskId}-${row.rank}`} onClick={() => setMessage({ title: row.title, body: `${methodLabel(row.method)} ${row.taskId} rank ${row.rank}: ${row.decision}, relevance ${row.relevance}, failure ${row.failureType || "없음"}, DOI ${row.doi}` })}>
                       <td>{methodLabel(row.method)}</td>
                       <td>{row.taskId}</td>
                       <td>{row.rank}</td>
                       <td><span className={`uxPill ${row.decision === "include" ? "green" : row.decision === "reject" ? "amber" : "blue"}`}>{row.decision}</span></td>
                       <td>{row.relevance}</td>
-                      <td>{row.failureType || "none"}</td>
+                      <td>{row.failureType || "없음"}</td>
                       <td>{row.matchedGoldId || "-"}</td>
                       <td>{row.title}</td>
                     </tr>
@@ -1103,7 +1103,7 @@ export function EvaluationDashboardPage() {
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Evaluation Rubric</h2>
+                <h2>평가 Rubric</h2>
                 <p>논문 추천 품질과 보고서 활용 가능성을 같이 평가합니다.</p>
               </div>
               <ShieldCheck size={18} />
@@ -1130,7 +1130,7 @@ export function EvaluationDashboardPage() {
             </div>
             <div className="uxScorePanel">
               <div className="uxScoreHead">
-                <span>Overall Quality</span>
+                <span>전체 품질</span>
                 <strong>{(overall / 100).toFixed(2)}</strong>
               </div>
               {scenario.bars.map((bar) => (
@@ -1145,12 +1145,12 @@ export function EvaluationDashboardPage() {
             </div>
           </section>
 
-          <CriticReviewPanel title="Error Analysis" description="클릭하면 presentation message에 개선 방향이 표시됩니다." onSelect={(item) => setMessage({ title: item.title, body: item.note })} />
+          <CriticReviewPanel title="오류 분석" description="클릭하면 presentation message에 개선 방향이 표시됩니다." onSelect={(item) => setMessage({ title: item.title, body: item.note })} />
 
           <section className="uxPanel">
             <div className="uxPanelHead">
               <div>
-                <h2>Presentation Message</h2>
+                <h2>발표 메시지</h2>
                 <p>선택한 평가 요소에 따라 발표 문구가 바뀝니다.</p>
               </div>
               <BarChart3 size={18} />
