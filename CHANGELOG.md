@@ -21,6 +21,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
 
 ## 2026-05-28 (codex)
+- Docs: Restored the missing historical bodies in docs/debug-log.md for the Root Wrangler Deploy Failure Check and Benchmark Work Queue Update records. (codex)
 - Docs: Restored the missing Gemini T004-T020 benchmark progress record in docs/progress.md and recorded the benchmark completion handoff, Vectorize setup, and review-correction context. (codex)
 - Docs: Added a course-requirement blueprint in docs/workflow.md that maps the final project announcement to current implementation, benchmark, reproducibility, and deliverable packaging tasks. (codex)
 - Changed: Localized dashboard user-facing explanatory copy to Korean while preserving core technical terms, API names, provider names, and benchmark metric labels. (codex)

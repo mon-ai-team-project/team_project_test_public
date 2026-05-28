@@ -105,6 +105,10 @@ Updated: 2026-05-28 (codex dashboard Korean copy localization)
 
 ## codex - Root Wrangler Deploy Fix (2026-05-27)
 
+- Found that the root `wrangler.toml` still contained merge-conflict markers plus unconfirmed AI/Vectorize bindings, which can break Cloudflare Worker Builds when the deploy command runs `npx wrangler deploy` from repository root. (codex)
+- Fixed root `wrangler.toml` to match the confirmed production Worker bindings: D1 `DB` and R2 `REPORTS`. (codex)
+- Verification: production `/api/health` and `/api/diagnostics` returned healthy responses; `npx wrangler deploy --dry-run`, `npm run build --workspace apps/worker`, and root `npm run build` passed locally. (codex)
+
 ## codex - Gemini T004-T006 Benchmark Handoff (2026-05-27)
 
 - Added `docs/gemini-t004-t006-benchmark-handoff.md` to transfer the next benchmark task to Gemini conservatively: T004-T006 gold-label refinement only, personal repo first, no Worker/dashboard/deployment edits. (codex)

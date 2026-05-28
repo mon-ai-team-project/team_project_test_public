@@ -40,6 +40,12 @@
 
 ## 2026-05-27 - Root Wrangler Deploy Failure Check
 
+- Context: The user reported that the Cloudflare Worker build/deploy was failed. (codex)
+- Finding: The deployed Worker runtime was healthy at `/api/health`, and `/api/diagnostics` reported D1, WoS, Crossref, Unpaywall, R2, and Google Drive readiness. The failure was not reproduced as a runtime outage. (codex)
+- Root cause: The repository-root `wrangler.toml` contained committed conflict markers (`<<<<<<<`, `=======`, `>>>>>>>`) and stale unconfirmed `AI`/`VECTOR_INDEX` bindings. Cloudflare Worker Builds configured with root directory `/` and deploy command `npx wrangler deploy` read this file, so config parsing/deploy can fail even though `apps/worker/wrangler.toml` is valid. (codex)
+- Fix: Cleaned root `wrangler.toml` to the confirmed production bindings only: D1 `DB` and R2 `REPORTS`. (codex)
+- Verification: `npx wrangler deploy --dry-run`, `npm run build --workspace apps/worker`, and root `npm run build` passed after the fix. Wrangler remote deployment listing could not be queried because this shell does not currently expose `CLOUDFLARE_API_TOKEN`. (codex)
+
 ## 2026-05-28 - Gold Label Audit Automation
 
 - Context: The user asked to proceed with the current highest-priority task after the full work check. The target was 20-task gold-label audit automation before organization synchronization. (codex)
@@ -113,6 +119,9 @@
 
 ## 2026-05-27 - Benchmark Work Queue Update
 
+- Context: After the selective team-output reapply reached personal `main`, the handoff queue still described the older T001-T003 startup state. (codex)
+- Fix: Updated the work queue, benchmark summary date, sample metric values, and next-step wording to point agents toward T004-T006 expansion. (codex)
+- Verification: `git diff --check` and `npm run benchmark:evaluate-proposed` passed before committing this branch. (codex)
 
 ## 2026-05-27 - Gemini T004-T006 Handoff Preparation
 
