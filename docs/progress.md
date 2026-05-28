@@ -2,6 +2,14 @@
 
 Updated: 2026-05-28 (codex blueprint and dashboard verification)
 
+## codex - Local LaTeX/PPTX MCP Installation (2026-05-28)
+
+- Installed: Cloned latex-mcp-server and pptx-generator-mcp into local ignored .mcp-servers directories and installed local tool prerequisites under .mcp-tools plus uv/uvx. (codex)
+- Fixed: Applied local-only pyproject fixes to latex-mcp-server so it builds in the Nix Python environment: setuptools capped below 77 and license converted to PEP 621 table form. (codex)
+- Verified: latex-paper MCP wrapper responded to initialize and tools/list, exposing compile_latex, read_file, read_pdf, bibliography, and summary tools. (codex)
+- Generated: Compiled paper/final-paper-draft.tex to paper/final-paper-draft.pdf and generated presentation/generated/paper-agent-final-presentation.pptx from presentation/final-presentation-mcp.md. (codex)
+- Configured: Added latex_paper and pptx_generator wrapper entries to the global Codex MCP config; Codex restart is required before the new MCP servers appear as attached tools. (codex)
+
 ## codex - Final Submission And LaTeX/PPT MCP Packaging (2026-05-28)
 
 - Added: Created docs/final-submission-story.md to freeze the final project narrative, implemented/partial boundary, benchmark claim boundary, dashboard demo path, and professor-evaluation mapping. (codex)

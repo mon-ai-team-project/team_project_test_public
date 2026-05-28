@@ -1,5 +1,13 @@
 # Debug Log
 
+## codex - LaTeX MCP Install Troubleshooting (2026-05-28)
+
+- Symptom: `uv tool install -e .` for Yeok-c/latex-mcp-server failed after uv selected Python 3.14 and then again with Python 3.11 because setuptools license validation could not import a compatible packaging license module. (codex)
+- Root Cause: The upstream local clone used `license = "MIT"` and an unconstrained setuptools build backend. In this Nix environment, newer setuptools validation failed before the editable package could build. (codex)
+- Fix: Patched only the ignored local clone to use `setuptools>=61.0,<77` and `license = { text = "MIT" }`, then re-ran `uv tool install -e .` successfully. (codex)
+- Verification: `latex-mcp-server --help` worked, the tracked wrapper returned MCP initialize/tools-list responses, and `pdflatex` generated `paper/final-paper-draft.pdf`. (codex)
+- PPTX: `pptx-generator-mcp` installed Node dependencies locally and generated `presentation/generated/paper-agent-final-presentation.pptx`; direct server process startup logged successfully. (codex)
+
 ## codex - LaTeX/PPT MCP Runtime Guardrail (2026-05-28)
 
 - Context: The user requested LaTeX and PPT MCP support for final paper and presentation production and supplied arxiv-latex-mcp, Office-PowerPoint-MCP-Server, latex-mcp-server, and pptx-generator-mcp candidates. (codex)

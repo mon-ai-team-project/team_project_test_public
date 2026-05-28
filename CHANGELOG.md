@@ -21,6 +21,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 _No unreleased changes._
 
 ## 2026-05-28 (codex)
+- Added: Installed and smoke-tested local LaTeX/PPTX MCP wrappers, generated draft PDF/PPTX deliverables, and recorded runtime guardrails. (codex)
 - Docs: Added final submission story, LaTeX paper draft, presentation outlines, and conservative LaTeX/PPT MCP setup guidance for final deliverable packaging. (codex)
 - Infra: Updated `.idx/dev.nix` to request Python, pip, pipx, and a small TeX Live environment required before enabling LaTeX/PPT MCP servers. (codex)
 - Docs: Verified the course blueprint progress against deployed dashboard and Worker APIs, confirming Pages routes, diagnostics, recent jobs, traces, outputs, critic flags, benchmark metrics, and GET artifact downloads. (codex)

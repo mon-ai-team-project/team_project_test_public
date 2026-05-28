@@ -122,3 +122,28 @@ Do not put placeholder paths into the client config. A stale or invalid path can
 - Broken MCP entries must be removed or disabled immediately.
 - LaTeX/PPT MCPs are optional production aids; the repository-native source files remain the source of truth.
 - Final deliverables must still be reproducible from tracked files and documented commands.
+
+## Applied Local Configuration
+
+The current workspace has been configured with local, git-ignored MCP runtime directories:
+
+- `.mcp-servers/latex-mcp-server`
+- `.mcp-servers/pptx-generator-mcp`
+- `.mcp-tools/`
+
+The LaTeX MCP clone required two local-only `pyproject.toml` fixes before installation in this Nix environment:
+
+- `setuptools>=61.0,<77` to avoid the newer license validation path that conflicts with the available packaging module.
+- `license = { text = "MIT" }` to satisfy PEP 621 project metadata validation.
+
+The verified Codex MCP wrappers are tracked in:
+
+- `scripts/mcp/latex-paper.sh`
+- `scripts/mcp/pptx-generator.sh`
+
+The global Codex config has been updated to call those wrappers as `latex_paper` and `pptx_generator`. Restart Codex before expecting the new MCP tools to appear in the tool list.
+
+## Generated Deliverables
+
+- `paper/final-paper-draft.pdf` was generated from `paper/final-paper-draft.tex` with `pdflatex`.
+- `presentation/generated/paper-agent-final-presentation.pptx` was generated from `presentation/final-presentation-mcp.md` using the PPTX generator code path.
