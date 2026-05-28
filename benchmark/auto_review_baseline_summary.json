@@ -1,0 +1,60 @@
+{
+  "output": "benchmark/auto_review_baseline_results.csv",
+  "gold": "benchmark/gold_relevant_papers.verified.csv",
+  "inputs": [
+    {
+      "method": "rule_based",
+      "path": "benchmark/baseline_rule_based_results.csv"
+    },
+    {
+      "method": "single_llm",
+      "path": "benchmark/baseline_single_llm_results.csv"
+    }
+  ],
+  "generatedBy": "benchmark/scripts/auto-review-baselines.mjs",
+  "policy": "Fully automated rule-based review; no human manual review required.",
+  "rowCount": 30,
+  "byMethod": {
+    "rule_based": {
+      "row_count": 15,
+      "include_count": 2,
+      "review_by_rule_count": 9,
+      "reject_count": 4,
+      "average_auto_relevance": 2.4667,
+      "failure_types": {
+        "low_relevance": 4,
+        "none": 2,
+        "partial_relevance": 9
+      },
+      "matched_gold_ids": [
+        "G001",
+        "G061"
+      ]
+    },
+    "single_llm": {
+      "row_count": 15,
+      "include_count": 9,
+      "review_by_rule_count": 5,
+      "reject_count": 1,
+      "average_auto_relevance": 3.8667,
+      "failure_types": {
+        "low_relevance": 1,
+        "none": 9,
+        "not_top_journal": 1,
+        "partial_relevance": 4
+      },
+      "matched_gold_ids": [
+        "G001",
+        "G002",
+        "G003",
+        "G004",
+        "G005",
+        "G006",
+        "G007",
+        "G008",
+        "G009",
+        "G061"
+      ]
+    }
+  }
+}

@@ -15,11 +15,12 @@ Current benchmark state:
 | Gold audit | Complete: 60 rows, 20/20 tasks, 0 errors, 0 active warnings, 2 accepted warnings. |
 | Gold audit allowlist | Complete: `benchmark/gold_audit_allowlist.json` tracks T001/G003 and duplicate DOI cross-task exception. |
 | Proposed Agent sample | Complete for T001-T003, 15 rows. |
-| Proposed Agent manual review | Complete for T001-T003, but refresh is now useful against new baseline comparison needs. |
 | Rule-based baseline | Complete for T001-T003, 15 rows. |
 | Single-LLM baseline | Complete for T001-T003, 15 fresh repository-grounded rows. |
+| Baseline auto review | Complete initial automation: 30 rows reviewed by `npm run benchmark:auto-review-baselines`. |
+| Baseline comparison | Complete initial comparison across Rule-based, Single-LLM, and Proposed Agent. |
 | member-c stale branch | Reviewed and rejected for direct reuse because it used older task topics/schema. |
-| Next maintainer task | Maintain baseline comparison metrics after benchmark input changes. |
+| Next maintainer task | Maintain automated review and comparison metrics after benchmark input changes. |
 
 Current metric snapshot for Proposed Agent T001-T003:
 
@@ -34,9 +35,32 @@ Hallucination Rate@5: 0.0000
 OA Success@5: 0.0000
 ```
 
+Current baseline auto-review snapshot:
+
+```text
+Rows reviewed: 30
+Rule-based: include 2, review_by_rule 9, reject 4
+Single-LLM: include 9, review_by_rule 5, reject 1
+Output CSV: benchmark/auto_review_baseline_results.csv
+Output JSON: benchmark/auto_review_baseline_summary.json
+```
+
+## Automation Policy
+
+All review and QA work must be automated first. Do not add new human-only review queues. If a team member finds an issue, they should encode it as a reproducible script rule, generated artifact, or documented command output.
+
+Primary commands:
+
+```bash
+npm run benchmark:audit-gold
+npm run benchmark:evaluate-proposed
+npm run benchmark:compare-baselines
+npm run benchmark:auto-review-baselines
+```
+
 ## Mandatory Workflow For Every Team Agent
 
-1. Start from the current reviewed main branch assigned by the maintainer.
+1. Start from the current reviewed branch assigned by the maintainer.
 2. Create the assigned branch only.
 3. Edit only allowed files.
 4. Update `CHANGELOG.md` with the correct attribution.
@@ -53,10 +77,10 @@ Priority: medium.
 Branch:
 
 ```text
-benchmark/jin23624-gold-exception-review
+benchmark/jin23624-gold-exception-automation
 ```
 
-Goal: review the two accepted gold-audit exceptions and try to reduce them without weakening benchmark relevance.
+Goal: reduce or reaffirm the two accepted gold-audit exceptions through reproducible evidence and config, not one-off manual judgment.
 
 Allowed files:
 
@@ -64,6 +88,7 @@ Allowed files:
 benchmark/gold_relevant_papers.csv
 benchmark/gold_relevant_papers.verified.csv
 benchmark/gold_audit_allowlist.json
+benchmark/scripts/audit-gold-labels.mjs
 jin23624_cpu/
 CHANGELOG.md
 docs/progress.md
@@ -72,12 +97,11 @@ docs/progress.md
 Required steps:
 
 1. Review `benchmark/gold_audit_report.md` and `benchmark/gold_audit_allowlist.json`.
-2. For T001/G003, search for a stronger DOI-backed paper in an approved S/A1 journal that directly covers AI recruitment/interview applicant reaction or employer attractiveness.
-3. Do not replace T001/G003 unless the replacement is at least as relevant and has verified DOI/title/year/journal metadata.
-4. Review the duplicate DOI exception for `10.1016/j.chb.2022.107179`; keep it if the same paper remains genuinely relevant to both T001 and T002.
-5. If no stronger replacement exists, leave the allowlist in place and record the search attempts.
-6. Update `jin23624_cpu/README.md` with evidence checked and decision.
-7. Run:
+2. For T001/G003, replace only if a stronger DOI-backed approved S/A1 journal row is verified.
+3. If no better row exists, keep the exception and encode the rationale in `benchmark/gold_audit_allowlist.json`.
+4. Review the duplicate DOI exception for `10.1016/j.chb.2022.107179`; keep it only if the same paper remains relevant to both T001 and T002.
+5. Update `jin23624_cpu/README.md` with commands and evidence checked.
+6. Run:
 
 ```bash
 npm run benchmark:audit-gold
@@ -86,7 +110,7 @@ npm run benchmark:evaluate-proposed
 
 Definition of done:
 
-- Either the accepted warning count is reduced, or the exception is explicitly reaffirmed with evidence.
+- Accepted warning count is reduced or the exception remains explicitly configured with evidence.
 - No fabricated DOI, journal, author, or year metadata.
 - `CHANGELOG.md` records the work with `(jin23624)`.
 
@@ -97,15 +121,17 @@ Priority: high.
 Branch:
 
 ```text
-benchmark/juilie-single-llm-review-t001-t003
+benchmark/juilie-baseline-auto-review-t001-t003
 ```
 
-Goal: manually review the 15 fresh Single-LLM baseline rows and judge relevance against the same T001-T003 rubric used for Proposed Agent review.
+Goal: QA and improve automated baseline review rules. Do not create `benchmark/manual_review_single_llm.csv` unless the maintainer explicitly reopens human review.
 
 Allowed files:
 
 ```text
-benchmark/manual_review_single_llm.csv
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
+benchmark/scripts/auto-review-baselines.mjs
 juilie_bot_hub/
 CHANGELOG.md
 docs/progress.md
@@ -113,27 +139,23 @@ docs/progress.md
 
 Required steps:
 
-1. Read `benchmark/baseline_single_llm_results.csv`.
-2. Create `benchmark/manual_review_single_llm.csv` with one row per Single-LLM baseline result.
-3. Do not rewrite `benchmark/baseline_single_llm_results.csv`.
-4. Add manual fields:
-   - `manual_relevance` from 0 to 5
-   - `manual_decision` as `include`, `review`, or `reject`
-   - `failure_type`
-   - `review_note`
-5. Use short evidence-based notes.
-6. Update `juilie_bot_hub/README.md` with row counts and key concerns.
-7. Run:
+1. Run `npm run benchmark:auto-review-baselines`.
+2. Inspect include, review_by_rule, reject, failure_type, matched_gold_id, and auto_relevance counts.
+3. Improve `benchmark/scripts/auto-review-baselines.mjs` only when a rule error is reproducible.
+4. Do not rewrite source baseline rows unless a mechanical schema defect is found.
+5. Update `juilie_bot_hub/README.md` with command output summary and remaining rule limitations.
+6. Run:
 
 ```bash
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
+npm run benchmark:auto-review-baselines
 ```
 
 Definition of done:
 
-- All 15 Single-LLM rows have manual review fields.
-- Uncertain cases are marked `review`, not forced into `include`.
+- All 30 baseline rows are covered by automated review output.
+- Rule limitations are documented as reproducible criteria.
 - `CHANGELOG.md` records the work with `(juilie)`.
 
 ## Assignment 3: unassigned_member_c
@@ -146,13 +168,14 @@ Branch:
 benchmark/member-c-baseline-comparison-qa
 ```
 
-Goal: QA the baseline comparison inputs before metric comparison is finalized.
+Goal: QA the baseline comparison inputs through reproducible schema and stale-topic checks.
 
 Allowed files:
 
 ```text
 benchmark/baseline_rule_based_results.csv
 benchmark/baseline_single_llm_results.csv
+benchmark/scripts/auto-review-baselines.mjs
 unassigned_member_c/
 CHANGELOG.md
 docs/debug-log.md
@@ -164,18 +187,19 @@ Required steps:
 1. Confirm both baseline CSV files have 15 rows: five each for T001, T002, and T003.
 2. Confirm every row has `task_id`, `keyword`, `baseline_type`, `result_rank`, `title`, `journal`, `journal_rank`, `doi`, `source_note`, and `review_note`.
 3. Confirm no stale dynamic-capabilities/governance/service-quality rows from the rejected member-c branch remain.
-4. Confirm `baseline_type` is exactly `rule_based` or `single_llm`.
+4. If a repeatable guardrail is missing, add it to `benchmark/scripts/auto-review-baselines.mjs`.
 5. Record findings in `unassigned_member_c/README.md`.
 6. Run:
 
 ```bash
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
+npm run benchmark:auto-review-baselines
 ```
 
 Definition of done:
 
-- Baseline input QA is recorded.
+- Baseline input QA is recorded with command output.
 - Any malformed row is fixed only if it is within the allowed files and clearly mechanical.
 - `CHANGELOG.md` records the work with `(member-c)` or the assigned member id.
 
@@ -189,13 +213,15 @@ Branch:
 benchmark/shonshinemin-baseline-metric-qa
 ```
 
-Goal: QA the new Rule-based vs Single-LLM vs Proposed Agent comparison outputs.
+Goal: QA Rule-based vs Single-LLM vs Proposed Agent comparison outputs and compare them with automated baseline review outputs.
 
 Allowed files:
 
 ```text
 benchmark/baseline_comparison_metrics.csv
 benchmark/baseline_comparison_summary.json
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
 shonshinemin_cmd/
 CHANGELOG.md
 docs/debug-log.md
@@ -210,16 +236,17 @@ Required steps:
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
 npm run benchmark:compare-baselines
+npm run benchmark:auto-review-baselines
 ```
 
-2. Check whether method-level metric differences match the underlying row data.
+2. Check whether method-level metric differences match the source CSV rows and auto-review counts.
 3. Record suspicious metric behavior, especially duplicate DOI effects and accepted gold-audit exceptions.
 4. Update `shonshinemin_cmd/README.md` with a reproducibility note.
 
 Definition of done:
 
-- Baseline comparison metric outputs are regenerated and explained.
-- Any suspicious score is documented.
+- Baseline comparison metric outputs and auto-review outputs are regenerated and explained.
+- Any suspicious score is documented through reproducible evidence.
 - `CHANGELOG.md` records the work with `(shonshinemin)`.
 
 ## Maintainer: seunghyeon_choi
@@ -227,7 +254,7 @@ Definition of done:
 Current maintainer tasks:
 
 1. Maintain `benchmark/scripts/compare-baselines.mjs` after benchmark input changes.
-2. Regenerate `benchmark/baseline_comparison_metrics.csv` and `benchmark/baseline_comparison_summary.json` with `npm run benchmark:compare-baselines`.
+2. Maintain `benchmark/scripts/auto-review-baselines.mjs` and generated outputs.
 3. Keep personal `origin/main` as the active development source until these benchmark files stabilize.
 4. Sync to organization repo only through reviewed PR flow after local validation.
 
@@ -237,5 +264,6 @@ Required maintainer verification:
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
 npm run benchmark:compare-baselines
+npm run benchmark:auto-review-baselines
 git diff --check
 ```

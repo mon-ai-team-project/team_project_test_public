@@ -21,6 +21,7 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 - Benchmark: Prepared for Rule-based vs Single-LLM vs Proposed Agent baseline comparison. Reviewed input CSV files for consistency and verified T001-T003 task coverage. (gemini)
 
 ## 2026-05-28 (codex)
+- Benchmark: Added automated baseline review script and generated CSV/JSON outputs, replacing human-only Single-LLM manual review tasks with reproducible rule-based QA. (codex)
 - Docs: Recorded the resolved dashboard `Failed to fetch` incident, including Worker/CORS checks, stale Pages asset finding, redeploy verification, and user-confirmed dashboard recovery. (codex)
 - Fixed: Reduced dashboard Run latency around the ranking phase by making Vectorize semantic scoring and LLM Critic opt-in, and by separating `scoring`, `ranking`, and `reviewing` job statuses. (codex)
 - Benchmark: Added `npm run benchmark:compare-baselines`, `benchmark/scripts/compare-baselines.mjs`, and generated Rule-based vs Single-LLM vs Proposed Agent comparison outputs. (codex)

@@ -14,19 +14,21 @@ Current files:
 - `benchmark/keywords.csv`: compatibility keyword list expanded from 3 to 20 queries.
 - `benchmark/gold_relevant_papers.csv`: 60 seed gold relevance rows, 3 per task.
 - `benchmark/gold_relevant_papers.verified.csv`: first Crossref title-query verification pass.
-- `benchmark/gold_promotion_decisions.csv`: manual promotion decisions for high-confidence candidate rows.
-- `benchmark/gold_refinement_queue.csv`: non-verified seed rows that need exact-title replacement or manual review.
+- `benchmark/gold_promotion_decisions.csv`: historical promotion decisions for high-confidence candidate rows.
+- `benchmark/gold_refinement_queue.csv`: historical non-verified seed rows that need exact-title replacement or scripted review.
 - `benchmark/gold_crossref_candidates.csv`: Crossref candidate pool generated from task-level queries.
 - `benchmark/gold_candidate_review.csv`: scored candidate review file with allowlist, field, type, DOI, and priority labels.
-- `benchmark/evaluation_rubric.md`: human scoring, core metrics, and agent-level checks.
+- `benchmark/evaluation_rubric.md`: scoring rubric, core metrics, and agent-level checks.
 - `benchmark/scripts/verify-gold-crossref.mjs`: local Crossref verification utility.
 - `benchmark/scripts/refine-gold-candidates.mjs`: local refinement queue and candidate generation utility.
 - `benchmark/scripts/score-gold-candidates.mjs`: local candidate scoring utility based on journal allowlist, field match, type, DOI, recency, and Crossref score.
 - `benchmark/scripts/run-proposed-agent.mjs`: deployed Worker runner for collecting Proposed Agent benchmark outputs.
+- `benchmark/scripts/compare-baselines.mjs`: reproducible Rule-based vs Single-LLM vs Proposed Agent comparison utility.
+- `benchmark/scripts/auto-review-baselines.mjs`: fully automated baseline review utility; replaces human-only Single-LLM manual review queues.
 
 ## Important Constraint
 
-Earlier seed rows intentionally avoided fabricated DOI values and required Crossref/manual verification. After Gemini expansion and Codex correction, the current `benchmark/gold_relevant_papers.csv` has 60 DOI-backed rows across 20 tasks.
+Earlier seed rows intentionally avoided fabricated DOI values and required Crossref/scripted verification. After Gemini expansion and Codex correction, the current `benchmark/gold_relevant_papers.csv` has 60 DOI-backed rows across 20 tasks.
 
 The current internal audit command is:
 
@@ -54,8 +56,8 @@ The first refinement queue has been generated:
 
 | File | Rows | Purpose |
 | --- | ---: | --- |
-| `benchmark/gold_refinement_queue.csv` | 52 | Non-verified gold rows requiring exact-title replacement or manual review. |
-| `benchmark/gold_crossref_candidates.csv` | 200 | Task-level Crossref candidates, 10 per task, marked `needs_manual_review`. |
+| `benchmark/gold_refinement_queue.csv` | 52 | Historical non-verified gold rows requiring exact-title replacement or scripted review. |
+| `benchmark/gold_crossref_candidates.csv` | 200 | Task-level Crossref candidates, 10 per task, originally marked for follow-up review. |
 | `benchmark/gold_candidate_review.csv` | 200 | Candidate list sorted by task and review score, with automatic priority labels. |
 
 T001-T020 now have three DOI-backed rows per task. The immediate next priority is not adding more gold rows, but resolving or accepting the three audit warnings and then refreshing Proposed Agent/baseline comparisons against the audited gold set. Crossref task-level candidates are intentionally not auto-accepted because many results are broad, non-top-journal, book-chapter, dissertation, or otherwise outside the approved journal universe.
@@ -68,7 +70,7 @@ The first candidate scoring pass produced:
 | `topic_only_review` | 90 | Journal article with DOI, but outside approved field/journal universe. |
 | `reject_low_priority` | 108 | Non-article, missing DOI, old, or otherwise weak candidate. |
 
-The two `promote_candidate` rows still require human relevance review before gold promotion.
+New promotion decisions should be backed by reproducible evidence in scripts or tracked data, not human-only review notes.
 
 ## Promotion Decisions
 
@@ -101,7 +103,22 @@ Generated outputs:
 ```text
 benchmark/baseline_comparison_metrics.csv
 benchmark/baseline_comparison_summary.json
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
 ```
+
+Automated baseline review command:
+
+```bash
+npm run benchmark:auto-review-baselines
+```
+
+Current automated review counts:
+
+| Method | Rows | Include | Review by rule | Reject | Average auto relevance |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Rule-based | 15 | 2 | 9 | 4 | 2.4667 |
+| Single-LLM | 15 | 9 | 5 | 1 | 3.8667 |
 
 Run command:
 
@@ -205,9 +222,9 @@ As of 2026-05-27, selected T001-T003 team outputs have been reapplied onto the c
 
 Use the audited gold set as the benchmark control layer:
 
-1. Keep the 2 accepted warnings in `benchmark/gold_audit_allowlist.json` under review, especially if a stronger T001/G003 approved-journal replacement is found.
+1. Keep the 2 accepted warnings in `benchmark/gold_audit_allowlist.json` under scripted review, especially if a stronger T001/G003 approved-journal replacement is found.
 2. Re-run `npm run benchmark:evaluate-proposed` after any gold-label or allowlist cleanup.
-3. Re-run `npm run benchmark:compare-baselines` after any baseline, proposed-agent, or gold-label input change.
+3. Re-run `npm run benchmark:compare-baselines` and `npm run benchmark:auto-review-baselines` after any baseline, proposed-agent, or gold-label input change.
 4. Run the full 20 tasks through the deployed Worker only when ready to spend WoS quota, then update:
 
 ```text

@@ -17,17 +17,34 @@ This file defines the current team-agent assignments. Agents should pick only th
 - Read `docs/team-task-briefing.md` for the current team status snapshot and detailed task instructions.
 - Do not reuse stale rows from `team-origin/benchmark/member-c-baseline-t001-t003`; see `docs/member-c-baseline-review-2026-05-28.md`.
 
+## Automation Policy
+
+All benchmark review work must be automated first. Do not create new human-only manual review workflows. If a result needs review, encode the rule as a script, generated CSV/JSON output, and reproducible npm command.
+
+Current automated review command:
+
+```bash
+npm run benchmark:auto-review-baselines
+```
+
+Current generated outputs:
+
+```text
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
+```
+
 ## Current Status Snapshot
 
 | Assignment | Owner | Current status | Next action |
 | --- | --- | --- | --- |
-| Gold exception review | `jin23624_cpu` | 60 gold rows audited; 0 active warnings; 2 accepted warnings remain. | Review T001/G003 and duplicate DOI exception; reduce or reaffirm exceptions with evidence. |
-| Single-LLM manual review | `juilie_bot_hub` | Proposed Agent manual review is complete; Single-LLM baseline now has 15 fresh rows. | Create `benchmark/manual_review_single_llm.csv` and manually review all 15 rows. |
-| Baseline input QA | `unassigned_member_c` | Rule-based and Single-LLM baselines each have 15 rows. | QA both baseline CSV inputs and confirm no stale branch rows remain. |
-| Baseline metric QA | `shonshinemin_cmd` | Baseline comparison script and outputs exist. | Verify comparison metrics and document interpretation risks. |
-| Integration | `seunghyeon_choi` | Maintainer and integration lead. | Maintain comparison metrics and keep org sync PR-gated. |
+| Gold exception automation | `jin23624_cpu` | 60 gold rows audited; 0 active warnings; 2 accepted warnings remain. | Improve or reaffirm accepted exceptions through reproducible evidence; avoid ad hoc manual-only decisions. |
+| Baseline auto review | `juilie_bot_hub` | Rule-based and Single-LLM baseline rows now have automated review outputs. | QA `benchmark:auto-review-baselines` output and propose rule improvements only through code/data changes. |
+| Baseline input QA automation | `unassigned_member_c` | Rule-based and Single-LLM baselines each have 15 rows. | Verify schema/topic guardrails and record reproducible findings. |
+| Baseline metric QA automation | `shonshinemin_cmd` | Baseline comparison script and auto-review outputs exist. | Verify comparison metrics and auto-review consistency. |
+| Integration | `seunghyeon_choi` | Maintainer and integration lead. | Maintain automation scripts and keep org sync PR-gated. |
 
-## Assignment 1 - Gold Exception Review
+## Assignment 1 - Gold Exception Automation
 
 Owner:
 
@@ -38,7 +55,7 @@ jin23624_cpu
 Branch:
 
 ```text
-benchmark/jin23624-gold-exception-review
+benchmark/jin23624-gold-exception-automation
 ```
 
 Allowed files:
@@ -47,6 +64,7 @@ Allowed files:
 benchmark/gold_relevant_papers.csv
 benchmark/gold_relevant_papers.verified.csv
 benchmark/gold_audit_allowlist.json
+benchmark/scripts/audit-gold-labels.mjs
 jin23624_cpu/
 CHANGELOG.md
 docs/progress.md
@@ -54,24 +72,23 @@ docs/progress.md
 
 Goal:
 
-Review accepted gold-audit exceptions and try to reduce them without weakening benchmark relevance.
+Reduce or reaffirm accepted gold-audit exceptions using reproducible rules and evidence, not one-off human judgment.
 
 Procedure:
 
 1. Review `benchmark/gold_audit_report.md` and `benchmark/gold_audit_allowlist.json`.
-2. For T001/G003, search for a stronger approved S/A1 journal replacement that directly covers AI recruitment/interview applicant reaction or employer attractiveness.
-3. Review the duplicate DOI exception for `10.1016/j.chb.2022.107179`.
-4. Replace rows only when DOI/title/year/journal are verified and relevance is not weaker.
-5. If no replacement is better, keep the exception and document why.
-6. Update `jin23624_cpu/README.md`.
+2. If replacing T001/G003, use only DOI/title/year/journal verified rows.
+3. If keeping T001/G003, encode the reason in `benchmark/gold_audit_allowlist.json`.
+4. If keeping the duplicate DOI exception for `10.1016/j.chb.2022.107179`, keep the exception explicit and reproducible.
+5. Update `jin23624_cpu/README.md` with the exact commands and files checked.
 
 Definition of done:
 
-- Accepted warnings are reduced or explicitly reaffirmed with evidence.
+- Accepted warnings are reduced or explicitly reaffirmed in data/config.
 - `npm run benchmark:audit-gold` and `npm run benchmark:evaluate-proposed` pass.
 - `CHANGELOG.md` records the work with `(jin23624)`.
 
-## Assignment 2 - Single-LLM Manual Review
+## Assignment 2 - Baseline Auto Review
 
 Owner:
 
@@ -82,13 +99,15 @@ juilie_bot_hub
 Branch:
 
 ```text
-benchmark/juilie-single-llm-review-t001-t003
+benchmark/juilie-baseline-auto-review-t001-t003
 ```
 
 Allowed files:
 
 ```text
-benchmark/manual_review_single_llm.csv
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
+benchmark/scripts/auto-review-baselines.mjs
 juilie_bot_hub/
 CHANGELOG.md
 docs/progress.md
@@ -96,40 +115,24 @@ docs/progress.md
 
 Goal:
 
-Manually review the 15 fresh Single-LLM baseline rows in `benchmark/baseline_single_llm_results.csv`.
+Use automated rules to review Rule-based and Single-LLM baseline rows. Do not create `manual_review_single_llm.csv` unless explicitly requested later.
 
 Procedure:
 
-1. Create `benchmark/manual_review_single_llm.csv`.
-2. Review all T001-T003 Single-LLM rows.
-3. Keep original baseline metadata unchanged.
-4. Add manual fields:
-   - `manual_relevance` from 0 to 5
-   - `manual_decision` as `include`, `review`, or `reject`
-   - `failure_type`
-   - `review_note`
-5. Update `juilie_bot_hub/README.md`.
-
-Recommended failure types:
-
-```text
-none
-low_relevance
-wrong_subtopic
-wrong_field
-not_top_journal
-metadata_problem
-gold_exception
-duplicate_cross_task
-```
+1. Run `npm run benchmark:auto-review-baselines`.
+2. Inspect generated counts for include, review_by_rule, reject, failure_type, matched_gold_id, and auto_relevance.
+3. Improve `benchmark/scripts/auto-review-baselines.mjs` only when a rule is clearly wrong and reproducible.
+4. Keep original baseline metadata unchanged unless a mechanical schema defect is found.
+5. Update `juilie_bot_hub/README.md` with command output summary and remaining rule limitations.
 
 Definition of done:
 
-- All 15 Single-LLM rows have manual review fields.
-- `npm run benchmark:audit-gold` and `npm run benchmark:evaluate-proposed` pass.
+- `benchmark/auto_review_baseline_results.csv` covers all 30 baseline rows.
+- `benchmark/auto_review_baseline_summary.json` explains method-level counts.
+- `npm run benchmark:audit-gold`, `npm run benchmark:evaluate-proposed`, and `npm run benchmark:auto-review-baselines` pass.
 - `CHANGELOG.md` records the work with `(juilie)`.
 
-## Assignment 3 - Baseline Input QA
+## Assignment 3 - Baseline Input QA Automation
 
 Owner:
 
@@ -148,6 +151,7 @@ Allowed files:
 ```text
 benchmark/baseline_rule_based_results.csv
 benchmark/baseline_single_llm_results.csv
+benchmark/scripts/auto-review-baselines.mjs
 unassigned_member_c/
 CHANGELOG.md
 docs/debug-log.md
@@ -156,7 +160,7 @@ docs/progress.md
 
 Goal:
 
-QA the baseline CSV inputs before metric comparison is finalized.
+QA the baseline CSV inputs through reproducible schema and stale-topic checks.
 
 Procedure:
 
@@ -167,15 +171,16 @@ Procedure:
    - dynamic capabilities for T001
    - governance or agency theory for T002
    - generic service quality for T003
-5. Record findings in `unassigned_member_c/README.md`.
+5. If a repeatable guardrail is missing, add it to `benchmark/scripts/auto-review-baselines.mjs`.
+6. Record findings in `unassigned_member_c/README.md`.
 
 Definition of done:
 
-- Baseline input QA is recorded.
-- `npm run benchmark:audit-gold` and `npm run benchmark:evaluate-proposed` pass.
+- Baseline input QA is recorded with commands and output paths.
+- `npm run benchmark:audit-gold`, `npm run benchmark:evaluate-proposed`, and `npm run benchmark:auto-review-baselines` pass.
 - `CHANGELOG.md` records the work with `(member-c)` or the assigned member id.
 
-## Assignment 4 - Baseline Metric QA
+## Assignment 4 - Baseline Metric QA Automation
 
 Owner:
 
@@ -194,6 +199,8 @@ Allowed files:
 ```text
 benchmark/baseline_comparison_metrics.csv
 benchmark/baseline_comparison_summary.json
+benchmark/auto_review_baseline_results.csv
+benchmark/auto_review_baseline_summary.json
 shonshinemin_cmd/
 CHANGELOG.md
 docs/debug-log.md
@@ -202,7 +209,7 @@ docs/progress.md
 
 Goal:
 
-QA Rule-based vs Single-LLM vs Proposed Agent metric outputs now that the comparison script exists.
+QA Rule-based vs Single-LLM vs Proposed Agent metric outputs and compare them with automated baseline review outputs.
 
 Procedure:
 
@@ -212,14 +219,15 @@ Procedure:
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
 npm run benchmark:compare-baselines
+npm run benchmark:auto-review-baselines
 ```
 
-2. Check metric consistency against source CSV rows.
+2. Check metric consistency against source CSV rows and generated auto-review counts.
 3. Record findings in `shonshinemin_cmd/README.md`.
 
 Definition of done:
 
-- Baseline comparison metric outputs are regenerated and explained.
+- Baseline comparison metric outputs and automated review outputs are regenerated and explained.
 - `CHANGELOG.md` records the work with `(shonshinemin)`.
 
 ## Integration Queue
@@ -233,14 +241,16 @@ seunghyeon_choi
 Maintainer integration steps:
 
 1. Maintain baseline comparison metrics after input changes.
-2. Run:
+2. Maintain automated review scripts and generated outputs.
+3. Run:
 
 ```bash
 npm run benchmark:audit-gold
 npm run benchmark:evaluate-proposed
 npm run benchmark:compare-baselines
+npm run benchmark:auto-review-baselines
 git diff --check
 ```
 
-3. Review team branches against allowed file scope.
-4. Keep organization synchronization PR-gated.
+4. Review team branches against allowed file scope.
+5. Keep organization synchronization PR-gated.

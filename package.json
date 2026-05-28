@@ -34,7 +34,8 @@
     "smoke:mcp:staging": "MCP_URL=${STAGING_MCP_URL:-https://paper-agent-mcp-staging.shch3653.workers.dev/mcp} npm run smoke:mcp",
     "staging:check": "npm run typecheck && npm run build:web:staging && npm run smoke:worker:staging && npm run smoke:mcp:staging",
     "dev:worker:local": "npm run dev --workspace apps/worker -- --port 8787",
-    "smoke:worker:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false npm run smoke:worker"
+    "smoke:worker:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false npm run smoke:worker",
+    "benchmark:auto-review-baselines": "node benchmark/scripts/auto-review-baselines.mjs"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

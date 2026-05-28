@@ -2,6 +2,13 @@
 
 Updated: 2026-05-28 (codex dashboard ranking latency fix)
 
+## codex - Fully Automated Benchmark Review Policy (2026-05-28)
+
+- **Policy**: Replaced human-only baseline review tasks with reproducible automated review. Future benchmark QA should be encoded as scripts, generated CSV/JSON outputs, and npm commands before any manual-only process is considered. (codex)
+- **Benchmark**: Added `benchmark/scripts/auto-review-baselines.mjs` and `npm run benchmark:auto-review-baselines`. The command reviews Rule-based and Single-LLM baseline rows using DOI/gold overlap, title keyword fit, top-journal status, metadata presence, and stale-topic guardrails. (codex)
+- **Outputs**: Generated `benchmark/auto_review_baseline_results.csv` and `benchmark/auto_review_baseline_summary.json` for 30 baseline rows. Current automated counts: Rule-based include 2 / review_by_rule 9 / reject 4; Single-LLM include 9 / review_by_rule 5 / reject 1. (codex)
+- **Docs**: Updated `docs/agent-work-queue.md` and `docs/team-task-briefing.md` so team tasks no longer request `manual_review_single_llm.csv` and instead improve automated scripts/results. (codex)
+
 ## codex - Dashboard Run Ranking Latency Fix (2026-05-28)
 
 - **Worker**: Reduced the apparent long `ranking` phase by defaulting dashboard-created jobs to metadata scoring and rule-based Critic review unless `useSemanticRanking` or `useLlmCritic` is explicitly requested. (codex)
@@ -72,7 +79,7 @@ Updated: 2026-05-28 (codex dashboard ranking latency fix)
 ## codex - Benchmark Work Queue Update (2026-05-27)
 
 - Updated `docs/agent-work-queue.md` and `benchmark/benchmark_summary.md` so future agents continue from the integrated T001-T003 benchmark state instead of the older pre-integration queue. (codex)
-- Next benchmark expansion target is T004-T006 gold refinement, followed by new Proposed Agent rows, manual review, and baseline rows for the same task range. (codex)
+- Next benchmark expansion target is T004-T006 gold refinement, followed by new Proposed Agent rows, automated review outputs, and baseline rows for the same task range. (codex)
 
 ## codex - Personal Repo Sync And Organization PR Merge (2026-05-27)
 

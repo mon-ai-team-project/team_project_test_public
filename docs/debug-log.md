@@ -1,5 +1,12 @@
 # Debug Log
 
+## 2026-05-28 - Benchmark Review Automation
+
+- Context: The user stated that there should be no human review tasks and that benchmark review should be fully automated. (codex)
+- Action: Added `benchmark/scripts/auto-review-baselines.mjs` and `npm run benchmark:auto-review-baselines` to generate automated review decisions for Rule-based and Single-LLM baseline rows. (codex)
+- Rule basis: DOI/title overlap with audited gold rows, title keyword overlap, approved S/A1 journal status, required metadata presence, and stale-topic markers from the rejected member-c branch. (codex)
+- Verification: The script generated `benchmark/auto_review_baseline_results.csv` and `benchmark/auto_review_baseline_summary.json` for 30 rows. Initial counts were Rule-based include 2 / review_by_rule 9 / reject 4 and Single-LLM include 9 / review_by_rule 5 / reject 1. (codex)
+
 ## 2026-05-28 - Dashboard Failed To Fetch Resolution
 
 - Context: After the ranking-latency fast-path fix, the user reported `Failed to fetch` when running the deployed dashboard. (codex)
