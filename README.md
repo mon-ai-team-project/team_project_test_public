@@ -2,6 +2,8 @@
 
 AI Agent 기반 학술논문 탐색 및 문헌검토 자동화 시스템입니다.
 
+
+
 이 저장소는 개인 GitHub repo에서 시작해 Cloudflare Pages 대시보드와 Cloudflare Workers backend를 함께 관리하는 monorepo입니다. 이 후 GitHub Organization으로 이전해도 같은 구조를 유지할 수 있습니다.
 
 ## Architecture
@@ -115,6 +117,24 @@ Recommended names:
 - D1: `paper_agent_db`
 - R2: `paper-agent-outputs`
 - Vectorize: `paper-abstract-index`
+
+## 배포 링크 및 상태 확인
+
+아래 링크는 조직 repo 기준으로 팀원이 현재 배포 상태를 빠르게 확인하기 위한 고정 진입점입니다.
+
+| 구분 | 링크 | 확인 기준 |
+| --- | --- | --- |
+| 대시보드 메인 | https://paper-agent-project.pages.dev/ | 화면이 열리고 Research/Ops/Evaluation 라우트로 이동 가능해야 합니다. |
+| Research Dashboard | https://paper-agent-project.pages.dev/dashboard/research | 검색 실행, Ranked Papers, Paper Detail, Report Preview를 확인합니다. |
+| Ops Dashboard | https://paper-agent-project.pages.dev/dashboard/ops | Worker, D1, R2, MCP, Agent trace 상태를 확인합니다. |
+| Evaluation Dashboard | https://paper-agent-project.pages.dev/dashboard/evaluation | Rule-based, Single-LLM, Proposed Multi-Agent 비교와 benchmark snapshot을 확인합니다. |
+| Worker health | https://paper-agent-project.shch3653.workers.dev/api/health | `{ "ok": true }` 형태의 정상 응답이어야 합니다. |
+| Worker diagnostics | https://paper-agent-project.shch3653.workers.dev/api/diagnostics | DB missingColumns가 비어 있고 WoS/Crossref/Unpaywall/R2/Google Drive 준비 상태를 확인합니다. |
+| 최근 검색 작업 | https://paper-agent-project.shch3653.workers.dev/api/search-jobs?limit=5 | 최근 job id, status, sourceResultCount, allowedResultCount를 확인합니다. |
+| MCP health | https://paper-agent-mcp.shch3653.workers.dev/health | MCP Worker가 `{ "ok": true }` 형태로 응답해야 합니다. |
+| MCP endpoint | https://paper-agent-mcp.shch3653.workers.dev/mcp | MCP client 연결용 endpoint입니다. 브라우저 직접 접속 확인용이 아닙니다. |
+
+주의: Worker 루트 경로 `https://paper-agent-project.shch3653.workers.dev/`는 `{ "error": "Not found" }`를 반환할 수 있습니다. 이는 오류가 아니며, 상태 확인은 `/api/health`와 `/api/diagnostics`를 기준으로 합니다.
 
 ## Required Secrets
 

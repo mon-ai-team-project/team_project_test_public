@@ -1,5 +1,10 @@
 # Debug Log
 
+## 2026-05-29 - Organization README Link Sync
+- Context: The user reported that the personal README had deployment/status links but the organization README did not. (codex)
+- Finding: `git diff team-origin/main..origin/main -- README.md` showed the missing Korean deployment/status section in organization main. (codex)
+- Fix: Imported only the README deployment/status section onto an organization-main-based branch and recorded the change without pulling unrelated personal-repo history. (codex)
+
 ## 2026-05-29 - Organization Expanded Benchmark Clean Import
 - Context: PR #18 from pre-freeze/benchmark-expanded-runtime-2026-05-29 attempted to merge 99 commits and conflicted across dashboard, docs, paper, presentation, and changelog files. (codex)
 - Decision: Do not resolve PR #18 directly. Create an organization-main-based clean branch with only expanded benchmark artifacts and corrected claim-boundary documentation. (codex)

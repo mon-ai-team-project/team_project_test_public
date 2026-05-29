@@ -1,5 +1,12 @@
 # Project Progress And Session Handoff
 
+Updated: 2026-05-29 (organization README deployment links)
+
+## 2026-05-29 (codex)
+- **Organization README Sync**: Confirmed the personal `origin/main` README had deployment/status links that were still missing from organization `team-origin/main`. (codex)
+- **README Update**: Added the Korean deployment/status table to the organization README, including Pages dashboard routes, Worker health/diagnostics/recent jobs, and MCP health/endpoint links. (codex)
+- **Operational Note**: Documented that the Worker root can return `Not found`; status checks should use `/api/health` and `/api/diagnostics`. (codex)
+
 Updated: 2026-05-29 (organization expanded benchmark partial-run import)
 
 ## 2026-05-29 (codex)

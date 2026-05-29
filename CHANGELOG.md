@@ -19,6 +19,9 @@ This project follows a strict manual changelog policy. Every commit or pull requ
 ## Unreleased
 _No unreleased changes._
 
+## 2026-05-29 (codex)
+- Docs: Added the personal-repo README deployment/status links to the organization README so team members can find Pages, Worker, diagnostics, recent jobs, and MCP checks from the org repository. (codex)
+
 
 ## 2026-05-29 (gemini)
 - Added: Created `docs/final-demo-script.md` with a narrated dashboard, trace, output, and evaluation demo path. (gemini)
