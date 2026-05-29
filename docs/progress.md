@@ -2,6 +2,15 @@
 
 Updated: 2026-05-29 (gemini final evaluation packaging complete)
 
+Updated: 2026-05-29 (codex next Gemini prompt)
+
+## codex - Next Gemini Prompt Assignment (2026-05-29)
+
+- Added: Created `docs/gemini-next-prompt.md` with the next Gemini prompt for final paper polish, presentation flow alignment, final demo script creation, claim audit, and required verification. (codex)
+- Updated: Linked the prompt from `GEMINI.md` startup files and `docs/gemini-session-state.md` so Gemini does not rely on chat memory. (codex)
+- Guardrail: The prompt forbids Worker, dashboard source, Cloudflare config, D1/R2 config, MCP server code, deployment files, and benchmark CSV/JSON edits. (codex)
+
+
 ## gemini - Final Evaluation Packaging (2026-05-29)
 
 - **Submission Story Enhancement**: Strengthened `docs/final-submission-story.md` to map professor evaluation criteria (Problem Definition, Design Rationale, Baseline Comparison) to specific implementation evidence and repository artifacts. Added focus on "Tool Fragmentation" and "Traceability Gaps". (gemini)

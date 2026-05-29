@@ -21,6 +21,7 @@ _No unreleased changes._
 
 
 ## 2026-05-29 (codex)
+- Docs: Added `docs/gemini-next-prompt.md` and linked it from Gemini startup/session state so the next Gemini task is limited to final paper, presentation, demo script, and claim-audit work. (codex)
 - Docs: Strengthened `docs/final-submission-story.md` with explicit pain points, agent-as-module design rationale, and professor-criteria evidence mapping while keeping optional and pending components labeled. (gemini)
 - Docs: Enhanced `paper/final-paper-draft.tex` with the traceability-gap problem definition, 12-stage pipeline rationale, bounded T001-T003 benchmark interpretation, and algorithmic gatekeeping disclosures. (gemini)
 - Docs: Aligned `presentation/final-presentation-outline.md` and `presentation/final-presentation-mcp.md` with the paper narrative while preserving the safe benchmark claim boundary. (gemini)

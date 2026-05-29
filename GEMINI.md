@@ -24,6 +24,7 @@ docs/agent-work-queue.md
 CHANGELOG.md
 docs/debug-log.md
 docs/gemini-session-state.md
+docs/gemini-next-prompt.md
 docs/gemini-debug-handoff.md
 docs/gemini-t004-t006-benchmark-handoff.md
 docs/local-worker-troubleshooting.md
@@ -86,7 +87,7 @@ Gemini must assume it does not remember previous sessions. Repository files are 
 Before any task:
 
 1. Read the required startup files listed above.
-2. Read `docs/gemini-handoff-blueprint.md` and `docs/gemini-session-state.md` if present.
+2. Read `docs/gemini-handoff-blueprint.md`, `docs/gemini-session-state.md`, and `docs/gemini-next-prompt.md` if present.
 3. Compare `git log --oneline -8` with the latest entries in `CHANGELOG.md` and `docs/progress.md`.
 4. Do not rely on chat memory for architecture, branch policy, deployment state, secrets, or deferred tasks.
 

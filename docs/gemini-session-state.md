@@ -1,6 +1,6 @@
 # Gemini Session State
 
-Updated: 2026-05-29 (gemini final-evaluation packaging complete)
+Updated: 2026-05-29 (codex next Gemini prompt assigned)
 
 ## Current Source Of Truth
 - `docs/final-submission-story.md` (Updated)
@@ -10,6 +10,7 @@ Updated: 2026-05-29 (gemini final-evaluation packaging complete)
 - `docs/gemini-session-state.md`
 - `CHANGELOG.md`
 - `docs/progress.md`
+- `docs/gemini-next-prompt.md`
 
 ## Current Personal Repo State
 
@@ -25,12 +26,17 @@ Updated: 2026-05-29 (gemini final-evaluation packaging complete)
 
 ## What Gemini Must Do Next
 
-The final evaluation package is now narratively complete and technically verified.
+Gemini must follow `docs/gemini-next-prompt.md`. The task is final submission polishing and demo-script preparation only.
 
-1. **Review and Polish**: Perform a final proofread of the LaTeX draft and slide content for any remaining "Mock" language that should be "Implemented".
-2. **Deliverables Generation**: If local LaTeX/PPT environments are active, generate the final PDF/PPTX.
-3. **Demo Readiness**: Ensure a specific search job ID (e.g., T001 AI Interview) is pre-run and verified for the live demo sequence.
-4. **Final Sync**: Merge the packaging branch into `origin/main` and prepare for final project submission.
+Priority order:
+
+1. Polish `paper/final-paper-draft.tex` conservatively for grammar, clarity, and claim safety.
+2. Align `presentation/final-presentation-outline.md` and `presentation/final-presentation-mcp.md` with the paper narrative. Do not add time-limit constraints.
+3. Create `docs/final-demo-script.md` for the live demo flow and fallback job path.
+4. Audit final claims in `docs/final-submission-story.md`, `paper/final-paper-draft.tex`, and `presentation/*`.
+5. Update required records and run verification.
+
+Do not edit Worker, dashboard source, Cloudflare config, D1/R2 config, MCP server code, deployment files, or benchmark CSV/JSON files.
 
 ## Gemini Constraints
 
