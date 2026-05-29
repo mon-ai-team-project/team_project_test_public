@@ -227,14 +227,14 @@ function ResearchDashboard() {
     setErrorMessage("");
     try {
       const response = await fetch(apiUrl(`/api/search-jobs/${job.id}`));
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to refresh search job"));
+      if (!response.ok) throw new Error(await readApiError(response, "search job 새로고침에 실패했습니다"));
       const data = (await response.json()) as JobResponse;
       setJob(data.job);
       setPapers(data.papers);
       setSelectedId((current) => (data.papers.some((paper) => paper.id === current) ? current : data.papers[0]?.id ?? ""));
       await refreshRecentJobs();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Failed to refresh search job");
+      setErrorMessage(error instanceof Error ? error.message : "search job 새로고침에 실패했습니다");
     } finally {
       setRefreshing(false);
     }
@@ -249,14 +249,14 @@ function ResearchDashboard() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(buildSearchPayload(keyword, maxResults, enrichmentLimit, yearStart, yearEnd, journalCategoryId))
       });
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to create search job"));
+      if (!response.ok) throw new Error(await readApiError(response, "search job 생성에 실패했습니다"));
       const data = (await response.json()) as JobResponse;
       setJob(data.job);
       setPapers(data.papers);
       setSelectedId(data.papers[0]?.id ?? "");
       await refreshRecentJobs();
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Failed to create search job");
+      setErrorMessage(error instanceof Error ? error.message : "search job 생성에 실패했습니다");
     } finally {
       setLoading(false);
     }
@@ -283,11 +283,11 @@ function ResearchDashboard() {
     setAgentTracesError("");
     try {
       const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/traces`));
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to load agent traces"));
+      if (!response.ok) throw new Error(await readApiError(response, "agent trace를 불러오지 못했습니다"));
       const data = (await response.json()) as TracesResponse;
       setAgentTraces(data.traces);
     } catch (error) {
-      setAgentTracesError(error instanceof Error ? error.message : "Failed to load agent traces");
+      setAgentTracesError(error instanceof Error ? error.message : "agent trace를 불러오지 못했습니다");
     } finally {
       setAgentTracesLoading(false);
     }
@@ -302,14 +302,14 @@ function ResearchDashboard() {
         fetch(apiUrl(`/api/search-jobs/${jobId}/critic-flags`)),
         fetch(apiUrl(`/api/search-jobs/${jobId}/outputs`))
       ]);
-      if (!flagsResponse.ok) throw new Error(await readApiError(flagsResponse, "Failed to load critic flags"));
-      if (!outputsResponse.ok) throw new Error(await readApiError(outputsResponse, "Failed to load output artifacts"));
+      if (!flagsResponse.ok) throw new Error(await readApiError(flagsResponse, "critic flag를 불러오지 못했습니다"));
+      if (!outputsResponse.ok) throw new Error(await readApiError(outputsResponse, "output artifact를 불러오지 못했습니다"));
       const flagsData = (await flagsResponse.json()) as CriticFlagsResponse;
       const outputsData = (await outputsResponse.json()) as JobOutputsResponse;
       setCriticFlags(flagsData.criticFlags);
       setJobOutputs(outputsData.outputs);
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to load job artifacts";
+      const message = error instanceof Error ? error.message : "job artifact를 불러오지 못했습니다";
       setCriticFlagsError(message);
       setJobOutputsError(message);
     }
@@ -321,10 +321,10 @@ function ResearchDashboard() {
     setReportPreviewError("");
     try {
       const response = await fetch(apiUrl(`/api/search-jobs/${jobId}/report.md`));
-      if (!response.ok) throw new Error(await readTextError(response, "Failed to load Markdown report"));
+      if (!response.ok) throw new Error(await readTextError(response, "Markdown report를 불러오지 못했습니다"));
       setReportPreview(await response.text());
     } catch (error) {
-      setReportPreviewError(error instanceof Error ? error.message : "Failed to load Markdown report");
+      setReportPreviewError(error instanceof Error ? error.message : "Markdown report를 불러오지 못했습니다");
     } finally {
       setReportPreviewLoading(false);
     }
@@ -334,10 +334,10 @@ function ResearchDashboard() {
     setDiagnosticsError("");
     try {
       const response = await fetch(apiUrl("/api/diagnostics"));
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to load diagnostics"));
+      if (!response.ok) throw new Error(await readApiError(response, "diagnostics를 불러오지 못했습니다"));
       setDiagnostics((await response.json()) as DiagnosticsResponse);
     } catch (error) {
-      setDiagnosticsError(error instanceof Error ? error.message : "Failed to load diagnostics");
+      setDiagnosticsError(error instanceof Error ? error.message : "diagnostics를 불러오지 못했습니다");
     }
   }
 
@@ -345,11 +345,11 @@ function ResearchDashboard() {
     setRecentJobsError("");
     try {
       const response = await fetch(apiUrl("/api/search-jobs?limit=10"));
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to load recent jobs"));
+      if (!response.ok) throw new Error(await readApiError(response, "최근 job을 불러오지 못했습니다"));
       const data = (await response.json()) as JobsResponse;
       setRecentJobs(data.jobs);
     } catch (error) {
-      setRecentJobsError(error instanceof Error ? error.message : "Failed to load recent jobs");
+      setRecentJobsError(error instanceof Error ? error.message : "최근 job을 불러오지 못했습니다");
     }
   }
 
@@ -358,14 +358,14 @@ function ResearchDashboard() {
     setErrorMessage("");
     try {
       const response = await fetch(apiUrl(`/api/search-jobs/${jobId}`));
-      if (!response.ok) throw new Error(await readApiError(response, "Failed to load search job"));
+      if (!response.ok) throw new Error(await readApiError(response, "search job을 불러오지 못했습니다"));
       const data = (await response.json()) as JobResponse;
       setJob(data.job);
       setKeyword(data.job.keyword);
       setPapers(data.papers);
       setSelectedId(data.papers[0]?.id ?? "");
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Failed to load search job");
+      setErrorMessage(error instanceof Error ? error.message : "search job을 불러오지 못했습니다");
     } finally {
       setLoadingJobId("");
     }
@@ -376,19 +376,19 @@ function ResearchDashboard() {
       <section className="toolbar">
         <div className="titleBlock">
           <span className="eyebrow">MON AI Team</span>
-          <h1>Paper Agent Dashboard</h1>
-          <p>WoS-backed literature screening workspace</p>
+          <h1>Paper Agent 대시보드</h1>
+          <p>WoS 기반 문헌 선별 workspace</p>
         </div>
         <div className="commandPanel">
           <div className="searchBox">
             <Search size={18} />
-            <input value={keyword} onChange={(event) => setKeyword(event.target.value)} aria-label="Research keyword" />
+            <input value={keyword} onChange={(event) => setKeyword(event.target.value)} aria-label="연구 검색어" />
             <button onClick={startSearch} disabled={loading || !keyword.trim()}>
               {loading ? <RefreshCw size={18} className="spin" /> : <Play size={18} />}
-              Run
+              실행
             </button>
           </div>
-          <div className="searchOptions" aria-label="Search options">
+          <div className="searchOptions" aria-label="검색 옵션">
             <label>
               <span>Max 1-50</span>
               <input
@@ -401,7 +401,7 @@ function ResearchDashboard() {
                 onChange={(event) => setMaxResults(event.target.value)}
                 onBlur={() => setMaxResults(String(parseLimitedMaxResults(maxResults)))}
                 placeholder="20"
-                aria-label="Maximum results"
+                aria-label="최대 결과 수"
               />
             </label>
             <label>
@@ -416,13 +416,13 @@ function ResearchDashboard() {
                 onChange={(event) => setEnrichmentLimit(event.target.value)}
                 onBlur={() => setEnrichmentLimit(String(parseLimitedEnrichmentLimit(enrichmentLimit, parseLimitedMaxResults(maxResults))))}
                 placeholder="10"
-                aria-label="Metadata enrichment limit"
+                aria-label="Metadata 보강 제한"
               />
             </label>
             <label className="categoryOption">
-              <span>Field</span>
-              <select value={journalCategoryId} onChange={(event) => setJournalCategoryId(event.target.value)} aria-label="Journal category">
-                <option value="">All fields</option>
+              <span>분야</span>
+              <select value={journalCategoryId} onChange={(event) => setJournalCategoryId(event.target.value)} aria-label="저널 분야">
+                <option value="">전체 분야</option>
                 {BUSINESS_SCHOOL_JOURNAL_CATEGORY_OPTIONS.map((option) => (
                   <option key={option.id} value={option.id}>
                     {option.label}
@@ -431,7 +431,7 @@ function ResearchDashboard() {
               </select>
             </label>
             <label>
-              <span>From</span>
+              <span>시작</span>
               <input
                 type="number"
                 min={1900}
@@ -439,12 +439,12 @@ function ResearchDashboard() {
                 step={1}
                 value={yearStart}
                 onChange={(event) => setYearStart(event.target.value)}
-                placeholder="Any"
-                aria-label="Start year"
+                placeholder="전체"
+                aria-label="시작 연도"
               />
             </label>
             <label>
-              <span>To</span>
+              <span>종료</span>
               <input
                 type="number"
                 min={1900}
@@ -452,14 +452,14 @@ function ResearchDashboard() {
                 step={1}
                 value={yearEnd}
                 onChange={(event) => setYearEnd(event.target.value)}
-                placeholder="Now"
-                aria-label="End year"
+                placeholder="현재"
+                aria-label="종료 연도"
               />
             </label>
           </div>
           <div className="runMeta">
             <StatusBadge value={diagnostics?.searchProvider ?? "wos"} tone="neutral" />
-            <StatusBadge value={diagnostics?.readiness.activeProviderReady ? "ready" : "check"} tone={diagnostics?.readiness.activeProviderReady ? "ok" : "warn"} />
+            <StatusBadge value={diagnostics?.readiness.activeProviderReady ? "준비됨" : "확인 필요"} tone={diagnostics?.readiness.activeProviderReady ? "ok" : "warn"} />
           </div>
         </div>
       </section>
@@ -467,11 +467,11 @@ function ResearchDashboard() {
       <ResearchExperiencePanels isRunning={loading || (Boolean(job) && job?.status !== "completed" && job?.status !== "failed")} />
 
       <section className="statusBand">
-        <Metric label="Status" value={job?.status ?? "demo"} tone={getStatusTone(job?.status)} />
-        <Metric label="Step" value={job?.currentStep ?? "ranking preview"} />
-        <Metric label="Source / Allowed" value={job ? `${job.sourceResultCount ?? "-"} / ${job.allowedResultCount ?? "-"}` : "-"} />
-        <Metric label="Papers" value={String(papers.length)} detail={`${includedCount} include · ${reviewCount} review`} />
-        <Metric label="Top Score" value={papers[0] ? papers[0].finalScore.toFixed(2) : "-"} />
+        <Metric label="상태" value={job?.status ?? "demo"} tone={getStatusTone(job?.status)} />
+        <Metric label="단계" value={job?.currentStep ?? "ranking preview"} />
+        <Metric label="원천 / 통과" value={job ? `${job.sourceResultCount ?? "-"} / ${job.allowedResultCount ?? "-"}` : "-"} />
+        <Metric label="논문" value={String(papers.length)} detail={`${includedCount} include · ${reviewCount} review`} />
+        <Metric label="최고 점수" value={papers[0] ? papers[0].finalScore.toFixed(2) : "-"} />
       </section>
 
       <section className="operationsGrid">
@@ -489,7 +489,7 @@ function ResearchDashboard() {
             <div className="panelTitle">
               <div>
                 <h2>Ranked Papers</h2>
-                <p>{papers.length ? `${papers.length} allowlisted results` : "No saved results"}</p>
+                <p>{papers.length ? `${papers.length}개 allowlist 통과 결과` : "저장된 결과 없음"}</p>
               </div>
               <div className="panelActions">
                 <button className="iconButton" onClick={downloadReport} disabled={!job} aria-label="Download Markdown report" title="Download Markdown report">
@@ -501,7 +501,7 @@ function ResearchDashboard() {
                 <button className="iconButton" onClick={downloadCsv} disabled={!job} aria-label="Download CSV" title="Download CSV">
                   <Download size={18} />
                 </button>
-                <button className="iconButton" onClick={refreshJob} disabled={!job || refreshing} aria-label="Refresh job" title="Refresh job">
+                <button className="iconButton" onClick={refreshJob} disabled={!job || refreshing} aria-label="job 새로고침" title="job 새로고침">
                   <RefreshCw size={18} className={refreshing ? "spin" : undefined} />
                 </button>
               </div>
@@ -522,12 +522,12 @@ function ResearchDashboard() {
                   <tr>
                     <th>Rank</th>
                     <th>Title</th>
-                    <th>Journal</th>
+                    <th>저널</th>
                     <th>Field / Rank</th>
-                    <th>Year</th>
+                    <th>연도</th>
                     <th>Status</th>
                     <th>OA</th>
-                    <th>Score</th>
+                    <th>점수</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -558,7 +558,7 @@ function ResearchDashboard() {
                   ) : (
                     <tr>
                       <td colSpan={8} className="emptyCell">
-                        No allowed journal results.
+                        allowlist를 통과한 저널 결과가 없습니다.
                       </td>
                     </tr>
                   )}
@@ -594,7 +594,7 @@ function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: 
       <div className="panelTitle">
         <div>
           <h2>Paper Detail</h2>
-          <p>{selected ? `${selected.year || "Unknown year"} · ${selected.journalName}` : "No selection"}</p>
+          <p>{selected ? `${selected.year || "연도 미상"} · ${selected.journalName}` : "선택 없음"}</p>
         </div>
         <FileText size={18} />
       </div>
@@ -608,18 +608,18 @@ function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: 
           {criticReview ? <CriticReviewSummaryCard review={criticReview} /> : null}
           <ScoreBreakdown paper={selected} />
           <dl>
-            <dt>Authors</dt>
+            <dt>저자</dt>
             <dd>{selected.authors}</dd>
             <dt>DOI</dt>
-            <dd>{selected.doi || "Not available"}</dd>
+            <dd>{selected.doi || "사용 불가"}</dd>
             <dt>Field / Rank</dt>
             <dd>
               <JournalRankBadge paper={selected} />
             </dd>
-            <dt>Verification</dt>
-            <dd>{selected.verificationStatus ?? "unverified"} · {selected.verificationReason ?? "No verification recorded."}</dd>
+            <dt>검증</dt>
+            <dd>{selected.verificationStatus ?? "unverified"} · {selected.verificationReason ?? "기록된 검증 결과가 없습니다."}</dd>
             <dt>Open Access</dt>
-            <dd>{selected.unpaywallStatus ?? "skipped"} · {selected.unpaywallReason ?? "No Unpaywall lookup recorded."}</dd>
+            <dd>{selected.unpaywallStatus ?? "skipped"} · {selected.unpaywallReason ?? "기록된 Unpaywall 조회 결과가 없습니다."}</dd>
             <dt>PDF</dt>
             <dd>
               {selected.oaPdfUrl ? (
@@ -631,7 +631,7 @@ function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: 
                   Open OA page
                 </a>
               ) : (
-                "No OA URL found"
+                "OA URL이 없습니다"
               )}
             </dd>
             <dt>Google Drive</dt>
@@ -641,11 +641,11 @@ function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: 
                   Open Drive file
                 </a>
               ) : (
-                `${selected.driveStatus ?? "skipped"} · ${selected.driveReason ?? "No Google Drive upload recorded."}`
+                `${selected.driveStatus ?? "skipped"} · ${selected.driveReason ?? "기록된 Google Drive 업로드가 없습니다."}`
               )}
             </dd>
             <dt>License</dt>
-            <dd>{[selected.oaLicense, selected.oaHostType, selected.oaRepository].filter(Boolean).join(" · ") || "Unknown"}</dd>
+            <dd>{[selected.oaLicense, selected.oaHostType, selected.oaRepository].filter(Boolean).join(" · ") || "알 수 없음"}</dd>
             <dt>Critic Flags</dt>
             <dd>
               <CriticFlagsList flags={criticFlags} errorMessage={errorMessage} />
@@ -653,7 +653,7 @@ function PaperDetailPanel({ selected, criticFlags, errorMessage }: { selected?: 
           </dl>
         </>
       ) : (
-        <p className="emptyState">No allowed journal result selected.</p>
+        <p className="emptyState">선택된 allowlist 통과 저널 결과가 없습니다.</p>
       )}
     </section>
   );
@@ -687,7 +687,7 @@ function CriticReviewSummaryCard({ review }: { review: CriticReviewSummary }) {
 
 function CriticFlagsList({ flags, errorMessage }: { flags: CriticFlag[]; errorMessage: string }) {
   if (errorMessage) return <span className="inlineError">{errorMessage}</span>;
-  if (!flags.length) return <span className="mutedText">No critic flags for this paper.</span>;
+  if (!flags.length) return <span className="mutedText">이 논문에 연결된 critic flag가 없습니다.</span>;
 
   return (
     <div className="artifactList criticFlagList">
@@ -714,7 +714,7 @@ function OutputArtifactsPanel({
       <div className="diagnosticsHeader">
         <div>
           <h2>Output Artifacts</h2>
-          <p>{displayOutputs.length ? String(displayOutputs.length) + " download endpoints available" : job ? "No output endpoints loaded" : "Run or load a job"}</p>
+          <p>{displayOutputs.length ? String(displayOutputs.length) + "개 download endpoint 사용 가능" : job ? "불러온 output endpoint가 없습니다" : "job을 실행하거나 불러오세요"}</p>
         </div>
         <button className="iconButton" onClick={onRefresh} disabled={!job} aria-label="Refresh output artifacts" title="Refresh output artifacts">
           <RefreshCw size={18} />
@@ -727,11 +727,11 @@ function OutputArtifactsPanel({
             <div>
               <strong>{output.outputType.toUpperCase()}</strong>
               <span>{output.storage} · {output.detail}</span>
-              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">Open artifact</a> : <small>Endpoint planned</small>}
+              {output.urlPath ? <a href={apiUrl(output.urlPath)} target="_blank" rel="noreferrer">산출물 열기</a> : <small>Endpoint 예정</small>}
             </div>
             <StatusBadge value={output.status} tone={getOutputTone(output.status)} />
           </article>
-        )) : <p className="emptyState">Completed jobs record CSV, Markdown, XLSX, and PDF outputs.</p>}
+        )) : <p className="emptyState">완료된 job은 CSV, Markdown, XLSX, PDF 산출물을 기록합니다.</p>}
       </div>
     </section>
   );
@@ -740,10 +740,10 @@ function OutputArtifactsPanel({
 function getDisplayOutputs(job: SearchJob | null, outputs: JobOutput[]): JobOutput[] {
   if (!job) return outputs;
   const defaults: JobOutput[] = [
-    buildDefaultOutput(job, "csv", "papers.csv", "text/csv; charset=utf-8", "CSV is available from the Worker endpoint."),
-    buildDefaultOutput(job, "markdown", "report.md", "text/markdown; charset=utf-8", "Markdown report is available from the Worker endpoint."),
-    buildDefaultOutput(job, "xlsx", "papers.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "XLSX workbook is available from the Worker endpoint."),
-    buildDefaultOutput(job, "pdf", "report.pdf", "application/pdf", "PDF report is available from the Worker endpoint.")
+    buildDefaultOutput(job, "csv", "papers.csv", "text/csv; charset=utf-8", "CSV는 Worker endpoint에서 받을 수 있습니다."),
+    buildDefaultOutput(job, "markdown", "report.md", "text/markdown; charset=utf-8", "Markdown report는 Worker endpoint에서 받을 수 있습니다."),
+    buildDefaultOutput(job, "xlsx", "papers.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "XLSX workbook은 Worker endpoint에서 받을 수 있습니다."),
+    buildDefaultOutput(job, "pdf", "report.pdf", "application/pdf", "PDF report는 Worker endpoint에서 받을 수 있습니다.")
   ];
   return defaults.map((fallback) => {
     const existing = outputs.find((output) => output.outputType === fallback.outputType);
@@ -778,8 +778,8 @@ function buildDefaultOutput(job: SearchJob, outputType: JobOutput["outputType"],
 function JournalRankBadge({ paper }: { paper: PaperSummary }) {
   return (
     <span className="journalRankBadge">
-      <strong>{paper.journalField ?? "Unmatched"}</strong>
-      <small>{paper.journalRank ?? "No rank"}</small>
+      <strong>{paper.journalField ?? "미매칭"}</strong>
+      <small>{paper.journalRank ?? "rank 없음"}</small>
     </span>
   );
 }
@@ -792,7 +792,7 @@ function AgentTracePanel({
       <div className="diagnosticsHeader">
         <div>
           <h2>Agent Traces</h2>
-          <p>{traces.length ? String(traces.length) + " recorded workflow steps" : "No live traces for the selected job"}</p>
+          <p>{traces.length ? String(traces.length) + "개 workflow 단계 기록됨" : "선택한 job의 live trace가 없습니다"}</p>
         </div>
         <button className="iconButton" onClick={onRefresh} disabled={loading} aria-label="Refresh agent traces" title="Refresh agent traces">
           <RefreshCw size={18} className={loading ? "spin" : undefined} />
@@ -809,7 +809,7 @@ function AgentTracePanel({
             </div>
             <StatusBadge value={trace.status} tone={getTraceTone(trace.status)} />
           </article>
-        )) : <p className="emptyState">Run or load a job to inspect persisted D1 traces.</p>}
+        )) : <p className="emptyState">job을 실행하거나 불러오면 저장된 D1 trace를 확인할 수 있습니다.</p>}
       </div>
     </section>
   );
@@ -908,9 +908,9 @@ function DiagnosticsPanel({
           <p>
             {diagnostics
               ? diagnostics.ok
-                ? `Ready · ${diagnostics.searchProvider}`
-                : `${missingCount} schema issue${missingCount === 1 ? "" : "s"} · ${diagnostics.searchProvider}`
-              : "Not checked"}
+                ? `준비됨 · ${diagnostics.searchProvider}`
+                : `${missingCount}개 schema issue · ${diagnostics.searchProvider}`
+              : "미확인"}
           </p>
         </div>
         <button className="iconButton" onClick={onRefresh} aria-label="Refresh diagnostics" title="Refresh diagnostics">
@@ -921,8 +921,8 @@ function DiagnosticsPanel({
       {diagnostics ? (
         <div className="diagnosticsGrid">
           <div>
-            <span className={diagnostics.db.bound ? "checkOk" : "checkFail"}>{diagnostics.db.bound ? "DB bound" : "DB missing"}</span>
-            <span className={missingCount === 0 ? "checkOk" : "checkFail"}>{missingCount === 0 ? "Schema ready" : `${missingCount} missing columns`}</span>
+            <span className={diagnostics.db.bound ? "checkOk" : "checkFail"}>{diagnostics.db.bound ? "DB 연결됨" : "DB 누락"}</span>
+            <span className={missingCount === 0 ? "checkOk" : "checkFail"}>{missingCount === 0 ? "Schema 준비됨" : `${missingCount}개 column 누락`}</span>
           </div>
           <div>
             {envItems.map(([label, ok]) => (
@@ -961,8 +961,8 @@ function RecentJobsPanel({
     <section className="recentJobsPanel">
       <div className="recentJobsHeader">
         <div>
-          <h2>Recent Jobs</h2>
-          <p>{jobs.length ? `${jobs.length} latest` : "No saved jobs"}</p>
+          <h2>최근 Jobs</h2>
+          <p>{jobs.length ? `${jobs.length}개 최신 job` : "저장된 job 없음"}</p>
         </div>
         <button className="iconButton" onClick={onRefresh} aria-label="Refresh recent jobs" title="Refresh recent jobs">
           <RefreshCw size={18} />
@@ -1014,7 +1014,7 @@ function ReportPreviewPanel({
       <div className="reportPreviewHeader">
         <div>
           <h2>Report Preview</h2>
-          <p>{job ? (isCompleted ? `${sections.length || 0} sections` : `Waiting for ${job.status}`) : "No active job"}</p>
+          <p>{job ? (isCompleted ? `${sections.length || 0}개 섹션` : `대기 중: ${job.status}`) : "활성 job 없음"}</p>
         </div>
         <div className="panelActions">
           <button className="iconButton" onClick={onRefresh} disabled={!canLoad || loading} aria-label="Refresh report preview">
@@ -1040,14 +1040,14 @@ function ReportPreviewPanel({
         {loading ? (
           <div className="reportPreviewEmpty">
             <RefreshCw size={18} className="spin" />
-            <span>Loading report</span>
+            <span>report 로드 중</span>
           </div>
         ) : report ? (
           <pre>{report}</pre>
         ) : (
           <div className="reportPreviewEmpty">
             <Eye size={18} />
-            <span>{job ? "Report preview appears after the job completes." : "Select or run a job to preview its report."}</span>
+            <span>{job ? "job 완료 후 report preview가 표시됩니다." : "report를 미리 보려면 job을 선택하거나 실행하세요."}</span>
           </div>
         )}
       </div>
@@ -1091,11 +1091,11 @@ function getScoreBreakdown(paper: PaperSummary): ScoreBreakdownItem[] {
 
   return [
     { label: "Relevance", value: relevance, detail: paper.relevanceReason },
-    { label: "Journal Fit", value: journalFit, detail: "Included in the business school journal allowlist." },
-    { label: "Crossref", value: verification, detail: paper.verificationReason ?? "No verification recorded." },
-    { label: "Open Access", value: openAccess, detail: paper.unpaywallReason ?? "No Unpaywall lookup recorded." },
-    { label: "Citation", value: citation, detail: `${paper.citedByCount ?? 0} citations from the active search provider.` },
-    { label: "Recency", value: recency, detail: `${paper.year || "Unknown"} publication year.` }
+    { label: "Journal Fit", value: journalFit, detail: "경영대학 저널 allowlist에 포함되어 있습니다." },
+    { label: "Crossref", value: verification, detail: paper.verificationReason ?? "기록된 검증 결과가 없습니다." },
+    { label: "Open Access", value: openAccess, detail: paper.unpaywallReason ?? "기록된 Unpaywall 조회 결과가 없습니다." },
+    { label: "Citation", value: citation, detail: `${paper.citedByCount ?? 0}회 인용, active search provider 기준입니다.` },
+    { label: "Recency", value: recency, detail: `${paper.year || "알 수 없음"}년 출판 연도입니다.` }
   ];
 }
 
@@ -1111,11 +1111,11 @@ function PipelineProgress({ job, loading }: { job: SearchJob | null; loading: bo
   const progress = Math.round((completedCount / pipelineSteps.length) * 100);
 
   return (
-    <section className="pipelinePanel" aria-label="Search pipeline progress">
+    <section className="pipelinePanel" aria-label="검색 pipeline 진행률">
       <div className="pipelineHeader">
         <div>
-          <h2>Pipeline Progress</h2>
-          <p>{loading ? "Running" : job ? `${progress}% complete` : "Ready"}</p>
+          <h2>Pipeline 진행률</h2>
+          <p>{loading ? "실행 중" : job ? `${progress}% 완료` : "준비됨"}</p>
         </div>
         <strong>{completedCount}/{pipelineSteps.length}</strong>
       </div>
@@ -1175,10 +1175,12 @@ function formatDateTime(value: string): string {
 
 function buildSearchPayload(keyword: string, maxResults: string, enrichmentLimit: string, yearStart: string, yearEnd: string, journalCategoryId: string) {
   const parsedMaxResults = parseLimitedMaxResults(maxResults);
-  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
+  const payload: { keyword: string; maxResults: number; enrichmentLimit: number; useSemanticRanking: boolean; useLlmCritic: boolean; yearStart?: number; yearEnd?: number; journalCategoryId?: string } = {
     keyword: keyword.trim(),
     maxResults: parsedMaxResults,
-    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults)
+    enrichmentLimit: parseLimitedEnrichmentLimit(enrichmentLimit, parsedMaxResults),
+    useSemanticRanking: false,
+    useLlmCritic: false
   };
   const start = parseOptionalYear(yearStart);
   const end = parseOptionalYear(yearEnd);
@@ -1247,11 +1249,11 @@ function buildCriticReviewSummary(paper: PaperSummary, flags: CriticFlag[]): Cri
   const decision = riskLevel === "high"
     ? "Manual review required"
     : riskLevel === "medium"
-      ? "Use after targeted verification"
+      ? "추가 검증 후 활용"
       : riskLevel === "low"
-        ? "Usable with access caveat"
-        : "No critic issues detected";
-  const primaryIssue = flags[0]?.message ?? "No rule-based critic flags were generated for this paper.";
+        ? "접근성 caveat와 함께 활용 가능"
+        : "감지된 critic issue 없음";
+  const primaryIssue = flags[0]?.message ?? "이 논문에는 rule-based critic flag가 생성되지 않았습니다.";
   const evidence = flags[0]?.evidence ?? paper.relevanceReason;
   const actions = flags.length
     ? flags.slice(0, 3).map((flag) => getCriticAction(flag))
@@ -1276,10 +1278,10 @@ function getCriticRiskLevel(flags: CriticFlag[]): CriticReviewSummary["riskLevel
 function getCriticAction(flag: CriticFlag): string {
   if (flag.flagType === "missing_doi") return "Confirm DOI or publisher metadata before citation.";
   if (flag.flagType === "crossref_verification") return "Compare Crossref metadata with the publisher record.";
-  if (flag.flagType === "low_relevance") return "Read abstract/introduction to confirm topic fit.";
-  if (flag.flagType === "screening_status") return "Manually decide include, review, or exclude before synthesis.";
-  if (flag.flagType === "access_path") return "Use DOI, library access, or institutional subscription for full text.";
-  return "Review this flag before using the paper.";
+  if (flag.flagType === "low_relevance") return "주제 적합성을 확인하려면 abstract/introduction을 검토하세요.";
+  if (flag.flagType === "screening_status") return "종합 전에 include, review, exclude 여부를 수동으로 결정하세요.";
+  if (flag.flagType === "access_path") return "본문 접근에는 DOI, 도서관 접근, 기관 구독을 사용하세요.";
+  return "논문에 활용하기 전에 이 flag를 검토하세요.";
 }
 
 function getCriticReviewTone(riskLevel: CriticReviewSummary["riskLevel"]): BadgeTone {

@@ -59,7 +59,7 @@ Examples:
 
 ```text
 benchmark/member-a-gold-t001-t003
-benchmark/member-b-proposed-review
+benchmark/member-b-auto-review-qa
 benchmark/member-c-baseline-t001-t003
 ```
 
@@ -81,7 +81,7 @@ Recommended ownership:
 | --- | --- | --- |
 | seunghyeon_choi | current maintainer, integration, scripts, Worker, dashboard, metrics | source code, docs, benchmark scripts, `seunghyeon_choi/`, `integrated/` |
 | Member A | gold label refinement | `benchmark/gold_relevant_papers.csv`, `benchmark/gold_relevant_papers.verified.csv` |
-| Member B | Proposed Agent manual review | `benchmark/manual_review_proposed.csv` |
+| Member B | Automated baseline review QA | `benchmark/auto_review_baseline_results.csv`, `benchmark/auto_review_baseline_summary.json`, `benchmark/scripts/auto-review-baselines.mjs` |
 | Unassigned Member C | baseline result collection | `benchmark/baseline_rule_based_results.csv`, `benchmark/baseline_single_llm_results.csv` |
 
 Do not modify unrelated files in a benchmark branch.
@@ -97,12 +97,13 @@ Gold labels:
 - Prefer international S and international A1 journals for final benchmark evidence.
 - Keep ambiguous rows marked as `ambiguous` until the title, DOI, journal, and year are verified.
 
-Manual review:
+Automated review:
 
-- Review only the assigned task rows.
-- Keep the original Agent output fields unchanged.
-- Add human judgment in separate review columns.
-- Use short, factual notes.
+- Do not create new human-only manual review workflows.
+- Keep original Agent and baseline output fields unchanged.
+- Encode decisions in scripts and generated CSV/JSON outputs.
+- Use short evidence-based notes in generated review columns.
+- Treat existing `manual_review_*` files as legacy evidence unless the maintainer requests a one-time audit.
 
 Baseline rows:
 
@@ -151,10 +152,10 @@ npm run build:web
 
 ## Current Priority
 
-The current benchmark priority is to improve the quality of T001-T003 evaluation evidence:
+The current benchmark priority is to improve the quality of T001-T003 evaluation evidence through reproducible automation:
 
 1. Refine T001-T003 gold labels with verified DOI-backed top-journal papers.
-2. Manually review the 15 rows in `benchmark/proposed_agent_results.csv`.
-3. Collect T001-T003 baseline results.
-4. Re-run `npm run benchmark:evaluate-proposed`.
-5. Use the improved metric outputs to decide whether to expand to all 20 benchmark tasks.
+2. Run `npm run benchmark:evaluate-proposed` for Proposed Agent metrics.
+3. Run `npm run benchmark:compare-baselines` for Rule-based, Single-LLM, and Proposed Agent comparison.
+4. Run `npm run benchmark:auto-review-baselines` for automated baseline QA.
+5. Expand to all 20 benchmark tasks only after the automated checks are stable.

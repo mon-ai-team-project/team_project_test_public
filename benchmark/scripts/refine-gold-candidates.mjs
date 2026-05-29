@@ -47,12 +47,12 @@ for (const task of tasks) {
       current_title: row.title,
       current_doi: row.doi,
       current_journal: row.journal,
-      human_relevance: row.human_relevance,
+      audited_relevance: row.human_relevance,
       verified_count_for_task: String(verifiedCount),
       target_field: task.field,
       journal_category_id: task.journal_category_id,
       research_question: task.research_question,
-      action_required: verifiedCount >= 3 ? "review_optional" : "replace_or_verify_exact_title"
+      action_required: verifiedCount >= 3 ? "scripted_review_optional" : "replace_or_verify_exact_title"
     });
   }
 }
@@ -88,7 +88,7 @@ for (const task of tasks) {
         journal_category_id: task.journal_category_id,
         expected_priority: Array.isArray(task.expected_priority) ? task.expected_priority.join("; ") : "",
         evaluation_focus: Array.isArray(task.evaluation_focus) ? task.evaluation_focus.join("; ") : "",
-        selection_status: "needs_manual_review"
+        selection_status: "needs_automated_verification"
       });
     });
   } catch (error) {

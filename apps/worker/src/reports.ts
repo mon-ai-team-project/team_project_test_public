@@ -69,9 +69,12 @@ function buildCriticReviewSummary(paper: PaperSummary, flags: CriticFlag[]) {
 
 function getCriticAction(flag: CriticFlag): string {
   if (flag.flagType === "missing_doi") return "Locate DOI or confirm bibliographic metadata from publisher page before citing.";
+  if (flag.flagType === "hallucination_risk") return "Verify title, DOI, journal, year, and authors against Crossref and publisher metadata before citing.";
+  if (flag.flagType === "journal_quality") return "Confirm whether this venue belongs to the approved S/A1 journal pool before using it as core evidence.";
   if (flag.flagType === "crossref_verification") return "Compare title, year, journal, authors, and DOI against Crossref or publisher metadata.";
   if (flag.flagType === "low_relevance") return "Read abstract/introduction to confirm conceptual fit with the research question.";
   if (flag.flagType === "screening_status") return "Treat ranking status as provisional and manually decide include, review, or exclude.";
+  if (flag.flagType === "low_impact_risk") return "Treat citation impact as weak and check whether the paper is recent, theoretical, or otherwise justified.";
   if (flag.flagType === "access_path") return "Use DOI, library access, or institutional subscriptions because no direct OA path is recorded.";
   return "Review this flag before using the paper in final synthesis.";
 }
@@ -347,37 +350,58 @@ function getPdfBody(result: SearchResult): Uint8Array {
 
 function getPdfReportLines(result: SearchResult): string[] {
   const summary = summarizeReport(result.papers);
+  const reportInsights = buildReportInsights(result.papers);
+  const criticSummary = summarizeCriticFlags(result.criticFlags ?? []);
   const lines = [
     "Paper Agent Report",
+    "==================",
     "Job ID: " + result.job.id,
     "Keyword: " + result.job.keyword,
-    "Status: " + result.job.status,
     "Generated at: " + new Date().toISOString(),
     "Paper count: " + result.papers.length,
     "Include / Review / Exclude: " + summary.includeCount + " / " + summary.reviewCount + " / " + summary.excludeCount,
-    "Open access with PDF: " + summary.oaPdfCount,
-    "Critic flags: " + summarizeCriticFlags(result.criticFlags ?? []).total + " total (high " + summarizeCriticFlags(result.criticFlags ?? []).high + ", medium " + summarizeCriticFlags(result.criticFlags ?? []).medium + ", low " + summarizeCriticFlags(result.criticFlags ?? []).low + ")",
     "Average final score: " + formatReportScore(summary.averageFinalScore),
+    "Critic flags: " + criticSummary.total + " total (high " + criticSummary.high + ", medium " + criticSummary.medium + ", low " + criticSummary.low + ")",
     "",
-    "Top Ranked Papers"
+    "Executive Summary",
+    "-----------------",
+    `This report contains ${result.papers.length} allowlisted journal results for "${result.job.keyword}".`,
+    `The corpus spans ${summary.yearRange} and includes ${summary.journalCount} distinct journals.`,
+    `Crossref verification found ${summary.verifiedCount} verified results, and Unpaywall found ${summary.oaPdfCount} PDFs.`,
+    "",
+    "Key Findings",
+    "------------",
+    ...reportInsights.keyFindings,
+    "",
+    "Common Themes",
+    "-------------",
+    ...reportInsights.commonThemes,
+    "",
+    "Research Gaps",
+    "-------------",
+    ...reportInsights.researchGaps,
+    "",
+    "Top Ranked Papers",
+    "-----------------"
   ];
 
   for (const paper of result.papers.slice(0, 20)) {
+    const critic = buildCriticReviewSummary(paper, getCriticFlagsForPaper(result, paper));
     lines.push(
       "",
       String(paper.rank) + ". " + paper.title,
-      "Authors: " + paper.authors,
-      "Year / Journal: " + (paper.year || "Unknown") + " / " + paper.journalName,
-      "Field / Rank: " + ([paper.journalField, paper.journalRank].filter(Boolean).join(" / ") || "Unmatched"),
-      "DOI: " + (paper.doi || "Not available"),
-      "Final score: " + formatReportScore(paper.finalScore) + " / " + paper.includeStatus,
-      "Verification: " + (paper.verificationStatus ?? "unverified") + " - " + (paper.verificationReason ?? "No verification recorded."),
-      "Access: " + (paper.oaPdfUrl || paper.oaLandingPageUrl || paper.driveWebUrl || "No direct access URL recorded."),
-      "Critic: " + buildCriticReviewSummary(paper, getCriticFlagsForPaper(result, paper)).note,
-      "Action: " + buildCriticReviewSummary(paper, getCriticFlagsForPaper(result, paper)).actions[0],
-      "Reason: " + paper.relevanceReason
+      "   Authors: " + paper.authors,
+      "   Year / Journal: " + (paper.year || "Unknown") + " / " + paper.journalName,
+      "   Field / Rank: " + ([paper.journalField, paper.journalRank].filter(Boolean).join(" / ") || "Unmatched"),
+      "   Final score: " + formatReportScore(paper.finalScore) + " / Status: " + paper.includeStatus,
+      "   DOI: " + (paper.doi || "Not available"),
+      "   Critic: " + critic.note,
+      "   Action: " + critic.actions[0],
+      "   Reason: " + paper.relevanceReason
     );
   }
+
+  lines.push("", "Limitations", "-----------", ...reportInsights.limitations);
 
   return lines.flatMap((line) => wrapPdfLine(normalizePdfText(line), 92));
 }

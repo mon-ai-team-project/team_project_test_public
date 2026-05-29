@@ -1,0 +1,200 @@
+{
+  "generatedAt": "reproducible-current-inputs",
+  "inputs": {
+    "goldPath": "benchmark/gold_relevant_papers.csv",
+    "tasksPath": "benchmark/tasks.jsonl",
+    "allowlistPath": "benchmark/gold_audit_allowlist.json"
+  },
+  "summary": {
+    "goldRows": 60,
+    "expectedTasks": 20,
+    "tasksCovered": 20,
+    "verifiedRows": 60,
+    "topJournalExpectedRows": 59,
+    "doiBackedRows": 60,
+    "duplicateDoiGroups": 1,
+    "errors": 0,
+    "warnings": 0,
+    "acceptedWarnings": 2
+  },
+  "taskSummary": [
+    {
+      "taskId": "T001",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 2,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T002",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T003",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T004",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T005",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T006",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T007",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T008",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T009",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T010",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T011",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T012",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T013",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T014",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T015",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T016",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T017",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T018",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T019",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    },
+    {
+      "taskId": "T020",
+      "rows": 3,
+      "verified": 3,
+      "topJournalExpected": 3,
+      "doiBacked": 3
+    }
+  ],
+  "issueCounts": {},
+  "acceptedIssueCounts": {
+    "warning:not_top_journal_expected": 1,
+    "warning:duplicate_doi_same_title": 1
+  },
+  "issues": [],
+  "acceptedIssues": [
+    {
+      "severity": "warning",
+      "code": "not_top_journal_expected",
+      "location": "T001/G003",
+      "message": "top_journal_expected is 'no'.",
+      "accepted": true,
+      "acceptance": {
+        "code": "not_top_journal_expected",
+        "location": "T001/G003",
+        "decision": "accepted_relevance_exception",
+        "reason": "The paper is DOI-backed and directly relevant to AI recruitment affective responses, but the journal is not in the current approved S/A1 allowlist. Keep as a controlled exception until a stronger approved-journal replacement is selected.",
+        "acceptedBy": "codex",
+        "acceptedDate": "2026-05-28"
+      }
+    },
+    {
+      "severity": "warning",
+      "code": "duplicate_doi_same_title",
+      "location": "10.1016/j.chb.2022.107179",
+      "message": "DOI 10.1016/j.chb.2022.107179 appears in multiple gold rows: T001/G002, T002/G005.",
+      "accepted": true,
+      "acceptance": {
+        "code": "duplicate_doi_same_title",
+        "location": "10.1016/j.chb.2022.107179",
+        "decision": "accepted_cross_task_overlap",
+        "reason": "The same DOI is intentionally relevant to both T001 and T002 because it covers AI/ML hiring process reactions across applicant and recruitment fairness contexts.",
+        "acceptedBy": "codex",
+        "acceptedDate": "2026-05-28"
+      }
+    }
+  ]
+}

@@ -24,6 +24,15 @@ GEMINI.md
 CLAUDE.md
 ```
 
+## Historical Integrity
+
+History integrity is also enforced by `npm run validate:history`, which compares protected history files against the base branch and blocks deleted headings, deleted attribution lines, empty sections, and unexpected line-count drops.
+
+- **Never Delete History**: Do not remove, summarize, or "clean up" older entries in `CHANGELOG.md`, `docs/progress.md`, or `docs/debug-log.md`. Historical preservation is the memory layer of the project.
+- **Prepend New Entries**: Always add new entries at the top of the relevant section (usually after the main header) to maintain a reverse-chronological log.
+- **Verify File Length**: If you modify a log file, ensure the line count has not decreased unless you are explicitly removing duplicated or erroneous entries. Truncation is a failure of agent discipline.
+- **Surgical Edits**: Prefer the `replace` tool over `write_file` for log updates to minimize the risk of accidental overwrites.
+
 ## Attribution
 
 Every meaningful dated entry must use this exact format:

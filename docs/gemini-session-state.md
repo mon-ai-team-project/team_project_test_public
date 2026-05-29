@@ -1,57 +1,78 @@
 # Gemini Session State
 
-Updated: 2026-05-26 (codex)
-
-This file exists because Gemini may not retain prior-session memory. Gemini must read and update this file at the start and end of every substantial session.
+Updated: 2026-05-29 (codex strict Gemini priority prompt updated)
 
 ## Current Source Of Truth
-
-Read these files before editing:
-
-- `AGENTS.md`
-- `GEMINI.md`
-- `docs/agent-writing-rules.md`
-- `docs/gemini-handoff-blueprint.md`
-- `docs/gemini-review-feedback.md`
-- `docs/gemini-debug-handoff.md`
-- `docs/local-worker-troubleshooting.md`
-- `docs/progress.md`
-- `docs/debug-log.md`
+- `docs/final-submission-story.md`
+- `paper/final-paper-draft.tex`
+- `presentation/final-presentation-outline.md`
+- `presentation/final-presentation-mcp.md`
+- `docs/gemini-next-prompt.md`
+- `docs/proposed-agent-bak-review-2026-05-29.md`
+- `docs/gemini-session-state.md`
 - `CHANGELOG.md`
+- `docs/progress.md`
 
-## Current Repository Policy
+## Current Personal Repo State
 
-- Work from the personal repository first unless the user explicitly asks for organization repo integration.
-- Do not push automatically. Ask for the target remote/branch unless the user has already specified it in the current session.
-- Do not enable production Cloudflare bindings for resources that have not been created and confirmed by the user.
-- Do not commit local attachment/reference files or worktree metadata.
+- Active branch at evaluation time: `task/final-evaluation-packaging`.
+- Personal repository default remains `origin/main`; accepted work must be pushed to `origin/main` unless the user explicitly requests otherwise.
+- Organization repository integration remains separate and PR-gated through `team-origin`.
 
 ## Latest Reviewed State
 
-- Gemini's Worker modularization was reviewed by Codex. (codex)
-- Optional LLM Critic and Vectorize code paths are acceptable as code-ready features, but runtime activation remains gated by Cloudflare resource setup. (codex)
-- Tracked Wrangler configs currently exclude `AI` and `VECTOR_INDEX` bindings to avoid deployment failure before human setup. (codex)
-- LLM Critic severity values are sanitized before critic flags are persisted. (codex)
-- Local Worker troubleshooting scripts and docs were added after verifying production smoke and local health behavior. (codex)
-- Latest local Gemini branch evaluation is recorded in `docs/gemini-latest-work-evaluation.md`; do not continue from divergent `personal-main-check` as-is. (codex)
-- Gemini must classify Worker issues before editing source code: source-code defect, local environment, Cloudflare runtime/config, or expected Wrangler noise. (codex)
+- Final paper and presentation packaging were previously reviewed and pushed in `57c9270`.
+- `docs/gemini-next-prompt.md` was added and pushed in `bc754de` to prevent Gemini from relying on chat memory.
+- Gemini's benchmark-backup task was reviewed and pushed in `0973960`; T004-T005 `.bak` files are raw expansion evidence only.
+- Gemini's deliverable-refresh task was reviewed by Codex on 2026-05-29. Codex corrected changelog placement, fixed `benchmark:run-expanded` to use `--jobs-output`, softened unsupported demo claims, and verified PDF/PPTX regeneration paths before push.
+- Current generated deliverables: `paper/final-paper-draft.pdf` from `pdflatex` and `presentation/generated/paper-agent-final-presentation.pptx` from `scripts/mcp/pptx-standalone.js`.
 
-## Required End-Of-Session Snapshot
+## Benchmark Backup Finding
 
-- Active task: T001-T003 Gold Label Refinement (jin23624_cpu 역할 수행)
-- Changed files:
-    - benchmark/gold_relevant_papers.csv
-    - benchmark/gold_relevant_papers.verified.csv (auto-generated)
-    - jin23624_cpu/README.md
-    - CHANGELOG.md
-    - docs/progress.md
-    - docs/debug-log.md
-- Verification run: `npm run benchmark:verify-gold` (Passed: 9 rows verified for T001-T003)
-- Verification not run and why: Deployed worker smoke tests (Not relevant to CSV changes), `npm run benchmark:evaluate-proposed` (Will run in next step to see metric improvement)
-- Human-gated blockers: None for this task.
-- Next recommended action: Run `npm run benchmark:evaluate-proposed` to confirm metric improvement for T001-T003. Then proceed to Baseline collection for T001-T003 or continue Gold refinement for T004-T006.
-- Git status summary: Modified benchmark CSVs, README, and doc files. No source code changes.
+- `benchmark/proposed_agent_jobs.csv.bak` contains T004-T005 job rows.
+- `benchmark/proposed_agent_results.csv.bak` contains 32 T004-T005 result rows.
+- These files should not overwrite `benchmark/proposed_agent_jobs.csv` or `benchmark/proposed_agent_results.csv`, because the tracked benchmark layer is currently the controlled T001-T003 comparison set.
+- T004-T005 rows include useful expansion evidence, but some rows have `partial` verification and `Enrichment limit 10 reached; Crossref lookup skipped to stay within Worker subrequest limits.`
+- Future integration should use a separate expanded benchmark file or a rerun/cleanup process, not direct replacement of the current benchmark CSVs.
 
-## Memory Rule
+## What Gemini Must Do Next
 
-If Gemini is uncertain whether a fact came from the current repository state or from memory, it must re-read the repository file or run a local command before acting.
+Gemini must follow `docs/gemini-next-prompt.md` unless the user gives a newer explicit instruction. The current next prompt is intentionally strict and ordered; do not skip ahead or widen scope on your own. Current safe next work remains documentation, benchmark reproducibility, and final-deliverable polishing only. The next prompt now explicitly includes LaTeX report generation and PPTX generation through the verified MCP or documented fallback path.
+
+Priority order:
+
+1. Expand benchmark evidence safely without overwriting controlled T001-T003 CSVs.
+2. Preserve benchmark reproducibility and scripted exception handling.
+3. Keep all claims strictly bounded to repository-backed evidence.
+4. Preserve the final-deliverable narrative in the paper and presentation.
+5. Prepare or refine the demo script.
+6. Harden handoff records in `docs/gemini-session-state.md` and `docs/progress.md`.
+7. Record every meaningful change in `CHANGELOG.md`.
+8. Run required verification commands.
+9. Keep the scope narrow and avoid forbidden files.
+10. End with changed files, verification results, risks, and next action.
+
+Do not edit Worker, dashboard source, Cloudflare config, D1/R2 config, MCP server code, deployment files, or tracked benchmark CSV/JSON files unless the user explicitly reassigns that scope.
+
+## Gemini Constraints
+
+- Do not modify Worker, Cloudflare, deployment, or dashboard files.
+- Do not overwrite the tracked T001-T003 benchmark CSVs with T004-T005 `.bak` data.
+- Ensure `(gemini)` attribution is used for Gemini-authored entries.
+- Do not erase prior history or compress source-of-truth files in a way that removes operational context.
+
+## Required Verification Baseline
+
+```bash
+git diff --check
+npm run validate:history
+npm run validate:agent-rules
+npm run benchmark:audit-gold
+```
+
+Additional benchmark checks when benchmark outputs are touched:
+
+```bash
+npm run benchmark:evaluate-proposed
+npm run benchmark:compare-baselines
+```

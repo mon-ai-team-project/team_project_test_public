@@ -19,6 +19,7 @@ export type SearchJobStatus =
   | "checking_oa"
   | "scoring"
   | "ranking"
+  | "reviewing"
   | "generating_report"
   | "completed"
   | "failed";

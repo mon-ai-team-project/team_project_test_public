@@ -1,0 +1,18 @@
+[
+  {
+    "code": "not_top_journal_expected",
+    "location": "T001/G003",
+    "decision": "accepted_relevance_exception",
+    "reason": "The paper is DOI-backed and directly relevant to AI recruitment affective responses, but the journal is not in the current approved S/A1 allowlist. Keep as a controlled exception until a stronger approved-journal replacement is selected.",
+    "acceptedBy": "codex",
+    "acceptedDate": "2026-05-28"
+  },
+  {
+    "code": "duplicate_doi_same_title",
+    "location": "10.1016/j.chb.2022.107179",
+    "decision": "accepted_cross_task_overlap",
+    "reason": "The same DOI is intentionally relevant to both T001 and T002 because it covers AI/ML hiring process reactions across applicant and recruitment fairness contexts.",
+    "acceptedBy": "codex",
+    "acceptedDate": "2026-05-28"
+  }
+]

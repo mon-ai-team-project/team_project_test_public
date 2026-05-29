@@ -21,3 +21,6 @@ jobs:
 
       - name: Validate agent scope and records
         run: node scripts/validate-agent-rules.mjs origin/${{ github.base_ref }}
+
+      - name: Validate history integrity
+        run: node scripts/validate-history-integrity.mjs origin/${{ github.base_ref }}

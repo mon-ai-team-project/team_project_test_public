@@ -1,3 +1,4 @@
+import { isBusinessSchoolJournal } from "@paper-agent/shared";
 import { type PaperRecord } from "./types";
 import { type CriticFlag } from "./reports";
 
@@ -77,7 +78,7 @@ Return ONLY a JSON object with the following structure:
 }
 
 /**
- * Builds rule-based critic flags based on metadata heuristics.
+ * Builds rule-based critic flags based on metadata heuristics and data consistency.
  */
 export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
   const flags: CriticFlag[] = [];
@@ -87,17 +88,32 @@ export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
         paperRank: paper.rank,
         severity: "high",
         flagType: "missing_doi",
-        message: "DOI is missing, so bibliographic verification is incomplete.",
-        evidence: paper.title
+        message: "DOI is missing; bibliographic verification and citation persistence are incomplete.",
+        evidence: `Title: ${paper.title}`
       });
     }
     if (paper.verificationStatus !== "verified") {
+      const isMismatch = paper.verificationReason?.toLowerCase().includes("mismatch") ?? false;
       flags.push({
         paperRank: paper.rank,
-        severity: paper.verificationStatus === "partial" ? "medium" : "high",
-        flagType: "crossref_verification",
-        message: "Crossref did not fully verify this paper.",
+        severity: isMismatch ? "high" : paper.verificationStatus === "partial" ? "medium" : "high",
+        flagType: isMismatch ? "hallucination_risk" : "crossref_verification",
+        message: isMismatch
+          ? "Search metadata may not match official Crossref records."
+          : "Crossref did not fully verify this paper.",
         evidence: paper.verificationReason || "No Crossref verification reason recorded."
+      });
+    }
+    const isTopJournal =
+      isBusinessSchoolJournal(paper.journalName) ||
+      (paper.crossrefJournalName ? isBusinessSchoolJournal(paper.crossrefJournalName) : false);
+    if (!isTopJournal) {
+      flags.push({
+        paperRank: paper.rank,
+        severity: "medium",
+        flagType: "journal_quality",
+        message: "The paper is not matched to the designated business-school top journal pool.",
+        evidence: `Journal: ${paper.journalName || paper.crossrefJournalName || "Unknown"}`
       });
     }
     const score = paper.relevanceScore ?? paper.abstractScore ?? 0;
@@ -116,7 +132,18 @@ export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
         severity: paper.includeStatus === "exclude" ? "high" : "medium",
         flagType: "screening_status",
         message: "The ranking stage did not mark this paper as a clean include.",
-        evidence: paper.includeStatus + ": " + (paper.relevanceReason || "Low overall score")
+        evidence: `${paper.includeStatus}: ${paper.relevanceReason || "Low overall score"}`
+      });
+    }
+    const currentYear = new Date().getUTCFullYear();
+    const age = paper.year ? currentYear - paper.year : 0;
+    if (age > 3 && (paper.citedByCount ?? 0) === 0) {
+      flags.push({
+        paperRank: paper.rank,
+        severity: "low",
+        flagType: "low_impact_risk",
+        message: "Older paper with zero recorded citations; evidence impact may be limited.",
+        evidence: `Published: ${paper.year}, citations: 0`
       });
     }
     if (!paper.oaPdfUrl && !paper.oaLandingPageUrl && !paper.driveWebUrl) {
@@ -131,6 +158,7 @@ export function buildCriticFlags(papers: PaperRecord[]): CriticFlag[] {
   }
   return flags;
 }
+
 
 function normalizeCriticSeverity(value: unknown): CriticFlag["severity"] | null {
   return value === "low" || value === "medium" || value === "high" ? value : null;

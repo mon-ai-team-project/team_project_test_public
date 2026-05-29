@@ -4,7 +4,7 @@ Source document: `paper_agent_enhanced_report.md`
 
 This rubric defines the first benchmark fixture layer for Paper Agent Project. It is intentionally strict: a result should not receive high credit unless it is relevant, real, verifiable, and aligned with the approved business-school journal scope.
 
-## Human Relevance Score
+## Audited Relevance Score
 
 | Score | Meaning | Required Evidence |
 | --- | --- | --- |
@@ -16,8 +16,8 @@ This rubric defines the first benchmark fixture layer for Paper Agent Project. I
 
 ## Core Metrics
 
-- `Precision@5`: number of top-5 returned papers with human relevance score >= 4 divided by 5.
-- `NDCG@5`: graded relevance ranking quality using the 1-5 human score.
+- `Precision@5`: number of top-5 returned papers with audited relevance score >= 4 divided by 5.
+- `NDCG@5`: graded relevance ranking quality using the 1-5 audited score.
 - `Paper Validity Rate`: returned papers with real title, real journal, real year, and non-fabricated metadata.
 - `DOI Accuracy`: returned DOI matches Crossref metadata for the title/year/journal.
 - `Top Journal Precision`: returned papers published in the approved field/rank journal universe.
@@ -53,3 +53,4 @@ Before computing final DOI Accuracy, run Crossref verification and update:
 - `doi_label_status=verified`
 
 Rows that cannot be verified should remain in the file with `doi_label_status=rejected` and a note explaining why.
+New review, QA, and refinement decisions must be reproducible. Encode selection rules in scripts and generated CSV/JSON outputs; preserve legacy manual review files as historical evidence instead of extending them as the active workflow.

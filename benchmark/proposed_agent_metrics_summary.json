@@ -7,15 +7,15 @@
   "totals": {
     "tasks": 3,
     "results": 15,
-    "gold": 9,
-    "verifiedGold": 9,
-    "goldMatches": 5,
-    "doiMatches": 5
+    "gold": 10,
+    "verifiedGold": 10,
+    "goldMatches": 2,
+    "doiMatches": 2
   },
   "macroAverages": {
-    "precision_at_k": 0.3333,
-    "ndcg_at_k": 0.5649,
-    "gold_doi_hit_rate_at_k": 0.5556,
+    "precision_at_k": 0.1333,
+    "ndcg_at_k": 0.3579,
+    "gold_doi_hit_rate_at_k": 0.1944,
     "doi_accuracy_at_k": 1,
     "paper_validity_rate_at_k": 1,
     "top_journal_precision_at_k": 1,

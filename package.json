@@ -15,8 +15,11 @@
     "deploy:worker": "npm run deploy --workspace apps/worker",
     "deploy:mcp": "npm run deploy --workspace apps/mcp",
     "benchmark:evaluate-proposed": "node benchmark/scripts/evaluate-proposed-agent.mjs",
+    "benchmark:compare-baselines": "node benchmark/scripts/compare-baselines.mjs",
+    "benchmark:audit-gold": "node benchmark/scripts/audit-gold-labels.mjs",
     "benchmark:refine-gold": "node benchmark/scripts/refine-gold-candidates.mjs",
     "benchmark:run-proposed": "node benchmark/scripts/run-proposed-agent.mjs",
+    "benchmark:run-expanded": "node benchmark/scripts/run-proposed-agent.mjs --output benchmark/proposed_agent_results_expanded.csv --jobs-output benchmark/proposed_agent_jobs_expanded.csv",
     "benchmark:score-gold": "node benchmark/scripts/score-gold-candidates.mjs",
     "benchmark:verify-gold": "node benchmark/scripts/verify-gold-crossref.mjs",
     "e2e:reports": "npm run e2e --workspace apps/mcp",
@@ -24,6 +27,7 @@
     "smoke:mcp": "npm run smoke --workspace apps/mcp",
     "typecheck": "npm run typecheck --workspaces",
     "validate:agent-rules": "node scripts/validate-agent-rules.mjs",
+    "validate:history": "node scripts/validate-history-integrity.mjs",
     "build:web:staging": "npm run build:staging --workspace apps/web",
     "deploy:web:staging": "npm run deploy:staging --workspace apps/web",
     "deploy:worker:staging": "npm run deploy:staging --workspace apps/worker",
@@ -32,7 +36,8 @@
     "smoke:mcp:staging": "MCP_URL=${STAGING_MCP_URL:-https://paper-agent-mcp-staging.shch3653.workers.dev/mcp} npm run smoke:mcp",
     "staging:check": "npm run typecheck && npm run build:web:staging && npm run smoke:worker:staging && npm run smoke:mcp:staging",
     "dev:worker:local": "npm run dev --workspace apps/worker -- --port 8787",
-    "smoke:worker:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false npm run smoke:worker"
+    "smoke:worker:local": "WORKER_URL=http://localhost:8787 REQUIRE_READY=false npm run smoke:worker",
+    "benchmark:auto-review-baselines": "node benchmark/scripts/auto-review-baselines.mjs"
   },
   "devDependencies": {
     "typescript": "^5.8.3"

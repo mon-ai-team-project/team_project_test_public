@@ -48,9 +48,9 @@ This violates the project rule that historical records and agent attributions mu
 The local `GEMINI.md` contains unresolved merge conflict markers around strict documentation and memory-continuity rules:
 
 ```text
-<<<<<<< HEAD
-=======
->>>>>>> origin/main
+[conflict marker: HEAD]
+[conflict separator]
+[conflict marker: origin/main]
 ```
 
 This is a hard blocker because Gemini is required to read `GEMINI.md` before editing. If the operating guide itself is conflicted, future Gemini sessions start from corrupted instructions. (codex)

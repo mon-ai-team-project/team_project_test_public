@@ -1,0 +1,10 @@
+method,source_file,task_id,result_count,gold_count,verified_gold_count,precision_at_5,ndcg_at_5,gold_doi_hit_rate_at_5,doi_presence_rate_at_5,top_journal_precision_at_5,paper_validity_rate_at_5,accepted_exception_count,matched_gold_ids,matched_dois,accepted_exception_locations
+rule_based,benchmark/baseline_rule_based_results.csv,T001,5,3,3,0.2000,0.6463,0.3333,1.0000,1.0000,1.0000,0,G001,10.1002/hrm.22303,
+rule_based,benchmark/baseline_rule_based_results.csv,T002,5,3,3,0.0000,0.0000,0.0000,1.0000,1.0000,1.0000,0,,,
+rule_based,benchmark/baseline_rule_based_results.csv,T003,5,4,4,0.2000,0.4275,0.2500,1.0000,1.0000,1.0000,0,G061,10.1287/mksc.2023.0494,
+single_llm,benchmark/baseline_single_llm_results.csv,T001,5,3,3,0.6000,1.0000,1.0000,1.0000,0.8000,1.0000,2,G001;G002;G003,10.1002/hrm.22303;10.1016/j.chb.2022.107179;10.1007/s11846-021-00514-4,T001/G003;10.1016/j.chb.2022.107179
+single_llm,benchmark/baseline_single_llm_results.csv,T002,5,3,3,0.6000,1.0000,1.0000,1.0000,1.0000,1.0000,1,G004;G005;G006,10.1007/s10551-022-05320-w;10.1016/j.chb.2022.107179;10.1016/j.chb.2023.107869,10.1016/j.chb.2022.107179
+single_llm,benchmark/baseline_single_llm_results.csv,T003,5,4,4,0.8000,0.9847,1.0000,1.0000,1.0000,1.0000,0,G007;G008;G009;G061,10.1016/j.ijresmar.2024.09.002;10.1177/00222429251356993;10.1007/s11747-024-01064-3;10.1287/mksc.2023.0494,
+proposed_agent,benchmark/proposed_agent_results.csv,T001,5,3,3,0.2000,0.6463,0.3333,1.0000,1.0000,1.0000,0,G001,10.1002/hrm.22303,
+proposed_agent,benchmark/proposed_agent_results.csv,T002,5,3,3,0.0000,0.0000,0.0000,1.0000,1.0000,1.0000,0,,,
+proposed_agent,benchmark/proposed_agent_results.csv,T003,5,4,4,0.2000,0.4275,0.2500,1.0000,1.0000,1.0000,0,G061,10.1287/mksc.2023.0494,
