@@ -1,5 +1,13 @@
 # Project Progress And Session Handoff
 
+Updated: 2026-05-29 (organization expanded benchmark partial-run import)
+
+## 2026-05-29 (codex)
+- **Organization Import**: Imported only the isolated expanded benchmark artifacts onto an organization-main-based clean branch to avoid the 99-commit conflicted PR. (codex)
+- **Actual Result**: The expanded run attempted T001-T020, but only T001-T008 completed. T009 failed during job polling and T010-T020 failed during POST submission to the deployed Worker. (codex)
+- **Claim Boundary**: Treat benchmark/proposed_agent_*_expanded.* as partial expanded-run evidence only, not complete 20-task performance evidence. (codex)
+- **Protection**: The controlled T001-T003 benchmark files, gold labels, baseline files, paper PDF, and presentation PPTX were not modified by this clean import. (codex)
+
 Updated: 2026-05-29 (organization sync PR conflict resolution)
 
 ## 2026-05-29 (codex)

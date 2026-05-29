@@ -1,5 +1,10 @@
 # Debug Log
 
+## 2026-05-29 - Organization Expanded Benchmark Clean Import
+- Context: PR #18 from pre-freeze/benchmark-expanded-runtime-2026-05-29 attempted to merge 99 commits and conflicted across dashboard, docs, paper, presentation, and changelog files. (codex)
+- Decision: Do not resolve PR #18 directly. Create an organization-main-based clean branch with only expanded benchmark artifacts and corrected claim-boundary documentation. (codex)
+- Finding: The expanded jobs file records 8 completed tasks and 12 failed tasks, so complete 20-task claims remain blocked until T009-T020 are rerun successfully. (codex)
+
 ## 2026-05-29 - Organization Sync PR Conflict Resolution
 
 - Context: The organization PR from `sync/personal-main-2026-05-29` reported conflicts in dashboard, Worker, benchmark, Gemini handoff, progress/debug, and package files. (codex)

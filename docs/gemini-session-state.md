@@ -76,3 +76,7 @@ Additional benchmark checks when benchmark outputs are touched:
 npm run benchmark:evaluate-proposed
 npm run benchmark:compare-baselines
 ```
+
+## Organization Clean Import - 2026-05-29
+
+The organization repository should not merge the conflicted 99-commit PR #18. Use the clean organization-main-based branch instead. The imported expanded files are partial-run evidence: T001-T008 completed, while T009-T020 failed during polling or POST submission. Do not present this data as complete 20-task benchmark evidence. (codex)
