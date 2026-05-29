@@ -1,5 +1,22 @@
 # Debug Log
 
+## 2026-05-29 - Organization Sync PR Conflict Resolution
+
+- Context: The organization PR from `sync/personal-main-2026-05-29` reported conflicts in dashboard, Worker, benchmark, Gemini handoff, progress/debug, and package files. (codex)
+- Finding: `team-origin/main` contained four commits not in personal `origin/main`, mainly the earlier org sync baseline plus root Wrangler cleanup and tracked `.worktrees/agent-traces` gitlink removal. (codex)
+- Decision: Resolve conflicted files with the personal `origin/main` version because it is the current validated source of truth and contains the final paper/PPTX, dashboard, benchmark automation, and history-integrity work. (codex)
+- Guardrail: Keep organization hotfix history through the merge commit instead of copying older org-main file contents that would delete or roll back current personal-main artifacts. (codex)
+- Verification target: After commit and push, the PR should leave conflict state, trigger `validate-agent-rules`, and remain mergeable once the required check reports. (codex)
+
+## 2026-05-27 - Organization Worker Build Failure Recheck
+- Follow-up finding: The subsequent Cloudflare log failed at `error occurred while updating repository submodules`; `git ls-files -s` showed `.worktrees/agent-traces` tracked as mode `160000` with no `.gitmodules`, which made Cloudflare treat it as an invalid submodule. (codex)
+- Follow-up fix: Removed the `.worktrees/agent-traces` gitlink from Git tracking; `.gitignore` already ignores `.worktrees/`, so this local worktree path should not be committed again. (codex)
+
+- Context: The user reported that the Cloudflare build still failed after the personal repo fix was deployed manually. (codex)
+- Finding: origin/main root wrangler.toml was clean, but team-origin/main still contained merge-conflict markers. Therefore a Worker Build connected to the organization repository would still fail before deployment. (codex)
+- Fix: Created a minimal organization-main hotfix branch from team-origin/main and cleaned root wrangler.toml to the confirmed D1 DB and R2 REPORTS bindings. (codex)
+- Verification: Branch diffs and latest commits were checked for jin23624, member-c, and juilie before writing the review note. (codex)
+
 ## 2026-05-29 - IEEE Template Application
 
 - Context: The user requested IEEE/ACM/AI conference template application and provided IEEE Article Template, IEEE PDF eXpress, and practical IEEE/LaTeX authoring references. (codex)

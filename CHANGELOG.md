@@ -30,6 +30,7 @@ _No unreleased changes._
 - Docs: Added `docs/proposed-agent-bak-review-2026-05-29.md` and updated `docs/gemini-session-state.md` with the Codex-reviewed handoff decision. (gemini)
 
 ## 2026-05-29 (codex)
+- Fixed: Resolved the organization sync PR conflicts by preserving personal origin/main as the content baseline while retaining organization hotfix history for the root Wrangler cleanup and tracked worktree gitlink removal. (codex)
 - Changed: Applied a local IEEE-style 10pt two-column conference draft layout to `paper/final-paper-draft.tex`, added Index Terms and Related Work/Method structure, documented IEEE Template/PDF eXpress follow-up, and regenerated `paper/final-paper-draft.pdf`. (codex)
 - Fixed: Reviewed Gemini local deliverable refresh, corrected changelog placement, fixed `benchmark:run-expanded` to use `--jobs-output`, softened unsupported demo claims, and verified LaTeX/PPTX generation paths. (codex)
 - Docs: Tightened `docs/gemini-next-prompt.md` so Gemini must keep benchmark expansion, reproducibility, bounded claims, handoff records, verification, and LaTeX/PPTX deliverable generation in a strict 1-10 priority order. (codex)
@@ -147,6 +148,82 @@ _No unreleased changes._
 - Fixed: Removed the accidentally tracked .worktrees/agent-traces gitlink from personal `main` so Cloudflare Git Builds no longer fail while updating repository submodules. (codex)
 
 - Infra: Triggered a fresh Cloudflare Git Build from personal `main` after confirming the failed build targeted stale commit `0bfa894` instead of fixed commit `4369a10`. (codex)
+
+
+- Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings and salvage guidance for the latest divergent Gemini local branch. (codex)
+
+## 2026-05-26 (codex)
+
+- Docs: Added `docs/gemini-debug-handoff.md` and strict Worker debug discipline for Gemini so local/production Worker findings are transferred without relying on memory. (codex)
+- Fixed: Relaxed local Worker smoke diagnostics readiness when `REQUIRE_READY=false` so local runs without provider secrets can still verify health, schema, and recent-job routes. (codex)
+- Docs: Added `docs/local-worker-troubleshooting.md` and explicit local Worker dev/smoke scripts after verifying production and local Worker behavior. (codex)
+- Docs: Added `docs/gemini-session-state.md` and Gemini memory-continuity rules so Gemini can resume from repository state instead of unreliable session memory. (codex)
+- Fixed: Sanitized LLM Critic severity values before adding AI-generated critic flags. (codex)
+- Fixed: Reviewed Gemini Worker modularization, removed unverified Cloudflare AI/Vectorize deployment bindings from tracked Wrangler configs, and added `.gitignore` safeguards for local reference artifacts. (codex)
+- Docs: Added `docs/gemini-review-feedback.md` with accepted work, corrections, and future Gemini guidance. (codex)
+- Changed: Split Worker report/export generation into `apps/worker/src/reports.ts` while keeping Worker routing and search orchestration in `apps/worker/src/index.ts`. (codex)
+- Docs: Added `docs/gemini-handoff-blueprint.md` so Gemini can continue from the current architecture, repository policy, verification baseline, and deferred-task list. (codex)
+
+## 2026-05-25 (codex)
+
+- Docs: Added `docs/human-ai-work-split.md` to separate human-only Cloudflare/GitHub/secret decisions from AI-agent-safe repo, staging, verification, and handoff work. (codex)
+- Infra: Added staging/production separation scripts, Pages staging examples, and extended Worker smoke checks for CSV, Markdown, XLSX, and PDF endpoints. (codex)
+- Fixed: Ensured Output Artifacts always exposes CSV, Markdown, XLSX, and PDF download endpoints even when older jobs are missing job_outputs metadata rows. (codex)
+- Added: Exposed direct PDF report download actions in the Research dashboard table toolbar and Report Preview panel. (codex)
+- Changed: Integrated Critic Agent review summaries into dynamic Markdown/PDF reports and the Research dashboard Paper Detail panel with risk level, decision, evidence, and recommended actions. (codex)
+- Fixed: Made Ranked Papers and Report Preview responsive on mobile by converting the ranked table to labeled stacked rows and tightening report preview wrapping, height, and panel actions. (codex)
+- Fixed: Moved the Research dashboard Paper Detail area below the Ranked Papers table so it can no longer obscure the right-side Score column. (codex)
+- Docs: Updated `docs/workflow.md` as the current full blueprint, reflecting D1 traces, critic flags, R2 CSV/Markdown/XLSX/PDF outputs, and conditional Google Drive OA PDF archival. (codex)
+- Fixed: Adjusted the Research dashboard Ranked Papers table sizing, column widths, and responsive stacking so the Status, OA, and Score columns remain visible through horizontal scrolling. (codex)
+- Docs: Cleaned up 2026-05-25 progress/debug headings so PDF, XLSX, dashboard artifact visibility, skeleton persistence, and enrichment trace records are separated for handoff. (codex)
+- Added: Implemented text-based PDF report output at `GET /api/search-jobs/:id/report.pdf`, including R2 persistence and `job_outputs` generated/stored status. (codex)
+- Added: Implemented dynamic and R2-persisted XLSX workbook output at `GET /api/search-jobs/:id/papers.xlsx`, replacing the XLSX artifact state from planned to generated/stored. (codex)
+- Changed: Connected `critic_flags` and `job_outputs` APIs to dashboard UI panels for Paper Detail, Output Artifacts, Ops metrics, live Critic Review, and artifact download links. (codex)
+- Added: Implemented full workflow skeleton persistence with `critic_flags` and `job_outputs` D1 tables, Critic Agent rule-based flags, output metadata APIs, and completed fallback relevance trace status in `apps/worker/src/index.ts` and `apps/worker/schema.sql`. (codex)
+- Changed: Added dashboard trace metadata display for `enrichmentLimit`, processed counts, skipped counts, Crossref verification, Unpaywall OA, and Google Drive storage summaries in `apps/web/src/main.tsx` and `apps/web/src/dashboard/DashboardPages.tsx`. (codex)
+
+## 2026-05-24 (codex)
+
+- Added: Introduced `enrichmentLimit` to cap Crossref and Unpaywall lookups per job, reducing Cloudflare Worker subrequest-limit failures while recording skipped rows explicitly. (codex)
+- Added: Connected Google Drive OA PDF archival for Unpaywall-confirmed PDF URLs using Worker service-account credentials and persisted Drive metadata in D1, CSV, Markdown, dashboard, and MCP outputs. (codex)
+- Changed: Connected the Ops dashboard route to live Worker search jobs and D1 `agent_traces` for status board, pipeline, and console output. (codex)
+- Fixed: Ensured Worker diagnostics runs schema bootstrap before checking columns, set new search jobs to 12 total steps, and completed trace rows now receive completion timestamps. (codex)
+
+- Added: Persisted Worker multi-agent execution traces in D1 and exposed trace read APIs for dashboard and MCP inspection. (codex)
+- Changed: Replaced misleading dashboard mock metric/status values with explicit incomplete mock placeholders in final dashboard routes. (codex)
+
+## 2026-05-27 (codex)
+- Fixed: Removed the accidentally tracked .worktrees/agent-traces gitlink so Cloudflare Git Builds no longer fail while updating repository submodules. (codex)
+
+- Fixed: Cleaned the organization-main root wrangler.toml conflict markers so Cloudflare Git Builds can parse the Worker deploy config. (codex)
+
+
+- Docs: Recorded the personal-repo sync and organization PR merge that restored the org-ready baseline in `docs/progress.md` and `docs/debug-log.md`. (codex)
+- Docs: Added `docs/team-branch-evaluation-2026-05-27.md` with team-branch status, recommendations, and troubleshooting notes. (codex)
+
+## 2026-05-27 (codex)
+
+
+
+- Docs: Added docs/benchmark-branch-review-2026-05-27.md to record that the benchmark branches need rebase or cherry-pick before merging onto the current org-ready baseline. (codex)
+
+## 2026-05-27 (jin23624)
+
+- Benchmark: Refined T001-T003 gold labels (G001-G009) with real DOI-backed, top-journal papers verified via Crossref. (jin23624)
+
+## 2026-05-26 (gemini)
+
+- Added: Integrated LLM-backed Critic Agent using Cloudflare Workers AI (`@cf/meta/llama-3-8b-instruct`) for qualitative evaluation of abstracts. (gemini)
+- Added: Integrated Cloudflare Vectorize and Workers AI for semantic relevance scoring. (gemini)
+- Added: Created `apps/worker/src/vectorize.ts` for abstract embedding generation and semantic similarity search. (gemini)
+- Added: Created `apps/worker/src/critic.ts` to centralize rule-based and LLM-backed qualitative analysis. (gemini)
+- Changed: Updated ranking formula to combine semantic similarity scores (60% weight) with keyword overlap scores (40% weight). (gemini)
+- Changed: Modularized `apps/worker/src/index.ts` into specialized modules (`types.ts`, `utils.ts`, `scoring.ts`, `providers.ts`, `enrichment.ts`, `persistence.ts`, `critic.ts`) to improve maintainability and code clarity. (gemini)
+- Docs: Updated `GEMINI.md` with strict file management and historical preservation rules. (gemini)
+- Docs: Updated project progress and debug logs with refactoring, Vectorize, and LLM Critic integration details. (gemini)
+
+## 2026-05-27 (codex)
+
 
 
 - Docs: Added `docs/gemini-latest-work-evaluation.md` with blocking findings and salvage guidance for the latest divergent Gemini local branch. (codex)

@@ -1,5 +1,20 @@
 # Project Progress And Session Handoff
 
+Updated: 2026-05-29 (organization sync PR conflict resolution)
+
+## 2026-05-29 (codex)
+- **Organization Sync Conflict Resolution**: Reproduced the organization PR conflict by merging `team-origin/main` into `sync/personal-main-2026-05-29`; conflicted files matched the GitHub PR list. (codex)
+- **Resolution Policy**: Preserved personal `origin/main` as the content baseline for source, benchmark, dashboard, paper, and handoff files because it contains the latest validated project state. (codex)
+- **Organization History**: Retained the organization hotfix commits in merge history, including root Wrangler cleanup and tracked worktree gitlink removal, while avoiding reintroduction of older org-main deletions. (codex)
+- **Next Step**: Push the resolved sync branch and wait for the required `validate-agent-rules` status check before merging the organization PR. (codex)
+
+## codex - Organization Worker Build Hotfix (2026-05-27)
+- Found the next Cloudflare Git Build failure: `.worktrees/agent-traces` was tracked as a gitlink/submodule entry without a `.gitmodules` definition. Removed the tracked gitlink so Cloudflare clone no longer attempts a broken submodule update. (codex)
+
+- Found that team-origin/main still had root wrangler.toml merge-conflict markers while personal origin/main was already fixed. This explains Cloudflare Git Build failure when the Worker is connected to the organization repository. (codex)
+- Prepared a minimal organization hotfix branch that only cleans the root Worker deploy config and records the troubleshooting outcome. (codex)
+- Next: keep the current personal baseline as the merge target and reapply benchmark changes only after rebasing. (codex)
+
 Updated: 2026-05-29 (gemini local setup and deliverable refresh complete)
 
 ## 2026-05-29 (gemini)
