@@ -30,6 +30,8 @@ _No unreleased changes._
 - Docs: Added `docs/proposed-agent-bak-review-2026-05-29.md` and updated `docs/gemini-session-state.md` with the Codex-reviewed handoff decision. (gemini)
 
 ## 2026-05-29 (codex)
+- Benchmark: Added isolated expanded benchmark partial-run artifacts from T001-T020 attempts; only T001-T008 completed and T009-T020 failed. (codex)
+- Docs: Recorded the expanded benchmark claim boundary so the branch is not presented as complete 20-task evidence. (codex)
 - Fixed: Resolved the organization sync PR conflicts by preserving personal origin/main as the content baseline while retaining organization hotfix history for the root Wrangler cleanup and tracked worktree gitlink removal. (codex)
 - Changed: Applied a local IEEE-style 10pt two-column conference draft layout to `paper/final-paper-draft.tex`, added Index Terms and Related Work/Method structure, documented IEEE Template/PDF eXpress follow-up, and regenerated `paper/final-paper-draft.pdf`. (codex)
 - Fixed: Reviewed Gemini local deliverable refresh, corrected changelog placement, fixed `benchmark:run-expanded` to use `--jobs-output`, softened unsupported demo claims, and verified LaTeX/PPTX generation paths. (codex)

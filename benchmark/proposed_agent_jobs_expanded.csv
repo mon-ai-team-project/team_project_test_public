@@ -1,0 +1,21 @@
+task_id,keyword,journal_category_id,job_id,status,current_step,source_result_count,allowed_result_count,paper_count,started_at,completed_at,error_message
+T001,AI interview employer branding,organization-hr,job-0b18c906-a0e1-4468-8133-a153c1a4446b,completed,delivery,8,6,6,2026-05-29T15:02:42.985Z,2026-05-29T15:03:07.419Z,
+T002,artificial intelligence recruitment applicant reaction,organization-hr,job-2649e9ae-49e0-4764-a646-ad7817d2f311,completed,delivery,50,20,20,2026-05-29T15:03:13.324Z,2026-05-29T15:03:29.785Z,
+T003,generative AI advertising effectiveness,marketing,job-8632fef4-e0c6-44e3-8b43-34b00df1236e,completed,delivery,50,20,20,2026-05-29T15:03:42.615Z,2026-05-29T15:04:01.114Z,
+T004,algorithmic management employee trust,organization-hr,job-96f2c5b4-7887-4ba2-838a-0b5eb5f3f28a,completed,delivery,50,20,20,2026-05-29T15:04:11.352Z,2026-05-29T15:04:32.096Z,
+T005,AI transparency consumer trust,marketing,job-7c6f8c62-0403-4f3c-b9d4-bfdc4e54d743,completed,delivery,50,12,12,2026-05-29T15:04:40.569Z,2026-05-29T15:05:00.090Z,
+T006,chatbot service failure customer satisfaction,marketing,job-7f9847c9-8de7-4434-886f-dcaca44975ce,completed,delivery,50,18,18,2026-05-29T15:05:09.499Z,2026-05-29T15:05:30.081Z,
+T007,platform work algorithmic control,organization-hr,job-7bbdc57f-9424-4087-88c7-4d0b762f246a,completed,delivery,50,20,20,2026-05-29T15:05:38.700Z,2026-05-29T15:05:56.836Z,
+T008,remote work knowledge sharing,common,job-250b2da9-5f87-4f72-bc79-a563859f6a72,completed,delivery,50,20,20,2026-05-29T15:06:07.065Z,2026-05-29T15:06:25.961Z,
+T009,digital transformation dynamic capabilities,international-business,,failed,benchmark_runner,,,0,2026-05-29T15:06:36.282Z,2026-05-29T15:06:59.401Z,GET job job-42551913-7d73-41f2-b3b2-54488c7c489c failed
+T010,ESG disclosure firm value,accounting,,failed,benchmark_runner,,,0,2026-05-29T15:07:00.902Z,2026-05-29T15:07:02.167Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T011,greenwashing consumer skepticism,marketing,,failed,benchmark_runner,,,0,2026-05-29T15:07:03.668Z,2026-05-29T15:07:05.129Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T012,social media influencer authenticity purchase intention,marketing,,failed,benchmark_runner,,,0,2026-05-29T15:07:06.630Z,2026-05-29T15:07:08.322Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T013,privacy personalization tradeoff marketing,marketing,,failed,benchmark_runner,,,0,2026-05-29T15:07:09.822Z,2026-05-29T15:07:11.373Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T014,FinTech adoption trust risk,information-systems,,failed,benchmark_runner,,,0,2026-05-29T15:07:12.873Z,2026-05-29T15:07:14.218Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T015,blockchain supply chain transparency,operations,,failed,benchmark_runner,,,0,2026-05-29T15:07:15.718Z,2026-05-29T15:07:17.301Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T016,AI decision support managerial judgment,information-systems,,failed,benchmark_runner,,,0,2026-05-29T15:07:18.802Z,2026-05-29T15:07:20.434Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T017,diversity climate employee voice,organization-hr,,failed,benchmark_runner,,,0,2026-05-29T15:07:21.935Z,2026-05-29T15:07:23.604Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T018,organizational resilience crisis management,international-business,,failed,benchmark_runner,,,0,2026-05-29T15:07:25.106Z,2026-05-29T15:07:26.671Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T019,customer journey omnichannel retailing,marketing,,failed,benchmark_runner,,,0,2026-05-29T15:07:28.172Z,2026-05-29T15:07:29.507Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
+T020,business analytics competitive advantage,information-systems,,failed,benchmark_runner,,,0,2026-05-29T15:07:31.007Z,2026-05-29T15:07:32.366Z,POST https://paper-agent-project.shch3653.workers.dev/api/search-jobs failed
